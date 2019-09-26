@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components;
+package org.firstinspires.ftc.teamcode.components.color;
 
 import android.util.Log;
 
@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
             colorSensor.enableLed(true);
         }
 
-        public void telemetry() {
+        public void debug() {
             Log.d("colorSensor", "Alpha: " + colorSensor.alpha());
             Log.d("colorSensor", "Red: " + colorSensor.red());
             Log.d("colorSensor", "Green: " + colorSensor.green());
