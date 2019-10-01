@@ -16,7 +16,7 @@ import java.util.Locale;
  * Creates an IMU system that handles the angle and movement of the robot through a gyroscope.
  */
 public class IMUSystem {
-    public BNO055IMU imu;
+    private BNO055IMU imu;
     public BNO055IMU.Parameters parameters;
 
     // State used for updating telemetry
