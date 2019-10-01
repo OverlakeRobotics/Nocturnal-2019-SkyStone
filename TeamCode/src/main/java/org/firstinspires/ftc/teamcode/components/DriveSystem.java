@@ -25,6 +25,10 @@ public class DriveSystem {
         initMotors();
     }
 
+    public enum Direction {
+        FORWARD, BACKWARD, LEFT, RIGHT
+    }
+
     /**
      * Set the power of the drive system
      * @param power power of the system
@@ -226,10 +230,6 @@ public class DriveSystem {
             return 360 + diff;
         }
         return diff;
-    }
-
-    private enum Direction {
-        FORWARD, BACKWARD, LEFT, RIGHT
     }
 
 }
