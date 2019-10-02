@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components.color;
+package org.firstinspires.ftc.teamcode.components;
 
 import android.util.Log;
 
