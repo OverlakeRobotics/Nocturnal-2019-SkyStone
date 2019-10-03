@@ -2,29 +2,31 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 public class DriveSystem {
-    private DcMotor motorFrontLeft;
-    private DcMotor motorFrontRight;
-    private DcMotor motorBackLeft;
-    private DcMotor motorBackRight;
+    public DcMotor motorFrontLeft;
+    public DcMotor motorFrontRight;
+    public DcMotor motorBackLeft;
+    public DcMotor motorBackRight;
     public DcMotor[] motors = new DcMotor[4];
 
     public IMUSystem imuSystem;
-    protected HardwareMap hardwareMap;
 
     private final int TICKS_IN_INCH = 69;
 
     /**
      * Handles the data for the abstract creation of a drive system with four wheels
      */
-    public DriveSystem(HardwareMap hardwareMap) {
-
-        this.hardwareMap = hardwareMap;
+    public DriveSystem(DcMotor[] motors, BNO055IMU imu) {
+        this.imuSystem = new IMUSystem(imu);
+        this.motors = motors;
         initMotors();
-        imuSystem = new IMUSystem(hardwareMap);
+    }
+
+    public enum Direction {
+        FORWARD, BACKWARD, LEFT, RIGHT
     }
 
     /**
@@ -39,15 +41,10 @@ public class DriveSystem {
 
     public void initMotors() {
 
-        this.motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
-        this.motorFrontRight = hardwareMap.dcMotor.get("motorFR");
-        this.motorBackRight = hardwareMap.dcMotor.get("motorBR");
-        this.motorBackLeft = hardwareMap.dcMotor.get("motorBL");
-
-        motors[0] = motorFrontLeft;
-        motors[1] = motorFrontRight;
-        motors[2] = motorBackRight;
-        motors[3] = motorBackLeft;
+        motorFrontLeft = motors[0];
+        motorFrontRight = motors[1];
+        motorBackRight = motors[2];
+        motorBackLeft = motors[3];
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
