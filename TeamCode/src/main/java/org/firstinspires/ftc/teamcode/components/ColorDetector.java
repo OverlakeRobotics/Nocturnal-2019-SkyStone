@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
         private static final Color red = new Color(255, 0,0);
         private static final Color blue = new Color(0,0,255);
         private static final Color yellow = new Color(255,255,0);
-x
+
         private ColorSensor colorSensor;
 
         public ColorDetector(ColorSensor colorSensor) {
@@ -41,14 +41,18 @@ x
         }
 
         public boolean isRed() {
-            return colorSensor.red() >= ;
+            Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
+            return input.equals(red);
         }
 
         public boolean isBlue() {
-            return colorSensor.blue() >= BLUE_THRESHOLD;
+            Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
+            return input.equals(blue);
         }
 
         public boolean isYellow() {
-            return colorSensor.
+            Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
+            return input.equals(yellow);
         }
+
     }
