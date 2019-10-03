@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
     public class ColorDetector {
 
-        private static final int RED_THRESHOLD = 200;
-        private static final int BLUE_THRESHOLD = 200;
-
+        private static final Color red = new Color(255, 0,0);
+        private static final Color blue = new Color(0,0,255);
+        private static final Color yellow = new Color(255,255,0);
+x
         private ColorSensor colorSensor;
 
         public ColorDetector(ColorSensor colorSensor) {
@@ -40,10 +41,14 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
         }
 
         public boolean isRed() {
-            return colorSensor.red() >= RED_THRESHOLD;
+            return colorSensor.red() >= ;
         }
 
         public boolean isBlue() {
             return colorSensor.blue() >= BLUE_THRESHOLD;
+        }
+
+        public boolean isYellow() {
+            return colorSensor.
         }
     }
