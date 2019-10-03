@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-    public class ColorDetector {
+    public class ColorSystem {
 
         private static final Color red = new Color(255, 0,0);
         private static final Color blue = new Color(0,0,255);
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
         private ColorSensor colorSensor;
 
-        public ColorDetector(ColorSensor colorSensor) {
+        public ColorSystem(ColorSensor colorSensor) {
             this.colorSensor = colorSensor;
             colorSensor.enableLed(true);
         }
