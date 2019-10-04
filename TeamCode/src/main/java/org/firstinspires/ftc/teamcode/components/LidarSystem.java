@@ -3,20 +3,51 @@ package org.firstinspires.ftc.teamcode.components;
 import android.util.*;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.components.base.System;
+
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.components.scale.ExponentialRamp;
+import org.firstinspires.ftc.teamcode.components.scale.Point;
+import org.firstinspires.ftc.teamcode.components.scale.Ramp;
+import org.firstinspires.ftc.teamcode.components.base.System;
+import org.firstinspires.ftc.teamcode.components.ColorSystem;
+import org.firstinspires.ftc.teamcode.components.IMUSystem;
 
 public class LidarSystem {
 
     private static final int ARM_THRESHOLD = 200;
     private static final int INTAKE_THRESHOLD = 2;
 
-    DistanceSensor lidar;
-    DistanceSensor lidar2;
+    private DistanceSensor lidar;
+    private DistanceSensor lidar2;
+    HardwareMap hwmap;
+
 
     public LidarSystem(DistanceSensor distanceSensor) {
         this.lidar = distanceSensor;
         this.lidar2 = distanceSensor;
+    }
+    public void initSystem() {
+        lidar = hwmap.get(DistanceSensor.class, "sensor_range");
+        lidar2 = hwmap.get(DistanceSensor.class, "sensor_range2");
+    }
+
+    public double getDistance1() {
+        return lidar.getDistance(DistanceUnit.INCH);
+    }
+
+    public double getDistance2() {
+        return lidar2.getDistance(DistanceUnit.INCH);
     }
 
     public void debug() {
