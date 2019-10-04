@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import org.firstinspires.ftc.teamcode.components.base.System;
+
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -15,6 +17,14 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
         public ColorSystem(ColorSensor colorSensor) {
             this.colorSensor = colorSensor;
             colorSensor.enableLed(true);
+        }
+
+        public void telemetry() {
+            //telemetry.log("Alpha", colorSensor.alpha());
+            //telemetry.log("Red  ", colorSensor.red());
+            //telemetry.log("Green", colorSensor.green());
+            //telemetry.log("Blue ", colorSensor.blue());
+            //telemetry.write();
         }
 
         public void debug() {
