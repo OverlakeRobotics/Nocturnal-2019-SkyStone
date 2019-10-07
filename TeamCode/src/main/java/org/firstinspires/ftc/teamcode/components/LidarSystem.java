@@ -33,9 +33,11 @@ public class LidarSystem {
     HardwareMap hwmap;
 
 
-    public LidarSystem(DistanceSensor distanceSensor) {
+    public LidarSystem(OpMode opMode, DistanceSensor distanceSensor) {
+        this.hwmap = opMode.hardwareMap;
         this.lidar = distanceSensor;
         this.lidar2 = distanceSensor;
+        initSystem();
     }
     public void initSystem() {
         lidar = hwmap.get(DistanceSensor.class, "sensor_range");

@@ -8,21 +8,19 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.teamcode.components.ColorSystem;
 import org.firstinspires.ftc.teamcode.components.LidarSystem;
 
-
-public class SensorOp extends LinearOpMode {
+public class Sensor extends LinearOpMode {
     private ColorSensor sensor;
     private ColorSystem system = new ColorSystem(sensor);
 
     private DistanceSensor lidar;
     private DistanceSensor lidar2;
-    private LidarSystem distance1 = new LidarSystem(lidar);
-    private LidarSystem distance2 = new LidarSystem(lidar2);
-
+    private LidarSystem distance1;
+    private LidarSystem distance2;
 
     public void initialize() {
         sensor = hardwareMap.colorSensor.get("color_sensor");
-
-
+        distance1 = new LidarSystem(this, lidar);
+        distance2 = new LidarSystem(this, lidar2);
     }
 
     public void runOpMode() {
