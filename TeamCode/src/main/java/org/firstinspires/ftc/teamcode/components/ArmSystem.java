@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.components;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import  com.qualcomm.robotcore.hardware.Servo;
+
+import java.io.Console;
+import java.util.EnumMap;
 
 /*
     This class controls everything related to the arm, including driver assist features.
@@ -21,12 +25,18 @@ public class ArmSystem {
     private final double WRIST_HOME = 0;
     private final double ELBOW_HOME = 0;
     private final double PIVOT_HOME = 0;
-    private final double GRIPPER_OPEN = 0;
-    private final double GRIPPER_CLOSE = 0.5; // I think? TODO: Figure out overheating issueo
+    private final double GRIPPER_OPEN = 0.47;
+    private final double GRIPPER_CLOSE = 0; // I think? TODO: Figure out overheating issue
+    protected Position QueuedPosition;
 
     public enum Position {
         POSITION_HOME, POSITION_WEST, POSITION_SOUTH, POSITION_EAST, POSITION_NORTH
     }
+
+    public enum ServoNames {
+        GRIPPER, WRIST, ELBOW, PIVOT
+    }
+
     /*
      If the robot is at the bottom of the screen, and X is the block:
 
@@ -45,12 +55,12 @@ public class ArmSystem {
      Probably should be controlled by the D pad or something.
      */
 
-    public ArmSystem(HardwareMap hardwareMap) {
+    public ArmSystem(EnumMap<ServoNames, Servo> servos) {
         this.hardwareMap = hardwareMap;
-        this.gripper = hardwareMap.get(Servo.class, "gripper");
-        this.wrist = hardwareMap.get(Servo.class, "wrist");
-        this.elbow = hardwareMap.get(Servo.class, "elbow");
-        this.pivot = hardwareMap.get(Servo.class, "pivot");
+        this.gripper = servos.get(ServoNames.GRIPPER);
+        this.wrist = servos.get(ServoNames.WRIST);
+        this.elbow = servos.get(ServoNames.ELBOW);
+        this.pivot = servos.get(ServoNames.PIVOT);
     }
 
     public void moveGripper(double pos) {
@@ -128,8 +138,7 @@ public class ArmSystem {
     public void movePresetPosition(Position pos) {
         switch(pos) {
             case POSITION_HOME:
-                openGripper();
-                moveWrist(0.6);
+                moveWrist(0);
                 moveElbow(0.35);
                 movePivot(0.86);
                 break;
@@ -154,5 +163,13 @@ public class ArmSystem {
                 movePivot(0.1);
                 break;
         }
+    }
+
+    public void setQueuedPosition(Position position) {
+        this.QueuedPosition = position;
+    }
+
+    public void go() {
+        this.movePresetPosition(QueuedPosition);
     }
 }

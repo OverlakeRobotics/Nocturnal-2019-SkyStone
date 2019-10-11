@@ -30,10 +30,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
+
+import java.util.EnumMap;
 
 /**
  * This OpMode scans a single servo back and forwards until Stop is pressed.
@@ -51,7 +54,7 @@ import org.firstinspires.ftc.teamcode.components.ArmSystem;
  */
 @TeleOp(name = "Arm system test", group = "test")
 
-public class ArmSystemTest extends LinearOpMode {
+public class ArmSystemTest extends OpMode {
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
@@ -61,54 +64,49 @@ public class ArmSystemTest extends LinearOpMode {
     // Define class members
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
-
+    private ArmSystem armSystem;
 
     @Override
-    public void runOpMode() {
-
+    public void init() {
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        ArmSystem armSystem = new ArmSystem(hardwareMap);
-
+        EnumMap<ArmSystem.ServoNames, Servo> enumMap = new EnumMap(ArmSystem.ServoNames);
+        enumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));
+        enumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "wrist"));
+        enumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "elbow"));
+        enumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "pivot"));
+        armSystem = new ArmSystem(enumMap);
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
-        waitForStart();
+    }
 
+    @Override
+    public void loop() {
+        telemetry.addData("Positions: " + armSystem.getGripper() + ", " + armSystem.getWrist() + ", " + armSystem.getElbow(),  "");
+        telemetry.addData(">", "Press Stop to end test." );
 
-        // Scan servo till stop pressed.
-        while(opModeIsActive()){
-            // Display the current value
-            try {
-                telemetry.addData("Positions: " + armSystem.getGripper() + ", " + armSystem.getWrist() + ", " + armSystem.getElbow(),  "");
-                telemetry.addData(">", "Press Stop to end test." );
-
-                if (gamepad1.x) {
-                    armSystem.movePresetPosition(ArmSystem.Position.POSITION_WEST);
-                    telemetry.addData("x", "");
-                } else if (gamepad1.y){
-                    armSystem.movePresetPosition(ArmSystem.Position.POSITION_NORTH);
-                    telemetry.addData("y", "");
-                } else if (gamepad1.b) {
-                    armSystem.movePresetPosition(ArmSystem.Position.POSITION_EAST);
-                    telemetry.addData("b", "");
-                } else if (gamepad1.a) {
-                    armSystem.movePresetPosition(ArmSystem.Position.POSITION_SOUTH);
-                    telemetry.addData("a", "");
-                } else if (gamepad1.right_bumper) {
-                    armSystem.movePresetPosition(ArmSystem.Position.POSITION_HOME);
-                    telemetry.addData("rb", "");
-                }
-                telemetry.update();
-            } catch (Exception e) {
-                telemetry.addData("oopsie whoopsie", "");
-                telemetry.update();
-            }
-
+        if (gamepad1.x) {
+            armSystem.movePresetPosition(ArmSystem.Position.POSITION_WEST);
+            telemetry.addData("x", "");
+        } else if (gamepad1.y){
+            armSystem.movePresetPosition(ArmSystem.Position.POSITION_NORTH);
+            telemetry.addData("y", "");
+        } else if (gamepad1.b) {
+            armSystem.movePresetPosition(ArmSystem.Position.POSITION_EAST);
+            telemetry.addData("b", "");
+        } else if (gamepad1.a) {
+            armSystem.movePresetPosition(ArmSystem.Position.POSITION_SOUTH);
+            telemetry.addData("a", "");
+        } else if (gamepad1.right_bumper) {
+            armSystem.movePresetPosition(ArmSystem.Position.POSITION_HOME);
+            telemetry.addData("rb", "");
         }
-
-        // Signal done;
-        telemetry.addData(">", "Done");
+        if (gamepad1.left_bumper) {
+            armSystem.openGripper();
+        } else if (gamepad1.left_trigger > 0.5) {
+            armSystem.closeGripper();
+        }
         telemetry.update();
     }
 }
