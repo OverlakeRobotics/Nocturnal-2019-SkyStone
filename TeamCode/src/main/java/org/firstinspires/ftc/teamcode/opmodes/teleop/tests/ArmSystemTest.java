@@ -70,7 +70,7 @@ public class ArmSystemTest extends OpMode {
     public void init() {
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        EnumMap<ArmSystem.ServoNames, Servo> enumMap = new EnumMap(ArmSystem.ServoNames);
+        EnumMap<ArmSystem.ServoNames, Servo> enumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
         enumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));
         enumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "wrist"));
         enumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "elbow"));
@@ -104,8 +104,10 @@ public class ArmSystemTest extends OpMode {
         }
         if (gamepad1.left_bumper) {
             armSystem.openGripper();
-        } else if (gamepad1.left_trigger > 0.5) {
+            telemetry.addData("open", "");
+        } else {
             armSystem.closeGripper();
+            telemetry.addData("closed", "");
         }
         telemetry.update();
     }
