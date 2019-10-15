@@ -25,11 +25,11 @@ public class LidarNavigationSystem {
     }
 
 
-    public void debug() {
-        Log.d("distanceSensor", "Distance: " + lidar1.getDistance(DistanceUnit.INCH));
+    public void debug(DistanceSensor lidar) {
+        Log.d("distanceSensor", "Distance: " + lidar.getDistance(DistanceUnit.INCH));
 
-        if (lidar1 != null) {
-            Log.d("distanceSensor", "ERROR! Lidar 1 distance is null!");
+        if (lidar != null) {
+            Log.d("distanceSensor", "ERROR! " + lidar + " distance is null!");
         }
 
     }
