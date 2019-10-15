@@ -14,43 +14,34 @@ public class LidarNavigationSystem {
     private static final int ARM_THRESHOLD = 200;
     private static final int INTAKE_THRESHOLD = 2;
 
-    DistanceSensor lidar;
+    DistanceSensor lidar1;
     DistanceSensor lidar2;
     HardwareMap hwmap;
     Rev2mDistanceSensor sensorTimeOfFlight;
 
-    public LidarNavigationSystem(OpMode opMode) {
-        this.hwmap = opMode.hardwareMap;
-        initSystem();
+    public LidarNavigationSystem(Rev2mDistanceSensor lidar1, Rev2mDistanceSensor lidar2) {
+        this.lidar1 = lidar1;
+        this.lidar2 = lidar2;
     }
 
-    public void initSystem() {
-        lidar = hwmap.get(DistanceSensor.class, "sensor_range1");
-        lidar2 = hwmap.get(DistanceSensor.class, "sensor_range2");
-        sensorTimeOfFlight = (Rev2mDistanceSensor)lidar;
-    }
 
     public void debug() {
-        Log.d("distanceSensor", "Distance: " + lidar.getDistance(DistanceUnit.INCH));
+        Log.d("distanceSensor", "Distance: " + lidar1.getDistance(DistanceUnit.INCH));
 
-        if (lidar != null) {
+        if (lidar1 != null) {
             Log.d("distanceSensor", "ERROR! Lidar 1 distance is null!");
         }
 
     }
-    public double getDistance1() {
+    public double getDistance(DistanceSensor lidar) {
         return lidar.getDistance(DistanceUnit.INCH);
     }
 
-    public double getDistance2() {
-        return lidar2.getDistance(DistanceUnit.INCH);
-    }
-
-    public boolean inRangeArm() {
+    public boolean inRangeArm(DistanceSensor lidar) {
         return lidar.getDistance(DistanceUnit.INCH) >= ARM_THRESHOLD;
     }
 
-    public boolean inRangeIntake() {
+    public boolean inRangeIntake(DistanceSensor lidar) {
         return lidar.getDistance((DistanceUnit.INCH)) <= INTAKE_THRESHOLD;
     }
 
