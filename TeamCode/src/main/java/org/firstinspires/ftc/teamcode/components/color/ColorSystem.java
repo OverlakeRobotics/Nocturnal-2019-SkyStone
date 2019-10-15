@@ -2,13 +2,21 @@ package org.firstinspires.ftc.teamcode.components.color;
 
 import android.util.Log;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxI2cColorRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+
+import org.firstinspires.ftc.teamcode.components.DriveSystem;
+
+import java.time.Instant;
 import java.util.Iterator;
+import java.util.Timer;
 
 public class ColorSystem {
 
@@ -16,7 +24,13 @@ public class ColorSystem {
     private static final Color blue = new Color(0,0,255);
     private static final Color yellow = new Color(255,255,0);
 
+    private static final Color redLine = new Color(255, 0, 0);//TODO: ADJUST VALUES
+    private static final double redLineTollarence = 10d;
+    private static final Color blueLine = new Color(0, 0, 255);
+    private static final double blueLineTollarence = 10d;
+
     ColorSensor colorSensor;
+    private static DriveSystem driveSystem;
 
     public ColorSystem(OpMode opMode) {
         HardwareMap hardwareMap = opMode.hardwareMap;
@@ -25,6 +39,9 @@ public class ColorSystem {
             Log.d("HardwareMapDevice", hardwareDevice.getDeviceName());
         }
         colorSensor = hardwareMap.get(LynxI2cColorRangeSensor.class, "color_sensor");
+        DcMotor[] motors = {hardwareMap.dcMotor.get("motorFL"), hardwareMap.dcMotor.get("motorFR"),
+                hardwareMap.dcMotor.get("motorBR"), hardwareMap.dcMotor.get("motorBL") };
+        this.driveSystem = new DriveSystem(motors, hardwareMap.get(BNO055IMU.class, "imu"));
     }
 
     public void debug() {
@@ -65,8 +82,42 @@ public class ColorSystem {
         return input.equals(yellow);
     }
 
+    public Color getColor() {
+        return new Color(getRed(), getGreen(), getBlue());
+    }
+
     public void bLed(boolean lightOn) {
         colorSensor.enableLed(lightOn);
     }
 
+    public enum OverLineSettings {
+        OVER_RED,
+        OVER_BLUE,
+        OVER_ANY
+    }
+
+    public boolean CheckIfOverLine(OverLineSettings toCheck) {
+        if(toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE)
+        {
+            if(getColor().equals(blueLine, blueLineTollarence))
+            {
+                return true;
+            }
+        }
+        if(toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_RED)
+        {
+            if(getColor().equals(redLine, redLineTollarence))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean DriveToLine(OverLineSettings lineToFind, double maximumTime, float xDir, float yDir) {
+        //Returns if line found
+        //TODO: ADD MAXIMUM TIME BACK (ELAPSEDTIME) CHANGE TO ENUM RETURN (FAILED, FOUND, CONTINUE)
+        //driveSystem.drive(xDir, yDir);
+        return true;//TODO REMOVE
+    }
 }
