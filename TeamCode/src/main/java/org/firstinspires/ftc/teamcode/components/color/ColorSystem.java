@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 
 import java.time.Instant;
@@ -114,10 +115,34 @@ public class ColorSystem {
         return false;
     }
 
-    public boolean DriveToLine(OverLineSettings lineToFind, double maximumTime, float xDir, float yDir) {
+    public enum LineFoundEnum {
+        FOUND,
+        FAILED,
+        NOT_FOUND
+    }
+    ElapsedTime et = new ElapsedTime();
+    boolean resetET = true;
+
+    public LineFoundEnum DriveToLine(OverLineSettings lineToFind, double maximumTime, float xDir, float yDir) {
+        if(resetET){
+            et.reset();
+            resetET = false;
+        }
+        if(maximumTime < et.seconds()) {
+            resetET = true;
+            return LineFoundEnum.FAILED;
+        }
+        else if(CheckIfOverLine(lineToFind))
+        {
+            resetET = true;
+            return LineFoundEnum.FOUND;
+        }
+        else
+        {
+            return LineFoundEnum.NOT_FOUND;
+        }
         //Returns if line found
-        //TODO: ADD MAXIMUM TIME BACK (ELAPSEDTIME) CHANGE TO ENUM RETURN (FAILED, FOUND, CONTINUE)
+        //TODO: ADD DRIVE CODE
         //driveSystem.drive(xDir, yDir);
-        return true;//TODO REMOVE
     }
 }
