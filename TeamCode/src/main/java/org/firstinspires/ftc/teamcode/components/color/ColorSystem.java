@@ -139,10 +139,8 @@ public class ColorSystem {
         }
         else
         {
+            driveSystem.drive(xDir, yDir, 0, 0, false);
             return LineFoundEnum.NOT_FOUND;
         }
-        //Returns if line found
-        //TODO: ADD DRIVE CODE
-        //driveSystem.drive(xDir, yDir);
     }
 }
