@@ -9,19 +9,23 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.EnumMap;
+
 public class LidarNavigationSystem {
 
     private static final int ARM_THRESHOLD = 200;
     private static final int INTAKE_THRESHOLD = 2;
 
-    DistanceSensor lidar1;
-    DistanceSensor lidar2;
-    HardwareMap hwmap;
-    Rev2mDistanceSensor sensorTimeOfFlight;
+    public enum SensorNames {
+        LEFT, RIGHT, BACK
+    }
 
-    public LidarNavigationSystem(Rev2mDistanceSensor lidar1, Rev2mDistanceSensor lidar2) {
-        this.lidar1 = lidar1;
-        this.lidar2 = lidar2;
+    public EnumMap<SensorNames, Rev2mDistanceSensor> lidars;
+
+
+
+    public LidarNavigationSystem(EnumMap<SensorNames, Rev2mDistanceSensor> lidars) {
+        this.lidars = lidars;
     }
 
 
@@ -33,15 +37,21 @@ public class LidarNavigationSystem {
         }
 
     }
-    public double getDistance(DistanceSensor lidar) {
+
+    // when passing a parameter into methods below,
+    // do something like "SensorNames.get(LEFT)"
+    // or else i will break into your house and eat your food
+    // - jack (long hair man)
+
+    public double getDistance(Rev2mDistanceSensor lidar) {
         return lidar.getDistance(DistanceUnit.INCH);
     }
 
-    public boolean inRangeArm(DistanceSensor lidar) {
+    public boolean inRangeArm(Rev2mDistanceSensor lidar) {
         return lidar.getDistance(DistanceUnit.INCH) >= ARM_THRESHOLD;
     }
 
-    public boolean inRangeIntake(DistanceSensor lidar) {
+    public boolean inRangeIntake(Rev2mDistanceSensor lidar) {
         return lidar.getDistance((DistanceUnit.INCH)) <= INTAKE_THRESHOLD;
     }
 
