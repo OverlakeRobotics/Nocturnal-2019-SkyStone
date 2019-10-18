@@ -12,12 +12,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 
-import java.time.Instant;
+import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Timer;
 
 public class ColorSystem {
 
@@ -26,9 +24,11 @@ public class ColorSystem {
     private static final Color YELLOW = new Color(255,255,0);
 
     private static final Color redLine = new Color(255, 0, 0);//TODO: ADJUST VALUES
-    private static final double redLineTollarence = 10d;
+    private static final double redLineTolerance = 10d;
     private static final Color blueLine = new Color(0, 0, 255);
-    private static final double blueLineTollarence = 10d;
+    private static final double blueLineTolerence = 10d;
+
+    private static final int CORRECTION = 39;
 
     ColorSensor colorSensor;
     private static DriveSystem driveSystem;
@@ -40,9 +40,11 @@ public class ColorSystem {
             Log.d("HardwareMapDevice", hardwareDevice.getDeviceName());
         }
         colorSensor = hardwareMap.get(LynxI2cColorRangeSensor.class, "color_sensor");
-        DcMotor[] motors = {hardwareMap.dcMotor.get("motorFL"), hardwareMap.dcMotor.get("motorFR"),
-                hardwareMap.dcMotor.get("motorBR"), hardwareMap.dcMotor.get("motorBL") };
-        this.driveSystem = new DriveSystem(motors, hardwareMap.get(BNO055IMU.class, "imu"));
+        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
+        for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
+            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
+        }
+        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
     }
 
     public void debug() {
@@ -53,19 +55,19 @@ public class ColorSystem {
     }
 
     public int getRed() {
-        return colorSensor.red() / 39;
+        return colorSensor.red() / CORRECTION;
     }
 
     public int getBlue() {
-        return colorSensor.blue() / 39;
+        return colorSensor.blue() / CORRECTION;
     }
 
     public int getGreen() {
-        return colorSensor.green() / 39;
+        return colorSensor.green() / CORRECTION;
     }
 
     public int getAlpha() {
-        return colorSensor.alpha() / 39;
+        return colorSensor.alpha() / CORRECTION;
     }
 
     public boolean isRed() {
@@ -97,17 +99,17 @@ public class ColorSystem {
         OVER_ANY
     }
 
-    public boolean CheckIfOverLine(OverLineSettings toCheck) {
+    public boolean checkIfOverLine(OverLineSettings toCheck) {
         if(toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE)
         {
-            if(getColor().equals(blueLine, blueLineTollarence))
+            if(getColor().equals(blueLine, blueLineTolerence))
             {
                 return true;
             }
         }
         if(toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_RED)
         {
-            if(getColor().equals(redLine, redLineTollarence))
+            if(getColor().equals(redLine, redLineTolerance))
             {
                 return true;
             }
@@ -123,23 +125,20 @@ public class ColorSystem {
     ElapsedTime et = new ElapsedTime();
     boolean resetET = true;
 
-    public LineFoundEnum DriveToLine(OverLineSettings lineToFind, double maximumTime, float xDir, float yDir) {
-        if(resetET){
+    public LineFoundEnum driveToLine(OverLineSettings lineToFind, double maximumTime, float xDir, float yDir) {
+        if(resetET) {
             et.reset();
             resetET = false;
         }
+
         if(maximumTime < et.seconds()) {
             resetET = true;
             return LineFoundEnum.FAILED;
-        }
-        else if(CheckIfOverLine(lineToFind))
-        {
+        } else if(checkIfOverLine(lineToFind)) {
             resetET = true;
             return LineFoundEnum.FOUND;
-        }
-        else
-        {
-            driveSystem.drive(xDir, yDir, 0, 0, false);
+        } else {
+            driveSystem.drive(xDir, yDir, 0, 0);
             return LineFoundEnum.NOT_FOUND;
         }
     }
