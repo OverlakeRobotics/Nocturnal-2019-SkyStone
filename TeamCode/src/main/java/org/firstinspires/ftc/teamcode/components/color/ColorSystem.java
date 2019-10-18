@@ -24,9 +24,7 @@ public class ColorSystem {
     private static final Color YELLOW = new Color(255,255,0);
 
     private static final Color redLine = new Color(255, 0, 0);//TODO: ADJUST VALUES
-    private static final double redLineTolerance = 10d;
     private static final Color blueLine = new Color(0, 0, 255);
-    private static final double blueLineTolerence = 10d;
 
     private static final int CORRECTION = 39;
 
@@ -71,18 +69,15 @@ public class ColorSystem {
     }
 
     public boolean isRed() {
-        Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
-        return input.equals(RED);
+        return getColor().equals(RED);
     }
 
     public boolean isBlue() {
-        Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
-        return input.equals(BLUE);
+        return getColor().equals(BLUE);
     }
 
     public boolean isYellow() {
-        Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
-        return input.equals(YELLOW);
+        return getColor().equals(YELLOW);
     }
 
     public Color getColor() {
@@ -100,15 +95,9 @@ public class ColorSystem {
     }
 
     public boolean checkIfOverLine(OverLineSettings toCheck) {
-        if (toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE) {
-            if (getColor().equals(blueLine)) {
-                return true;
-            }
-        }
-        if (toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_RED) {
-            if (getColor().equals(redLine)) {
-                return true;
-            }
+        if (toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE ||
+                toCheck == OverLineSettings.OVER_RED) {
+            return getColor().equals(blueLine) || getColor().equals(redLine);
         }
         return false;
     }
