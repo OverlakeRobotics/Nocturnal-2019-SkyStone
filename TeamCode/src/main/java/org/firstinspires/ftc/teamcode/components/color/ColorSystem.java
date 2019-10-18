@@ -12,9 +12,9 @@ import java.util.Iterator;
 
 public class ColorSystem {
 
-    private static final Color red = new Color(255, 0,0);
-    private static final Color blue = new Color(0,0,255);
-    private static final Color yellow = new Color(255,255,0);
+    private static final Color RED = new Color(255, 0,0);
+    private static final Color BLUE = new Color(0,0,255);
+    private static final Color YELLOW = new Color(255,255,0);
 
     ColorSensor colorSensor;
 
@@ -52,17 +52,17 @@ public class ColorSystem {
 
     public boolean isRed() {
         Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
-        return input.equals(red);
+        return input.equals(RED);
     }
 
     public boolean isBlue() {
         Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
-        return input.equals(blue);
+        return input.equals(BLUE);
     }
 
     public boolean isYellow() {
         Color input = new Color(colorSensor.red(), colorSensor.blue(), colorSensor.green());
-        return input.equals(yellow);
+        return input.equals(YELLOW);
     }
 
     public void bLed(boolean lightOn) {
