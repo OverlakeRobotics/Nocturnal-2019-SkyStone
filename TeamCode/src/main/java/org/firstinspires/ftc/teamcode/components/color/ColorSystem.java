@@ -100,17 +100,13 @@ public class ColorSystem {
     }
 
     public boolean checkIfOverLine(OverLineSettings toCheck) {
-        if(toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE)
-        {
-            if(getColor().equals(blueLine, blueLineTolerence))
-            {
+        if (toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE) {
+            if (getColor().equals(blueLine)) {
                 return true;
             }
         }
-        if(toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_RED)
-        {
-            if(getColor().equals(redLine, redLineTolerance))
-            {
+        if (toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_RED) {
+            if (getColor().equals(redLine)) {
                 return true;
             }
         }
