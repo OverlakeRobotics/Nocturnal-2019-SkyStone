@@ -27,7 +27,6 @@ public class Sensor extends LinearOpMode {
         while (opModeIsActive()) {
             colorSystem.bLed(false);
 
-            telemetry.addData("Alpha:", colorSystem.getAlpha() / 39);
             telemetry.addData("Red:", colorSystem.getRed() / 39);
             telemetry.addData("Green:", colorSystem.getGreen() / 39);
             telemetry.addData("Blue:", colorSystem.getBlue() / 39);
