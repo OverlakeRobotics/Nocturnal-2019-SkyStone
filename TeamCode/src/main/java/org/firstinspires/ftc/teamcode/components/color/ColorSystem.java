@@ -32,17 +32,7 @@ public class ColorSystem {
     private static DriveSystem driveSystem;
 
     public ColorSystem(OpMode opMode) {
-        HardwareMap hardwareMap = opMode.hardwareMap;
-        for (Iterator<HardwareDevice> it = hardwareMap.iterator(); it.hasNext(); ) {
-            HardwareDevice hardwareDevice = it.next();
-            Log.d("HardwareMapDevice", hardwareDevice.getDeviceName());
-        }
-        colorSensor = hardwareMap.get(LynxI2cColorRangeSensor.class, "color_sensor");
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
+        colorSensor = opMode.hardwareMap.get(LynxI2cColorRangeSensor.class, "color_sensor");
     }
 
     public int getRed() {
