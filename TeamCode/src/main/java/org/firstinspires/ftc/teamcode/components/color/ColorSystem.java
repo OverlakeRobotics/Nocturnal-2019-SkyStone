@@ -26,7 +26,7 @@ public class ColorSystem {
     private static final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
     private static final Color BLUE_LINE = new Color(0, 0, 255);
 
-    private static final double SCALE_FACTOR = 255;
+    private static final double SCALE_FACTOR = 3.9;
 
     ColorSensor colorSensor;
     private static DriveSystem driveSystem;
