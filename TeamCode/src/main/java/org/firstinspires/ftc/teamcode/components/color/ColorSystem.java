@@ -23,10 +23,10 @@ public class ColorSystem {
     private static final Color BLUE = new Color(0,0,255);
     private static final Color YELLOW = new Color(255,255,0);
 
-    private static final Color redLine = new Color(255, 0, 0);//TODO: ADJUST VALUES
-    private static final Color blueLine = new Color(0, 0, 255);
+    private static final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
+    private static final Color BLUE_LINE = new Color(0, 0, 255);
 
-    private static final int CORRECTION = 39;
+    private static final double SCALE_FACTOR = 255;
 
     ColorSensor colorSensor;
     private static DriveSystem driveSystem;
@@ -45,27 +45,20 @@ public class ColorSystem {
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
     }
 
-    public void debug() {
-        Log.d("colorSensor", "Alpha: " + colorSensor.alpha());
-        Log.d("colorSensor", "Red: " + colorSensor.red());
-        Log.d("colorSensor", "Green: " + colorSensor.green());
-        Log.d("colorSensor", "Blue: " + colorSensor.blue());
-    }
-
     public int getRed() {
-        return colorSensor.red() / CORRECTION;
+        return (int) (colorSensor.red() / SCALE_FACTOR);
     }
 
     public int getBlue() {
-        return colorSensor.blue() / CORRECTION;
+        return (int) (colorSensor.blue() / SCALE_FACTOR);
     }
 
     public int getGreen() {
-        return colorSensor.green() / CORRECTION;
+        return (int) (colorSensor.green() / SCALE_FACTOR);
     }
 
     public int getAlpha() {
-        return colorSensor.alpha() / CORRECTION;
+        return (int) (colorSensor.alpha() / SCALE_FACTOR);
     }
 
     public boolean isRed() {
@@ -97,7 +90,7 @@ public class ColorSystem {
     public boolean checkIfOverLine(OverLineSettings toCheck) {
         if (toCheck == OverLineSettings.OVER_ANY || toCheck == OverLineSettings.OVER_BLUE ||
                 toCheck == OverLineSettings.OVER_RED) {
-            return getColor().equals(blueLine) || getColor().equals(redLine);
+            return getColor().equals(BLUE_LINE) || getColor().equals(RED_LINE);
         }
         return false;
     }

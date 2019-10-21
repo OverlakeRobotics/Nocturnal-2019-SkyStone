@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.components.color;
 
-public class  Color {
+public class Color extends android.graphics.Color {
     public int red;
     public int green;
     public int blue;
