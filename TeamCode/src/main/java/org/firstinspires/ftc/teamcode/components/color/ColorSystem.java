@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxI2cColorRangeSensor;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,23 +33,20 @@ public class ColorSystem {
     private static DriveSystem driveSystem;
 
     public ColorSystem(OpMode opMode) {
-        colorSensor = opMode.hardwareMap.get(LynxI2cColorRangeSensor.class, "color_sensor");
+        //colorSensor = opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
+        colorSensor = opMode.hardwareMap.colorSensor.get("color");
     }
 
     public int getRed() {
-        return (int) (colorSensor.red() / SCALE_FACTOR);
+        return colorSensor.red();
     }
 
     public int getBlue() {
-        return (int) (colorSensor.blue() / SCALE_FACTOR);
+        return colorSensor.blue();
     }
 
     public int getGreen() {
-        return (int) (colorSensor.green() / SCALE_FACTOR);
-    }
-
-    public int getAlpha() {
-        return (int) (colorSensor.alpha() / SCALE_FACTOR);
+        return colorSensor.green();
     }
 
     public boolean isRed() {
