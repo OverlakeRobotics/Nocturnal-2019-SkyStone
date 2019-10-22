@@ -1,21 +1,10 @@
 package org.firstinspires.ftc.teamcode.components.color;
 
-import android.util.Log;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxI2cColorRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-
-import java.util.EnumMap;
-import java.util.Iterator;
 
 public class ColorSystem {
 
@@ -23,8 +12,8 @@ public class ColorSystem {
     private static final Color BLUE = new Color(0,0,255);
     private static final Color YELLOW = new Color(255,255,0);
 
-    private static final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
-    private static final Color BLUE_LINE = new Color(0, 0, 255);
+    private final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
+    private final Color BLUE_LINE = new Color(0, 0, 255);
 
     private static final double SCALE_FACTOR = 3.9;
 
@@ -32,23 +21,20 @@ public class ColorSystem {
     private static DriveSystem driveSystem;
 
     public ColorSystem(OpMode opMode) {
-        colorSensor = opMode.hardwareMap.get(LynxI2cColorRangeSensor.class, "color_sensor");
+        //colorSensor = opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
+        colorSensor = opMode.hardwareMap.colorSensor.get("color");
     }
 
     public int getRed() {
-        return (int) (colorSensor.red() / SCALE_FACTOR);
+        return colorSensor.red();
     }
 
     public int getBlue() {
-        return (int) (colorSensor.blue() / SCALE_FACTOR);
+        return colorSensor.blue();
     }
 
     public int getGreen() {
-        return (int) (colorSensor.green() / SCALE_FACTOR);
-    }
-
-    public int getAlpha() {
-        return (int) (colorSensor.alpha() / SCALE_FACTOR);
+        return colorSensor.green();
     }
 
     public boolean isRed() {
