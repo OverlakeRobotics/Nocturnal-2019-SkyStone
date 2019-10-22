@@ -1,22 +1,10 @@
 package org.firstinspires.ftc.teamcode.components.color;
 
-import android.util.Log;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxI2cColorRangeSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-
-import java.util.EnumMap;
-import java.util.Iterator;
 
 public class ColorSystem {
 
