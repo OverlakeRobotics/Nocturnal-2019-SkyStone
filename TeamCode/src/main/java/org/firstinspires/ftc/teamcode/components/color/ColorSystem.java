@@ -15,7 +15,7 @@ public class ColorSystem {
     private final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
     private final Color BLUE_LINE = new Color(0, 0, 255);
 
-    private static final double SCALE_FACTOR = 3.9;
+    private static final double SCALE_FACTOR = 255;
 
     ColorSensor colorSensor;
     private static DriveSystem driveSystem;
@@ -58,19 +58,50 @@ public class ColorSystem {
     }
 
     public enum OverLineSettings {
-        OVER_RED,
-        OVER_BLUE,
-        OVER_ANY
+        OVER_RED (5, 1, 1),
+        OVER_BLUE (1, 1, 5);
+
+        public int r;
+        public int g;
+        public int b;
+
+        OverLineSettings(int r, int g, int b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
     }
 
     public boolean checkIfOverLine(OverLineSettings toCheck) {
-        if (toCheck == OverLineSettings.OVER_BLUE){
-            return getColor().equals(BLUE_LINE);
-        }
-        if (toCheck == OverLineSettings.OVER_RED){
-            return getColor().equals(RED_LINE);
+        if (toCheck == OverLineSettings.OVER_BLUE || toCheck == OverLineSettings.OVER_RED) {
+            return getColor().equals(BLUE_LINE) || getColor().equals(RED_LINE);
         }
         return false;
     }
 
+    public enum LineFoundEnum {
+        FOUND,
+        FAILED,
+        NOT_FOUND
+    }
+    ElapsedTime et = new ElapsedTime();
+    boolean resetET = true;
+
+    public LineFoundEnum driveToLine(OverLineSettings lineToFind, double maximumTime, float xDir, float yDir) {
+        if(resetET) {
+            et.reset();
+            resetET = false;
+        }
+
+        if(maximumTime < et.seconds()) {
+            resetET = true;
+            return LineFoundEnum.FAILED;
+        } else if(checkIfOverLine(lineToFind)) {
+            resetET = true;
+            return LineFoundEnum.FOUND;
+        } else {
+            driveSystem.drive(xDir, yDir, 0, 0);
+            return LineFoundEnum.NOT_FOUND;
+        }
+    }
 }
