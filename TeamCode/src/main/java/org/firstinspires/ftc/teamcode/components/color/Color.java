@@ -18,5 +18,4 @@ public class Color extends android.graphics.Color {
     private boolean isWithin(int a, int b) {
         return Math.abs(a - b) <= TOLERANCE;
     }
-
 }
