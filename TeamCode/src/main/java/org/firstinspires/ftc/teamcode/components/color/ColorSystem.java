@@ -23,8 +23,8 @@ public class ColorSystem {
     private static final Color BLUE = new Color(0,0,255);
     private static final Color YELLOW = new Color(255,255,0);
 
-    private static final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
-    private static final Color BLUE_LINE = new Color(0, 0, 255);
+    private final Color RED_LINE = new Color(255, 0, 0);//TODO: ADJUST VALUES
+    private final Color BLUE_LINE = new Color(0, 0, 255);
 
     private static final double SCALE_FACTOR = 255;
 
