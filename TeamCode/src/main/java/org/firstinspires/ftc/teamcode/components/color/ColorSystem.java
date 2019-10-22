@@ -58,9 +58,18 @@ public class ColorSystem {
     }
 
     public enum OverLineSettings {
-        OVER_RED,
-        OVER_BLUE,
-        OVER_ANY
+        OVER_RED (5, 1, 1),
+        OVER_BLUE (1, 1, 5);
+
+        public int r;
+        public int g;
+        public int b;
+
+        OverLineSettings(int r, int g, int b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
     }
 
     public boolean checkIfOverLine(OverLineSettings toCheck) {
