@@ -51,6 +51,7 @@ public class ColorSystem {
     }
 
     public enum OverLineSettings {
+        OVER_ANY (0, 0, 0, 0, 0, 0),//NEVER USE COLOR VALUES
         OVER_RED (3, 6, 0, 2, 0, 2),
         OVER_BLUE (0, 2, 0, 2, 3,6);
 
@@ -73,13 +74,21 @@ public class ColorSystem {
     }
 
     public boolean checkIfOverLine(OverLineSettings toCheck) {
-        if (toCheck == OverLineSettings.OVER_BLUE){
-            return getColor().equals(BLUE_LINE);
+        if(toCheck == OverLineSettings.OVER_ANY)
+        {
+            return (checkIfOverLine(OverLineSettings.OVER_RED) ||
+                    checkIfOverLine(OverLineSettings.OVER_BLUE));
         }
-        if (toCheck == OverLineSettings.OVER_RED){
-            return getColor().equals(RED_LINE);
+        if(toCheck.r_min <= getRed() && getRed() >= toCheck.r_max &&
+                toCheck.g_min <= getGreen() && getGreen() >= toCheck.g_max &&
+                toCheck.b_min <= getBlue() && getBlue() >= toCheck.b_max)
+        {
+            return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
 }
