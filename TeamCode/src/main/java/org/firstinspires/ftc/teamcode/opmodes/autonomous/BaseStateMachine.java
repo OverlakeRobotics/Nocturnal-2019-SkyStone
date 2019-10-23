@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
 
-public abstract class BaseStateMachine extends BaseOpMode {
+public abstract class   BaseStateMachine extends BaseOpMode {
         public enum State {
                 STATE_INITIAL,
                 STATE_FIND_SKYSTONE,

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.components.color;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ColorSystem {
 
@@ -30,18 +31,6 @@ public class ColorSystem {
         return colorSensor.green();
     }
 
-    public boolean isRed() {
-        return getColor().equals(RED);
-    }
-
-    public boolean isBlue() {
-        return getColor().equals(BLUE);
-    }
-
-    public boolean isYellow() {
-        return getColor().equals(YELLOW);
-    }
-
     public Color getColor() {
         return new Color(getRed(), getGreen(), getBlue());
     }
@@ -51,7 +40,7 @@ public class ColorSystem {
     }
 
     public enum OverLineSettings {
-        OVER_ANY (0, 0, 0, 0, 0, 0),//NEVER USE COLOR VALUES
+        OVER_ANY, //NEVER USES TRADITIONAL 0-255 COLOR VALUES
         OVER_RED (3, 6, 0, 2, 0, 2),
         OVER_BLUE (0, 2, 0, 2, 3,6);
 
@@ -70,6 +59,8 @@ public class ColorSystem {
             this.b_min = b_min;
             this.b_max = b_max;
         }
+
+        OverLineSettings() {}
 
     }
 
