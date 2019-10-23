@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
+
 import java.util.EnumMap;
 
 public class DriveSystem {
@@ -16,7 +19,7 @@ public class DriveSystem {
         FORWARD, BACKWARD, LEFT, RIGHT;
 
         private static boolean isStrafe(Direction direction) {
-            return direction == LEFT || direction == RIGHT;
+            return direction == Direction.LEFT || direction == Direction.RIGHT;
         }
     }
 
@@ -30,7 +33,7 @@ public class DriveSystem {
 
     private int mTargetTicks;
 
-    private final int TICKS_IN_MM = 69;
+    private final int TICKS_IN_INCH = 69;
 
     /**
      * Handles the data for the abstract creation of a drive system with four wheels
@@ -75,11 +78,12 @@ public class DriveSystem {
     /**
      * Clips joystick values and drives the motors.
      * @param rightX Right X joystick value
+     * @param rightY Right Y joystick value
      * @param leftX Left X joystick value
      * @param leftY Left Y joystick value in case you couldn't tell from the others
      */
     // TODO
-    public void drive(float rightX, float leftX, float leftY) {
+    public void drive(float rightX, float rightY, float leftX, float leftY) {
         // Prevent small values from causing the robot to drift
         if (Math.abs(rightX) < 0.01) {
             rightX = 0.0f;
@@ -90,11 +94,15 @@ public class DriveSystem {
         if (Math.abs(leftY) < 0.01) {
             leftY = 0.0f;
         }
+        if (Math.abs(rightY) < 0.01) {
+            rightY = 0.0f;
+        }
 
-        double frontLeftPower = -leftY + rightX + leftX;
-        double frontRightPower = -leftY - rightX - leftX;
-        double backLeftPower = -leftY + rightX - leftX;
-        double backRightPower = -leftY - rightX + leftX;
+        // write the values to the motors 1
+        double frontLeftPower = -leftY - rightX + leftX;
+        double frontRightPower = -leftY + rightX - leftX;
+        double backLeftPower = -leftY - rightX - leftX;
+        double backRightPower = -leftY + rightX + leftX;
 
         motors.forEach((name, motor) -> {
             switch(name) {
@@ -134,15 +142,21 @@ public class DriveSystem {
                 } else {
                     motor.setTargetPosition(mTargetTicks);
                 }
+
+
             });
             setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
             setMotorPower(maxPower);
         }
 
+
         for (DcMotor motor : motors.values()) {
+
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
-            if(offset <= 0){
-                setMotorPower(0);
+            Log.d(TAG, "Offset is " + offset);
+
+            if(offset < 100){
+                setMotorPower(0.0);
                 mTargetTicks = 0;
                 return true;
             }
@@ -150,6 +164,15 @@ public class DriveSystem {
 
         return false;
 
+    }
+
+    public boolean anyMotorsBusy() {
+        for (DcMotor motor : motors.values()) {
+            if (motor.isBusy()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setRunMode(DcMotor.RunMode runMode) {
@@ -170,17 +193,17 @@ public class DriveSystem {
         return distance;
     }
 
-    public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
-        return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower);
+    public boolean driveToPositionInches(double inches, Direction direction, double maxPower) {
+        return driveToPositionTicks(inchesToTicks(inches), direction, maxPower);
     }
 
     /**
-     * Converts millimeters to ticks
-     * @param millimeters Millimeters to convert to ticks
+     * Converts inches to ticks
+     * @param inches Inches to convert to ticks
      * @return
      */
-    public int millimetersToTicks(int millimeters) {
-        return (int) millimeters * TICKS_IN_MM;
+    public int inchesToTicks(double inches) {
+        return (int) inches * TICKS_IN_INCH;
     }
 
     /**
