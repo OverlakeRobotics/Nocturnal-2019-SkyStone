@@ -16,7 +16,7 @@ public class ColorSystem {
     ColorSensor colorSensor;
 
     public ColorSystem(OpMode opMode) {
-        colorSensor = opMode.hardwareMap.colorSensor.get("color");
+        colorSensor = opMode.hardwareMap.colorSensor.get("color_sensor");
     }
 
     public int getRed() {
@@ -45,14 +45,15 @@ public class ColorSystem {
         OVER_RED (3, 1, 1),
         OVER_BLUE (1, 2, 4);
 
-        public int r;
-        public int g;
-        public int b;
+        public double r;
+        public double g;
+        public double b;
 
         OverLineSettings(int r, int g, int b) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
+            int total = r + g + b;
+            this.r = r/total;
+            this.g = g/total;
+            this.b = b/total;
         }
 
         OverLineSettings() { }
@@ -70,7 +71,7 @@ public class ColorSystem {
             return true;
         } else {
             return false;
-        }
+         }
     }
 
     private boolean withinMargin(double a, double b)
