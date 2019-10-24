@@ -41,38 +41,42 @@ public class ColorSystem {
 
     public enum OverLineSettings {
         OVER_ANY, //NEVER USES TRADITIONAL 0-255 COLOR VALUES
-        OVER_RED (3, 6, 0, 2, 0, 2),
-        OVER_BLUE (0, 2, 0, 2, 3,6);
+        //TODO CHANGE TO PERCENTAGE RBG AS DECIMAL
+        OVER_RED (3, 1, 1),
+        OVER_BLUE (1, 2, 4);
 
-        public int r_min;
-        public int r_max;
-        public int g_min;
-        public int g_max;
-        public int b_min;
-        public int b_max;
+        public int r;
+        public int g;
+        public int b;
 
-        OverLineSettings(int r_min, int r_max, int g_min, int g_max, int b_min, int b_max) {
-            this.r_min = r_min;
-            this.r_max = r_max;
-            this.g_min = g_min;
-            this.g_max = g_max;
-            this.b_min = b_min;
-            this.b_max = b_max;
+        OverLineSettings(int r, int g, int b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
         }
 
-        OverLineSettings() {}
-
+        OverLineSettings() { }
     }
 
     public boolean checkIfOverLine(OverLineSettings toCheck) {
-        if(toCheck == OverLineSettings.OVER_ANY)
-        {
+        if (toCheck == OverLineSettings.OVER_ANY) {
             return (checkIfOverLine(OverLineSettings.OVER_RED) ||
                     checkIfOverLine(OverLineSettings.OVER_BLUE));
         }
-        if(toCheck.r_min <= getRed() && getRed() >= toCheck.r_max &&
-                toCheck.g_min <= getGreen() && getGreen() >= toCheck.g_max &&
-                toCheck.b_min <= getBlue() && getBlue() >= toCheck.b_max)
+        double totalOfColors = toCheck.r + toCheck.g + toCheck.b;
+        if (withinMargin(colorSensor.red()/totalOfColors, toCheck.r) &&
+                withinMargin(colorSensor.blue()/totalOfColors, toCheck.b) &&
+                withinMargin(colorSensor.green(), toCheck.g)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean withinMargin(double a, double b)
+    {
+        double allowedDifferenceAsDecimalOfPercent = .25;
+        if(a >= b*(1-(0.5*allowedDifferenceAsDecimalOfPercent)) && a <= (1+(0.5*allowedDifferenceAsDecimalOfPercent)))
         {
             return true;
         }
@@ -81,5 +85,4 @@ public class ColorSystem {
             return false;
         }
     }
-
 }
