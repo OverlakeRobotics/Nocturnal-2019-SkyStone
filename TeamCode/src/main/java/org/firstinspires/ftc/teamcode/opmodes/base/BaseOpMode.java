@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.IMUSystem;
@@ -27,17 +29,31 @@ public abstract class BaseOpMode extends OpMode {
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
+
+        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT);
         DistanceSensor distanceSensor2;
         DistanceSensor distanceSensor3;
         ColorSensor colorSensor;
 
+
     }
 
-    protected void setCamera(CameraChoice cameraChoice){
-
-        vuforia = new Vuforia(hardwareMap, cameraChoice);
+    protected Vuforia setCamera(CameraChoice cameraChoice){
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName camName = null;
+        switch (cameraChoice) {
+            case CAM_LEFT:
+                camName = hardwareMap.get(WebcamName.class, "WebcamLeft");
+                break;
+            case CAM_BACK:
+                camName = hardwareMap.get(WebcamName.class, "WebcamBack");
+                break;
+            case CAM_RIGHT:
+                camName = hardwareMap.get(WebcamName.class, "WebcamRight");
+                break;
+        }
+        vuforia = new Vuforia(camName, cameraMonitorViewId);
         skystone = vuforia.targetsSkyStone.get(0);
-
-
+        return vuforia;
     }
 }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -19,7 +21,7 @@ import java.util.List;
 public class Vuforia {
 
     public enum CameraChoice {
-        PHONE_FRONT, PHONE_BACK, WEBCAM1, WEBCAM2;
+        CAM_LEFT, CAM_RIGHT, CAM_BACK;
     }
 
     private class VuforiaLocalizer extends VuforiaLocalizerImpl {
@@ -47,14 +49,17 @@ public class Vuforia {
     private static final float quadField  = 36 * mmPerInch;
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    // private float phoneXRotate    = 0;
+    // private float phoneYRotate    = 0;
+    // private float phoneZRotate    = 0;
     public VuforiaTrackables targetsSkyStone;
     private List<VuforiaTrackable> allTrackables;
 
-    public Vuforia(HardwareMap hardwareMap, CameraChoice choice) {
-        vuforia = setCamera(hardwareMap, choice);
+    public Vuforia(WebcamName camName, int cameraMonitorViewId) {
+        vuforia = setCamera(camName, cameraMonitorViewId);
+    }
+
+    public Vuforia() {
     }
 
     public void close() {
@@ -105,29 +110,16 @@ public class Vuforia {
         targetsSkyStone.deactivate();
     }
 
-    public VuforiaLocalizer setCamera(HardwareMap hardwareMap, CameraChoice cameraChoice) {
-        if (vuforia != null)
+    public VuforiaLocalizer setCamera(WebcamName camName, int cameraMonitorViewId) {
+        if (vuforia != null) {
             vuforia.close();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
+        }
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.useExtendedTracking = false;
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        switch (cameraChoice) {
-            case PHONE_FRONT:
-                parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-                break;
-            case PHONE_BACK:
-                parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-                break;
-            case WEBCAM1:
-                parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam1");
-                break;
-            case WEBCAM2:
-                parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam2");
-                break;
-        }
+        parameters.cameraName = camName;
+
         vuforia = new VuforiaLocalizer(parameters);
         initializeTrackables(vuforia);
         return vuforia;
