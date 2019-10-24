@@ -45,7 +45,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
         public void init(Team team) {
                 super.init();
-                super.setCamera(team == Team.RED ? CameraChoice.WEBCAM1 : CameraChoice.WEBCAM2);
+                super.setCamera(team == Team.RED ? CameraChoice.CAM_RIGHT : CameraChoice.CAM_LEFT);
                 rearPerimeter = vuforia.targetsSkyStone.get(team == Team.RED ? 12 : 11);
 
 //                distanceLeft = hardwareMap.get(DistanceSensor.class, "distanceLeft");
