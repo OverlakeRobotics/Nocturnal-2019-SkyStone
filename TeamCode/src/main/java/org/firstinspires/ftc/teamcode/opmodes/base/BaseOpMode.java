@@ -36,7 +36,8 @@ public abstract class BaseOpMode extends OpMode {
             camMap.put(name,hardwareMap.get(WebcamName.class, name.toString()));
         }
 
-        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT, cameraMonitorViewId);
         DistanceSensor distanceSensor2;
         DistanceSensor distanceSensor3;
         ColorSensor colorSensor;
@@ -44,8 +45,7 @@ public abstract class BaseOpMode extends OpMode {
 
     }
 
-    protected Vuforia setCamera(CameraChoice cameraChoice){
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+    protected Vuforia setCamera(CameraChoice cameraChoice, int cameraMonitorViewId){
         vuforia = new Vuforia(camMap.get(cameraChoice), cameraMonitorViewId);
         skystone = vuforia.targetsSkyStone.get(0);
         return vuforia;
