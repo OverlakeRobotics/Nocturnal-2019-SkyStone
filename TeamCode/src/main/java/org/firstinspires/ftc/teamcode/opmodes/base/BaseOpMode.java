@@ -19,6 +19,7 @@ import java.util.EnumMap;
 public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
+    protected EnumMap<Vuforia.CameraChoice, WebcamName> camMap;
     protected Vuforia vuforia;
     protected VuforiaTrackable skystone;
     protected VuforiaTrackable rearPerimeter;
@@ -29,6 +30,11 @@ public abstract class BaseOpMode extends OpMode {
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
+        camMap = new EnumMap<>(Vuforia.CameraChoice.class);
+
+        for(Vuforia.CameraChoice name : Vuforia.CameraChoice.values()){
+            camMap.put(name,hardwareMap.get(WebcamName.class, name.toString()));
+        }
 
         vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT);
         DistanceSensor distanceSensor2;
@@ -40,19 +46,7 @@ public abstract class BaseOpMode extends OpMode {
 
     protected Vuforia setCamera(CameraChoice cameraChoice){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName camName = null;
-        switch (cameraChoice) {
-            case CAM_LEFT:
-                camName = hardwareMap.get(WebcamName.class, "WebcamLeft");
-                break;
-            case CAM_BACK:
-                camName = hardwareMap.get(WebcamName.class, "WebcamBack");
-                break;
-            case CAM_RIGHT:
-                camName = hardwareMap.get(WebcamName.class, "WebcamRight");
-                break;
-        }
-        vuforia = new Vuforia(camName, cameraMonitorViewId);
+        vuforia = new Vuforia(camMap.get(cameraChoice), cameraMonitorViewId);
         skystone = vuforia.targetsSkyStone.get(0);
         return vuforia;
     }
