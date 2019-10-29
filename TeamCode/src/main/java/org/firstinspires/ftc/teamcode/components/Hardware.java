@@ -5,16 +5,14 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
+
 
 import java.util.EnumMap;
 
-public class HardwareRobot {
+public class Hardware {
         /* Public OpMode members. */
         public DriveSystem driveSystem;
         public EnumMap<Vuforia.CameraChoice, WebcamName> camMap;
@@ -26,7 +24,7 @@ public class HardwareRobot {
         HardwareMap mHardwareMap = null;
 
         /* Constructor */
-        public HardwareRobot(){
+        public Hardware(){
 
         }
 
@@ -44,16 +42,9 @@ public class HardwareRobot {
         }
 
         cameraViewId = mHardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", mHardwareMap.appContext.getPackageName());
-        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT);
         // DistanceSensor distanceSensor2;
         // DistanceSensor distanceSensor3;
         // ColorSensor colorSensor;
 
-    }
-
-    protected Vuforia setCamera(Vuforia.CameraChoice cameraChoice){
-        vuforia = new Vuforia(camMap.get(cameraChoice), cameraViewId);
-        skystone = vuforia.targetsSkyStone.get(0);
-        return vuforia;
     }
 }

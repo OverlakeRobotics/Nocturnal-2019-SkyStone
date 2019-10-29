@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.HardwareRobot;
+import org.firstinspires.ftc.teamcode.components.Hardware;
 import org.firstinspires.ftc.teamcode.components.IMUSystem;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
@@ -24,16 +24,16 @@ public abstract class BaseOpMode extends OpMode {
     protected Vuforia vuforia;
     protected VuforiaTrackable skystone;
     protected VuforiaTrackable rearPerimeter;
-    protected HardwareRobot robot;
+    protected Hardware robot;
     protected int cameraViewId;
 
     public void init(){
-        robot = new HardwareRobot();
+        robot = new Hardware();
         robot.init(hardwareMap);
 
         driveSystem = robot.driveSystem;
         camMap = robot.camMap;
-        vuforia = robot.vuforia;
+        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT);
         cameraViewId = robot.cameraViewId;
         // DistanceSensor distanceSensor2;
         // DistanceSensor distanceSensor3;
