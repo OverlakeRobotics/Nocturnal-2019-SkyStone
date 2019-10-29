@@ -10,29 +10,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
 
 public class HardwareRobot {
         /* Public OpMode members. */
-        public DcMotor leftDrive = null;
-        public DcMotor rightDrive = null;
-        public DcMotor leftArm = null;
-
+        public DriveSystem driveSystem;
+        public EnumMap<Vuforia.CameraChoice, WebcamName> camMap;
+        public Vuforia vuforia;
+        public int cameraViewId;
+        public VuforiaTrackable skystone;
+        // public VuforiaTrackable rearPerimeter;
         /* local OpMode members. */
         HardwareMap mHardwareMap = null;
-        private ElapsedTime period  = new ElapsedTime();
 
         /* Constructor */
-        public HardwarePushbot(){
+        public HardwareRobot(){
 
         }
-
-    protected DriveSystem driveSystem;
-    protected EnumMap<Vuforia.CameraChoice, WebcamName> camMap;
-    protected Vuforia vuforia;
-    protected VuforiaTrackable skystone;
-    protected VuforiaTrackable rearPerimeter;
 
     public void init(HardwareMap phwMap){
         mHardwareMap = phwMap;
@@ -47,11 +43,17 @@ public class HardwareRobot {
             camMap.put(name, mHardwareMap.get(WebcamName.class, name.toString()));
         }
 
-        int cameraMonitorViewId = mHardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT, cameraMonitorViewId);
-        DistanceSensor distanceSensor2;
-        DistanceSensor distanceSensor3;
-        ColorSensor colorSensor;
+        cameraViewId = mHardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", mHardwareMap.appContext.getPackageName());
+        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT);
+        // DistanceSensor distanceSensor2;
+        // DistanceSensor distanceSensor3;
+        // ColorSensor colorSensor;
 
+    }
+
+    protected Vuforia setCamera(Vuforia.CameraChoice cameraChoice){
+        vuforia = new Vuforia(camMap.get(cameraChoice), cameraViewId);
+        skystone = vuforia.targetsSkyStone.get(0);
+        return vuforia;
     }
 }

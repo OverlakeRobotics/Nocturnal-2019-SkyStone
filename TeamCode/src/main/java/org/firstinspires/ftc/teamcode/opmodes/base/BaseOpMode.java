@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.HardwareRobot;
 import org.firstinspires.ftc.teamcode.components.IMUSystem;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
@@ -23,30 +24,24 @@ public abstract class BaseOpMode extends OpMode {
     protected Vuforia vuforia;
     protected VuforiaTrackable skystone;
     protected VuforiaTrackable rearPerimeter;
+    protected HardwareRobot robot;
+    protected int cameraViewId;
 
     public void init(){
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
-        camMap = new EnumMap<>(Vuforia.CameraChoice.class);
+        robot = new HardwareRobot();
+        robot.init(hardwareMap);
 
-        for(Vuforia.CameraChoice name : Vuforia.CameraChoice.values()){
-            camMap.put(name,hardwareMap.get(WebcamName.class, name.toString()));
-        }
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        vuforia = setCamera(Vuforia.CameraChoice.CAM_RIGHT, cameraMonitorViewId);
-        DistanceSensor distanceSensor2;
-        DistanceSensor distanceSensor3;
-        ColorSensor colorSensor;
-
-
+        driveSystem = robot.driveSystem;
+        camMap = robot.camMap;
+        vuforia = robot.vuforia;
+        cameraViewId = robot.cameraViewId;
+        // DistanceSensor distanceSensor2;
+        // DistanceSensor distanceSensor3;
+        // ColorSensor colorSensor;
     }
 
-    protected Vuforia setCamera(CameraChoice cameraChoice, int cameraMonitorViewId){
-        vuforia = new Vuforia(camMap.get(cameraChoice), cameraMonitorViewId);
+    protected Vuforia setCamera(CameraChoice cameraChoice){
+        vuforia = new Vuforia(camMap.get(cameraChoice), cameraViewId);
         skystone = vuforia.targetsSkyStone.get(0);
         return vuforia;
     }
