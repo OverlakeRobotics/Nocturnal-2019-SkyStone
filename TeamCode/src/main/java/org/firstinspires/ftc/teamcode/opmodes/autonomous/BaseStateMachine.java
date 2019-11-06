@@ -17,19 +17,15 @@ public abstract class BaseStateMachine extends BaseOpMode {
     public enum State {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
-        STATE_DELIVER_STONE,
         STATE_GRAB_STONE,
-        STATE_FIND_STONE,
         STATE_PARK_AT_LINE,
-        STATE_DEPOSIT_STONE,
-        STATE_DRAG_FOUNDATION,
-        STATE_RETURN,
         GRAB_STONE_DEAD_RECKONING,
         EJECT_STONE,
         STATE_ALIGN_STONE,
         STATE_HORIZONTAL_ALIGN_STONE,
         STATE_INTAKE_STONE,
         STATE_ALIGN_BRIDGE,
+        STATE_MOVE_PAST_LINE,
         LOGGING
     }
 
@@ -102,10 +98,12 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 if (vuforia.isTargetVisible(skystone)) {
                     translation = vuforia.getRobotPosition();
                     newState(State.STATE_GRAB_STONE);
+                    break;
                 }
                 // If it moves 700 millimeters and it hasn't found the stone just use dead reckoning
                 if (driveSystem.driveToPosition(700, DriveSystem.Direction.BACKWARD, 0.2)) {
                     newState(State.GRAB_STONE_DEAD_RECKONING);
+                    break;
                 }
                 break;
 
@@ -138,6 +136,13 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 }
                 break;
 
+            case STATE_MOVE_PAST_LINE:
+                if (driveSystem.driveToPosition(2000, DriveSystem.Direction.FORWARD, 1.0)) {
+                    mStateTime.reset();
+                    newState(State.EJECT_STONE);
+                }
+                break;
+
             case EJECT_STONE:
                 if (mStateTime.milliseconds() >= 1000) {
                     intakeSystem.stop();
@@ -145,11 +150,6 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 } else {
                     intakeSystem.stop();
                 }
-                break;
-
-            case STATE_FIND_STONE:
-                // Find a stone using TensorFlow
-                newState(State.STATE_GRAB_STONE);
                 break;
 
             case STATE_PARK_AT_LINE:
@@ -168,21 +168,6 @@ public abstract class BaseStateMachine extends BaseOpMode {
                     }
                 }
                 driveSystem.drive(0.0f, 0.0f, -0.2f);
-                break;
-
-            case STATE_DEPOSIT_STONE:
-                // Put stone down on foundation
-                newState(State.STATE_RETURN);
-                break;
-
-            case STATE_DRAG_FOUNDATION:
-                // Drag foundation out of box
-                newState(State.STATE_PARK_AT_LINE);
-                break;
-
-            case STATE_RETURN:
-                // Go back to block repository
-                newState(State.STATE_FIND_SKYSTONE);
                 break;
         }
     }
