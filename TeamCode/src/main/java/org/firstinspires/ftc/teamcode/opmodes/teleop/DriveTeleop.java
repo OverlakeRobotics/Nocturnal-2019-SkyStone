@@ -13,12 +13,13 @@ import java.util.*;
 
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
-
+    
     // We need to have arm code in this OpMode because we don't want to calibrate the arm
     // in BaseOpMode
     private ArmSystem armSystem;
     // Use the following variables to detect if their respective bumpers have been pressed the
-    // previous loop. Otherwise, hitting a bumper will increase the queued height by a like 30.
+    // previous loop. Otherwise, hitting a bumper will increase the queued height by a like
+    // 30.
     boolean m_right = false;
     boolean m_left = false;
     boolean m_gripper = false; // Gripper button`
