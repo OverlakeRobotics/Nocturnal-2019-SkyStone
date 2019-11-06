@@ -7,7 +7,7 @@ public class LatchSystem {
     private Servo servo;
     private final double DOWN_POSITION = 0.9;
     private final double UP_POSITION = 0.05;
-    public boolean latched;
+    public boolean latch = false;
 
     public LatchSystem(Servo servo) {
         this.servo = servo;
@@ -27,10 +27,10 @@ public class LatchSystem {
         }
     }
 
-    public void toggle() {
-        if (latched) {
+    public void toggle(boolean up, boolean down) {
+        if (up) {
             unlatch();
-        } else if (!latched) {
+        } else if (down) {
             latch();
         }
     }
