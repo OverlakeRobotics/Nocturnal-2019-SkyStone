@@ -26,6 +26,14 @@ public class LatchSystem {
         }
     }
 
+    public void toggle(boolean up, boolean down) {
+        if (up) {
+            unlatch();
+        } else if (down) {
+            latch();
+        }
+    }
+
     public void latch() {
         servo.setPosition(DOWN_POSITION);
         servo.close();
