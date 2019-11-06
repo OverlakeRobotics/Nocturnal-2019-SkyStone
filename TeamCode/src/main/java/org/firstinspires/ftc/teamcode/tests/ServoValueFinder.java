@@ -79,10 +79,10 @@ public class ServoValueFinder extends BaseOpMode {
         armSystem.updateHeight();
 
         telemetry.addData("", ArmSystem.TAG);
-        telemetry.addData("Pivot:", ArmSystem.ServoNames.GRIPPER);
-        telemetry.addData("Elbow:", ArmSystem.ServoNames.GRIPPER);
-        telemetry.addData("Wrist:", ArmSystem.ServoNames.GRIPPER);
-        telemetry.addData("Gripper:", ArmSystem.ServoNames.GRIPPER);
+        telemetry.addData("Pivot:", armSystem.pivot.getPosition());
+        telemetry.addData("Elbow:", armSystem.elbow.getPosition());
+        telemetry.addData("Wrist:", armSystem.wrist.getPosition());
+        telemetry.addData("Gripper:", armSystem.gripper.getPosition());
         telemetry.update();
     }
 }
