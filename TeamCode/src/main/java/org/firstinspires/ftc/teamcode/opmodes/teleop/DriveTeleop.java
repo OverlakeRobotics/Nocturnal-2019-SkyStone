@@ -27,11 +27,11 @@ public class DriveTeleop extends BaseOpMode {
             }
         }*/
         if(gamepad2.a){
-            if(latched){
+            if(latchSystem.latched){
                 latchSystem.unlatch();
                 latched = false;
             }
-            if(!latched){
+            if(!latchSystem.latched){
                 latchSystem.latch();
                 latched = true;
             }
