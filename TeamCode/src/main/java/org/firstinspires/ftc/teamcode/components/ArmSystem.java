@@ -18,10 +18,10 @@ import java.util.EnumMap;
         - Pivot
  */
 public class ArmSystem {
-    public Servo gripper;
-    public Servo wrist;
-    public Servo elbow;
-    public Servo pivot;
+    private Servo gripper;
+    private Servo wrist;
+    private Servo elbow;
+    private Servo pivot;
     private DcMotor slider;
     private DigitalChannel limitSwitch; // true is unpressed, false is pressed
     private final double WRIST_HOME = 0;
