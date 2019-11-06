@@ -16,20 +16,19 @@ public class DriveTeleop extends BaseOpMode {
 
     // We need to have arm code in this OpMode because we don't want to calibrate the arm
     // in BaseOpMode
-
     private ArmSystem armSystem;
     // Use the following variables to detect if their respective bumpers have been pressed the
     // previous loop. Otherwise, hitting a bumper will increase the queued height by a like 30.
     boolean m_right = false;
     boolean m_left = false;
     boolean m_gripper = false; // Gripper button`
-    public boolean latched = false; //overhanging variable
     ArrayList<Boolean> listoftogglebooleans = new ArrayList<Boolean>(5);
     public int loopcount = 0;
 
 
     public void init() {
         super.init();
+
         EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
         servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));
         servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "elbow"));
@@ -60,11 +59,11 @@ public class DriveTeleop extends BaseOpMode {
             }
         }*/
         if(gamepad2.a){
-            if(latched){
+            if(latchSystem.latched){
                 latchSystem.unlatch();
                 latched = false;
             }
-            if(!latched){
+            if(!latchSystem.latched){
                 latchSystem.latch();
                 latched = true;
             }
