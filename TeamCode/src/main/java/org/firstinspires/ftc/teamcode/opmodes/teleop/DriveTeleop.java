@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
+import java.util.*;
 
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
@@ -22,6 +23,10 @@ public class DriveTeleop extends BaseOpMode {
     boolean m_right = false;
     boolean m_left = false;
     boolean m_gripper = false; // Gripper button`
+    /*public boolean latched = false; //overhanging variable
+    ArrayList<Boolean> listoftogglebooleans = new ArrayList<Boolean>(5);
+    public int loopcount = 0;*/
+
 
     public void init() {
         super.init();
@@ -43,9 +48,21 @@ public class DriveTeleop extends BaseOpMode {
     }
 
     public void loop(){
+        /*listoftogglebooleans.set(loopcount, gamepad2.a);
+        if(!(listoftogglebooleans.get(loopcount)) && listoftogglebooleans.get(loopcount-1)){
+            if(latched){
+                latchSystem.unlatch();
+                latched = false;
+            }
+            if(!latched){
+                latchSystem.latch();
+                latched = true;
+            }
+        }*/
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
+
         driveSystem.drive(rx, lx, -ly, gamepad1.x);
         spinnySystem.spin(gamepad1.left_bumper, gamepad1.right_bumper);
         latchSystem.run(gamepad2.x, gamepad2.y);
@@ -53,7 +70,6 @@ public class DriveTeleop extends BaseOpMode {
         // Arm code (THIS NEEDS TO BE CLEANED UP LATER)
         // Put every joystick value to the 3rd power for greater control over the robot
         // 1^3 = 1, so we don't even need to trim the values or anything
-
             if (gamepad2.dpad_left) {
                 armSystem.movePresetPosition(ArmSystem.Position.POSITION_WEST);
             } else if (gamepad2.dpad_up) {
@@ -87,5 +103,6 @@ public class DriveTeleop extends BaseOpMode {
                 m_gripper = false;
             }
             armSystem.updateHeight();
+        //loopcount++;
     }
 }
