@@ -23,9 +23,9 @@ public class DriveTeleop extends BaseOpMode {
     boolean m_right = false;
     boolean m_left = false;
     boolean m_gripper = false; // Gripper button`
-    /*public boolean latched = false; //overhanging variable
+    public boolean latched = false; //overhanging variable
     ArrayList<Boolean> listoftogglebooleans = new ArrayList<Boolean>(5);
-    public int loopcount = 0;*/
+    public int loopcount = 0;
 
 
     public void init() {
@@ -59,6 +59,17 @@ public class DriveTeleop extends BaseOpMode {
                 latched = true;
             }
         }*/
+        if(gamepad2.a){
+            if(latched){
+                latchSystem.unlatch();
+                latched = false;
+            }
+            if(!latched){
+                latchSystem.latch();
+                latched = true;
+            }
+        }
+
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
@@ -103,6 +114,5 @@ public class DriveTeleop extends BaseOpMode {
                 m_gripper = false;
             }
             armSystem.updateHeight();
-        //loopcount++;
     }
 }
