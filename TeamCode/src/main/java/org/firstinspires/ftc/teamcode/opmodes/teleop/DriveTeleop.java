@@ -9,14 +9,27 @@ import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
+import java.util.*;
 
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
     
     public void loop(){
+        /*listoftogglebooleans.set(loopcount, gamepad2.a);
+        if(!(listoftogglebooleans.get(loopcount)) && listoftogglebooleans.get(loopcount-1)){
+            if(latched){
+                latchSystem.unlatch();
+                latched = false;
+            }
+            if(!latched){
+                latchSystem.latch();
+                latched = true;
+            }
+        }*/
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
+
         driveSystem.drive(rx, lx, -ly, gamepad1.x);
         spinnySystem.spin(gamepad1.left_bumper, gamepad1.right_bumper);
         latchSystem.run(gamepad2.x, gamepad2.y);
