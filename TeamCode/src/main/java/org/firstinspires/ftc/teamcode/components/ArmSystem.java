@@ -274,7 +274,7 @@ public class ArmSystem {
         }
     }
 
-    private void movePresetPosition(Position pos) {
+    public void movePresetPosition(Position pos) {
         switch(pos) {
             case POSITION_NORTH:
                 // TODO: Find north pos with new motor
@@ -305,7 +305,7 @@ public class ArmSystem {
     }
 
     // Still requires updateHeight() to be called, just like the setSliderHeight method.
-    private void go() {
+    public void go() {
         //this.movePresetPosition(queuedPosition);
         setSliderHeight(queuedHeight);
     }
@@ -405,7 +405,7 @@ public class ArmSystem {
     }
 
     // Should be called every loop
-    private void updateHeight(double speed) {
+    public void updateHeight(double speed) {
         slider.setPower(speed);
         slider.setTargetPosition(calculateHeight(targetHeight));
         updateServo(elbow, elbowTarget);

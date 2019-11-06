@@ -13,7 +13,14 @@ import java.util.*;
 
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
-    
+
+    private boolean aRecentlyHit =false;
+    boolean m_right = false;
+    boolean m_left = false;
+    boolean m_gripper = false; // Gripper button`
+    //ArrayList<Boolean> listoftogglebooleans = new ArrayList<Boolean>(5);
+    public int loopcount = 0;
+
     public void loop(){
         /*listoftogglebooleans.set(loopcount, gamepad2.a);
         if(!(listoftogglebooleans.get(loopcount)) && listoftogglebooleans.get(loopcount-1)){
@@ -77,7 +84,7 @@ public class DriveTeleop extends BaseOpMode {
             } else if (!gamepad2.a) {
                 m_gripper = false;
             }
-            armSystem.updateHeight();
+            armSystem.updateHeight(0.75);
         //loopcount++;
     }
 }
