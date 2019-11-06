@@ -47,6 +47,8 @@ public class DriveTeleop extends BaseOpMode {
         armSystem.movePresetPosition(ArmSystem.Position.POSITION_HOME);
     }
 
+    private boolean aRecentlyHit = false;
+
     public void loop(){
         /*listoftogglebooleans.set(loopcount, gamepad2.a);
         if(!(listoftogglebooleans.get(loopcount)) && listoftogglebooleans.get(loopcount-1)){
@@ -59,8 +61,13 @@ public class DriveTeleop extends BaseOpMode {
                 latched = true;
             }
         }*/
-        if(gamepad2.a){
+        if(gamepad2.a && !aRecentlyHit){
+            aRecentlyHit = true;
             latchSystem.toggle();
+        }
+        else if (!gamepad2.a)
+        {
+            aRecentlyHit = false;
         }
 
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
