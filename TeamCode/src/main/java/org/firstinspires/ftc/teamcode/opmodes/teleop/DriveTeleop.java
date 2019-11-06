@@ -27,14 +27,7 @@ public class DriveTeleop extends BaseOpMode {
             }
         }*/
         if(gamepad2.a){
-            if(latchSystem.latched){
-                latchSystem.unlatch();
-                latched = false;
-            }
-            if(!latchSystem.latched){
-                latchSystem.latch();
-                latched = true;
-            }
+            latchSystem.toggle();
         }
 
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
@@ -43,7 +36,6 @@ public class DriveTeleop extends BaseOpMode {
 
         driveSystem.drive(rx, lx, -ly, gamepad1.x);
         spinnySystem.spin(gamepad1.left_bumper, gamepad1.right_bumper);
-        latchSystem.run(gamepad2.x, gamepad2.y);
 
         // Arm code (THIS NEEDS TO BE CLEANED UP LATER)
         // Put every joystick value to the 3rd power for greater control over the robot
