@@ -95,7 +95,6 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 if (vuforia.isTargetVisible(skystone)) {
                     translation = vuforia.getRobotPosition();
                     newState(State.STATE_GRAB_STONE);
-                    break;
                 }
                 // If it moves 700 millimeters and it hasn't found the stone just use dead reckoning
                 if (driveSystem.driveToPosition(700, DriveSystem.Direction.BACKWARD, 0.2)) {
