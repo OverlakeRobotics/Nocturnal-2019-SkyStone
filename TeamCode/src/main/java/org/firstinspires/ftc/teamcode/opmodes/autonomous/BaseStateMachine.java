@@ -89,6 +89,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
     private double alignStone;
     @Override
     public void loop() {
+        Log.d(TAG, mCurrentState.name());
         telemetry.addData("State", mCurrentState);
         telemetry.update();
         switch (mCurrentState) {
@@ -108,29 +109,19 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_FIND_SKYSTONE:
-                List<Recognition> recognitions = tensorflow.getInference();
-                if (recognitions != null) {
-                    for (Recognition recognition : recognitions) {
-                        if (recognition.getLabel().equals("Skystone")) {
-                            double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
-                            int sign = (int) Math.signum(degrees);
-                            skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
-                            skystoneOffset -= 250;
-                            Log.d(TAG, "Skystone offset: " + skystoneOffset);
-                            newState(State.STATE_ALIGN_SKYSTONE);
-                            break;
-                        }
-                    }
-                } else {
-                    skystoneOffset = 20;
-                    newState(State.STATE_ALIGN_SKYSTONE);
+                // If it has seen the stone grab the stone
+                if (vuforia.isTargetVisible(skystone)) {
+                    translation = vuforia.getRobotPosition();
+                    driveSystem.stopAndReset();
+                    newState(State.STATE_ALIGN_STONE);
+                    break;
                 }
                 break;
 
             case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
-                    newState(State.STATE_HORIZONTAL_ALIGN_SKYSTONE);
+                if (driveSystem.driveToPosition((int) translation.get(1) - 500, DriveSystem.Direction.FORWARD, 0.5)) {
+                    newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
 
