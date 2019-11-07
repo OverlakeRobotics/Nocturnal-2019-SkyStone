@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 @Autonomous(name = "TestDrive", group="Autonomous")
@@ -26,11 +29,20 @@ public class TestDrive extends BaseOpMode {
     @Override
     public void init() {
         super.init();
-        mCurrentState = State.STATE_INITIAL;
+        mCurrentState = State.STATE_FINISHED;
+        super.setCamera(Vuforia.CameraChoice.WEBCAM1);
+        skystone = vuforia.targetsSkyStone.get(0);
     }
 
     @Override
     public void loop() {
+        if (vuforia.isTargetVisible(skystone)) {
+            VectorF translation = vuforia.getRobotPosition();
+            telemetry.addData("X", translation.get(0));
+            telemetry.addData("Y", translation.get(1));
+            telemetry.addData("Z",  translation.get(2));
+            telemetry.update();
+        }
         switch (mCurrentState) {
             case STATE_INITIAL:
                 // Initialize
