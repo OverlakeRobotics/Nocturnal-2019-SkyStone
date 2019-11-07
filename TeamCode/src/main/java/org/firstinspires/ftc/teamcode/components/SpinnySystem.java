@@ -6,8 +6,12 @@ import java.util.EnumMap;
 
 public class SpinnySystem {
 
+//    public enum MotorNames {
+//        RIGHTINTAKE, LEFTINTAKE, BOTTOMINTAKE
+//    }
+
     public enum MotorNames {
-        RIGHTINTAKE, LEFTINTAKE, BOTTOMINTAKE
+        LEFTINTAKE, BOTTOMINTAKE
     }
 
     private EnumMap<SpinnySystem.MotorNames, DcMotor> motors;
@@ -30,11 +34,11 @@ public class SpinnySystem {
     private void initMotors() {
         motors.forEach((name, motor) -> {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            if (name == MotorNames.RIGHTINTAKE) {
-                motor.setDirection(DcMotorSimple.Direction.REVERSE);
-            } else {
+//            if (name == MotorNames.RIGHTINTAKE) {
+//                motor.setDirection(DcMotorSimple.Direction.REVERSE);
+//            } else {
                 motor.setDirection(DcMotorSimple.Direction.FORWARD);
-            }
+//            }
             motor.setPower(0.0);
         });
     }
