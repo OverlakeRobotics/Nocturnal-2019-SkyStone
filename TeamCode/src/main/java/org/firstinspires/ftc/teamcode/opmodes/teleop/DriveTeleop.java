@@ -14,7 +14,7 @@ import java.util.*;
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
 
-    private boolean aRecentlyHit =false;
+    private boolean xRecentlyHit =false;
     boolean m_right = false;
     boolean m_left = false;
     boolean m_gripper = false; // Gripper button`
@@ -33,13 +33,13 @@ public class DriveTeleop extends BaseOpMode {
                 latched = true;
             }
         }*/
-        if(gamepad2.a && !aRecentlyHit){
-            aRecentlyHit = true;
+        if(gamepad2.x && !xRecentlyHit){
+            xRecentlyHit = true;
             latchSystem.toggle();
         }
-        else if (!gamepad2.a)
+        else if (!gamepad2.x)
         {
-            aRecentlyHit = false;
+            xRecentlyHit = false;
         }
 
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
