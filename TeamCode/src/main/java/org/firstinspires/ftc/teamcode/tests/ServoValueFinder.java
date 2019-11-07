@@ -48,6 +48,7 @@ public class ServoValueFinder extends BaseOpMode {
             pivot.setPosition(pivot.getPosition() - 0.01);
         }
 
+        telemetry.addLine("Jared is dumb stinky poophead.");
         telemetry.addData("wrist:", wrist.getPosition());
         telemetry.addData("elbow:", elbow.getPosition());
         telemetry.addData("pivot:", pivot.getPosition());
