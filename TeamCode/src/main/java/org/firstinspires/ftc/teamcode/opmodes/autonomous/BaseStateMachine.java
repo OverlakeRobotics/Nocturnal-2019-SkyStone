@@ -17,9 +17,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
     public enum State {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
-        STATE_GRAB_STONE,
         STATE_PARK_AT_LINE,
-        GRAB_STONE_DEAD_RECKONING,
         EJECT_STONE,
         STATE_ALIGN_STONE,
         STATE_HORIZONTAL_ALIGN_STONE,
@@ -88,7 +86,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INITIAL:
                 // Initialize
                 // Drive 0.5m (1 tile) to the left
-                if (driveSystem.driveToPosition(600, centerDirection, 1.0) && !isStopRequested()) {
+                if (driveSystem.driveToPosition(600, centerDirection, 1.0)) {
                     newState(State.STATE_FIND_SKYSTONE);
                 }
                 break;
@@ -97,12 +95,12 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 // If it has seen the stone grab the stone
                 if (vuforia.isTargetVisible(skystone)) {
                     translation = vuforia.getRobotPosition();
-                    newState(State.STATE_GRAB_STONE);
+                    newState(State.STATE_ALIGN_STONE);
                     break;
                 }
-                // If it moves 700 millimeters and it hasn't found the stone just use dead reckoning
-                if (driveSystem.driveToPosition(700, DriveSystem.Direction.BACKWARD, 0.2)) {
-                    newState(State.GRAB_STONE_DEAD_RECKONING);
+                // If it moves 1200 millimeters and it hasn't found the stone just use dead reckoning
+                if (driveSystem.driveToPosition(1200, DriveSystem.Direction.BACKWARD, 0.05)) {
+                    newState(State.LOGGING);
                     break;
                 }
                 break;
