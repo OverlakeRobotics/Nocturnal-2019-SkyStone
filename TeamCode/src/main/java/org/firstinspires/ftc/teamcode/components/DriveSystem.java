@@ -187,6 +187,12 @@ public class DriveSystem {
 
     }
 
+    public void stopAndReset() {
+        setMotorPower(0.0);
+        mTargetTicks = 0;
+        mTargetHeading = 0;
+    }
+
     public void setRunMode(DcMotor.RunMode runMode) {
         for (DcMotor motor : motors.values()) {
             motor.setMode(runMode);

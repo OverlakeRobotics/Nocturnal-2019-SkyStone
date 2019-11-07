@@ -71,6 +71,9 @@ public abstract class BaseStateMachine extends BaseOpMode {
     private int distanceToWall;
     @Override
     public void loop() {
+        Log.d(TAG, mCurrentState.name());
+        telemetry.addData("State", mCurrentState);
+        telemetry.update();
         switch (mCurrentState) {
             case LOGGING:
                 telemetry.addData("DistanceFront", distanceCenter.getDistance(DistanceUnit.INCH));
@@ -93,6 +96,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 // If it has seen the stone grab the stone
                 if (vuforia.isTargetVisible(skystone)) {
                     translation = vuforia.getRobotPosition();
+                    driveSystem.stopAndReset();
                     newState(State.STATE_ALIGN_STONE);
                     break;
                 }
@@ -105,7 +109,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_ALIGN_STONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition((int) translation.get(0), DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition((int) translation.get(1) - 500, DriveSystem.Direction.FORWARD, 0.5)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
