@@ -39,8 +39,11 @@ public class DriveSystem {
     private int mTargetTicks;
     private double mTargetHeading;
 
-    // 4 inches
-    private final double TICKS_IN_MM = 1.358267716;
+    // 12.566370614359173 inches circumference of a wheel
+    // 319.185813604722993 mm circumference of a wheel
+    // 1120 ticks in a revolution
+    // 1120 / 319.185813604722993 = 3.508927879
+    private final double TICKS_IN_MM = 3.508927879;
 
     /**
      * Handles the data for the abstract creation of a drive system with four wheels
@@ -166,24 +169,18 @@ public class DriveSystem {
         for (DcMotor motor : motors.values()) {
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if(offset <= 0){
-
                 // Shut down motors
                 setMotorPower(0);
-
                 // Reset motors to default run mode
                 setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
                 // Reset target
                 mTargetTicks = 0;
-
                 // Motor has reached target
                 return true;
             }
         }
-
         // Motor has not reached target
         return false;
-
     }
 
     public void stopAndReset() {

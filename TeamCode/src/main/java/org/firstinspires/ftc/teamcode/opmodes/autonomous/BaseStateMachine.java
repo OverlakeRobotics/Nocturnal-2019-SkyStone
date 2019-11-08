@@ -40,7 +40,6 @@ public abstract class BaseStateMachine extends BaseOpMode {
     private DriveSystem.Direction centerDirection;
     private DriveSystem.Direction outsideDirection;
     private Team currentTeam;
-    VuforiaTrackable skystone;
 
     private DriveSystem.Direction direction;
 
@@ -63,10 +62,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             outsideDirection = DriveSystem.Direction.LEFT;
         }
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
-        lightSystem.off();
-        this.msStuckDetectLoop = 30000;
         newState(State.STATE_INITIAL);
-        skystone = vuforia.targetsSkyStone.get(0);
     }
 
     private VectorF translation;
@@ -89,7 +85,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INITIAL:
                 // Initialize
                 // Drive 0.5m (1 tile) to the left
-                if (driveSystem.driveToPosition(600, centerDirection, 1.0)) {
+                if (driveSystem.driveToPosition(230, centerDirection, 1.0)) {
                     newState(State.STATE_FIND_SKYSTONE);
                 }
                 break;
@@ -102,8 +98,8 @@ public abstract class BaseStateMachine extends BaseOpMode {
                     newState(State.STATE_ALIGN_STONE);
                     break;
                 }
-                // If it moves 1200 millimeters and it hasn't found the stone just use dead reckoning
-                if (driveSystem.driveToPosition(1200, DriveSystem.Direction.BACKWARD, 0.05)) {
+                // TODO: If it moves 500 millimeters and it hasn't found the stone just use dead reckoning
+                if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.15)) {
                     newState(State.LOGGING);
                     break;
                 }
@@ -111,46 +107,47 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_ALIGN_STONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition((int) translation.get(1) - 500, DriveSystem.Direction.FORWARD, 0.5)) {
+                if (driveSystem.driveToPosition((int) translation.get(1) + 250, DriveSystem.Direction.BACKWARD, 0.5)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
 
             case STATE_HORIZONTAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition(700, centerDirection, 0.7)) {
+                if (driveSystem.driveToPosition(600, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
 
             case STATE_INTAKE_STONE:
-                if (driveSystem.driveToPosition(500, DriveSystem.Direction.FORWARD, 0.2)) {
-                    spinnySystem.spin(false, false);
+                if (driveSystem.driveToPosition(400, DriveSystem.Direction.FORWARD, 0.2)) {
+//                    spinnySystem.spin(false, false);
                     distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
+                    Log.d(TAG, "Distance to wall: " + distanceToWall);
                     newState(State.STATE_ALIGN_BRIDGE);
-                } else {
-                    spinnySystem.spin(true, false);
                 }
+//                else {
+//                    spinnySystem.spin(true, false);
+//                }
                 break;
 
             case STATE_ALIGN_BRIDGE:
                 if (driveSystem.driveToPosition(distanceToWall, outsideDirection, 1.0)) {
-                    newState(State.STATE_PARK_AT_LINE);
+                    newState(State.STATE_MOVE_PAST_LINE);
                 }
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(2000, DriveSystem.Direction.FORWARD, 1.0)) {
-                    mStateTime.reset();
+                if (driveSystem.driveToPosition(800, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.EJECT_STONE);
                 }
                 break;
 
             case EJECT_STONE:
                 if (mStateTime.milliseconds() >= 1000) {
-                    intakeSystem.stop();
+//                    spinnySystem.spin(false, false);
                     newState(State.STATE_PARK_AT_LINE);
                 } else {
-                    intakeSystem.stop();
+//                    spinnySystem.spin(false, true);
                 }
                 break;
 
