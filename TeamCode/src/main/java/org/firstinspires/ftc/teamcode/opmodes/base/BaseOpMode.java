@@ -48,32 +48,21 @@ public abstract class BaseOpMode extends OpMode {
         }
         intakeSystem = new IntakeSystem(intakeMap);
 
-        DistanceSensor distanceSensor2;
-        DistanceSensor distanceSensor3;
-        ColorSensor colorSensor;
-
-        EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
-        servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));
-        servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "elbow"));
-        servoEnumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "wrist"));
-        servoEnumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "pivot"));
-        armSystem = new ArmSystem(
-                servoEnumMap,
-                hardwareMap.get(DcMotor.class, "slider_motor"),
-                hardwareMap.get(DigitalChannel.class, "slider_switch"), false);
+//        EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
+//        servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));
+//        servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "elbow"));
+//        servoEnumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "wrist"));
+//        servoEnumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "pivot"));
+//        armSystem = new ArmSystem(
+//                servoEnumMap,
+//                hardwareMap.get(DcMotor.class, "slider_motor"),
+//                hardwareMap.get(DigitalChannel.class, "slider_switch"), false);
 
     }
 
     protected void setCamera(CameraChoice cameraChoice){
-
         vuforia = new Vuforia(hardwareMap, cameraChoice);
         skystone = vuforia.targetsSkyStone.get(0);
-
-
-    }
-
-    public final boolean isStopRequested() {
-        return this.stopRequested || Thread.currentThread().isInterrupted();
     }
 
     @Override
