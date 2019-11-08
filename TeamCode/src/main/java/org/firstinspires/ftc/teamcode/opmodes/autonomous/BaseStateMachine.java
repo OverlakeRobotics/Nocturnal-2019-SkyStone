@@ -120,7 +120,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition((int) translation.get(1) - 500, DriveSystem.Direction.FORWARD, 0.5)) {
+                if (driveSystem.driveToPosition((int) translation.get(1) + 250, DriveSystem.Direction.BACKWARD, 0.5)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
