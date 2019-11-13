@@ -107,7 +107,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_ALIGN_STONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition((int) translation.get(1) + 475, DriveSystem.Direction.BACKWARD, 0.5)) {
+                if (driveSystem.driveToPosition((int) translation.get(1) + 500, DriveSystem.Direction.BACKWARD, 0.5)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
@@ -137,7 +137,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(950, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(1050, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.EJECT_STONE);
                 }
                 break;
