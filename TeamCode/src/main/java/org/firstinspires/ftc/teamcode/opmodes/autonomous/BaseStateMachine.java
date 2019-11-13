@@ -149,7 +149,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_ALIGN_BRIDGE:
-                if (driveSystem.driveToPosition(distanceToWall, outsideDirection, 1.0)) {
+                if (driveSystem.driveToPosition(distanceToWall + 100, outsideDirection, 1.0)) {
                     newState(State.STATE_MOVE_PAST_LINE);
                 }
                 break;
