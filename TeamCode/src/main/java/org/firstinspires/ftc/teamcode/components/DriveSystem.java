@@ -11,11 +11,11 @@ import java.util.EnumMap;
 public class DriveSystem {
 
     public enum MotorNames {
-        FRONTLEFT, FRONTRIGHT, BACKRIGHT, BACKLEFT
+        FRONTLEFT, FRONTRIGHT, BACKRIGHT, BACKLEFT,
     }
 
     public enum Direction {
-        FORWARD, BACKWARD, LEFT, RIGHT;
+        FORWARD, BACKWARD, LEFT, RIGHT, STRAFE_LEFT, STRATE_RIGHT;
 
         private static boolean isStrafe(Direction direction) {
             return direction == LEFT || direction == RIGHT;
@@ -83,7 +83,6 @@ public class DriveSystem {
 
         setMotorPower(0);
     }
-
     /**
      * Clips joystick values and drives the motors.
      * @param rightX Right X joystick value
@@ -93,7 +92,6 @@ public class DriveSystem {
 
     // TODO
     public void drive(float rightX, float leftX, float leftY, boolean xButton) {
-
 
         this.slowDrive = xButton;
         Log.d(TAG, "slow drive -- " + slowDrive);
@@ -117,7 +115,6 @@ public class DriveSystem {
         double frontRightPower = -leftY - rightX - leftX;
         double backLeftPower = -leftY + rightX - leftX;
         double backRightPower = -leftY - rightX + leftX;
-
         motors.forEach((name, motor) -> {
             switch(name) {
                 case FRONTRIGHT:
@@ -135,6 +132,80 @@ public class DriveSystem {
             }
         });
         slowDrive = false;
+    }
+
+    public void StrafeRight(){
+        motors.forEach((name, motor) -> {
+            switch(name) {
+                case FRONTRIGHT:
+                    motor.setPower(-MAX_DRIVE_POWER);
+                    break;
+                case BACKLEFT:
+                    motor.setPower(-MAX_DRIVE_POWER);
+                    break;
+                case FRONTLEFT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+                case BACKRIGHT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+            }
+        });
+    }
+    public void StrafeLeft(){
+        motors.forEach((name, motor) -> {
+            switch(name) {
+                case FRONTRIGHT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+                case BACKLEFT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+                case FRONTLEFT:
+                    motor.setPower(-MAX_DRIVE_POWER);
+                    break;
+                case BACKRIGHT:
+                    motor.setPower(-MAX_DRIVE_POWER);
+                    break;
+            }
+        });
+    }
+    public void StrafeDiagonalRight(){
+        motors.forEach((name, motor) -> {
+            switch(name) {
+                case FRONTRIGHT:
+                    motor.setPower(0);
+                    break;
+                case BACKLEFT:
+                    motor.setPower(0);
+                    break;
+                case FRONTLEFT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+                case BACKRIGHT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+            }
+        });
+    }
+
+    public void StrafeDiagonalLeft(){
+        motors.forEach((name, motor) -> {
+            switch(name) {
+                case FRONTRIGHT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+                case BACKLEFT:
+                    motor.setPower(MAX_DRIVE_POWER);
+                    break;
+                case FRONTLEFT:
+                    motor.setPower(0);
+                    break;
+                case BACKRIGHT:
+                    motor.setPower(0);
+                    break;
+            }
+        });
     }
 
     public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower) {
