@@ -74,7 +74,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
         telemetry.update();
         switch (mCurrentState) {
             case LOGGING:
-                telemetry.addData("DistanceFront", distanceCenter.getDistance(DistanceUnit.INCH));
+                telemetry.addData("DistanceFront", distanceCenter.getDistance(DistanceUnit.MM));
                 telemetry.addData("Color Blue", colorSensor.blue());
                 telemetry.addData("Color Red", colorSensor.red());
                 telemetry.addData("Color Green", colorSensor.green());
@@ -99,7 +99,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                     break;
                 }
                 // TODO: If it moves 500 millimeters and it hasn't found the stone just use dead reckoning
-                if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.15)) {
+                if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.05)) {
                     newState(State.LOGGING);
                     break;
                 }
@@ -119,7 +119,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_INTAKE_STONE:
-                if (driveSystem.driveToPosition(400, DriveSystem.Direction.FORWARD, 0.2)) {
+                if (driveSystem.driveToPosition(200, DriveSystem.Direction.FORWARD, 0.2)) {
 //                    spinnySystem.spin(false, false);
                     distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
                     Log.d(TAG, "Distance to wall: " + distanceToWall);
@@ -131,7 +131,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_ALIGN_BRIDGE:
-                if (driveSystem.driveToPosition(distanceToWall, outsideDirection, 1.0)) {
+                if (driveSystem.driveToPosition(distanceToWall - 300, outsideDirection, 1.0)) {
                     newState(State.STATE_MOVE_PAST_LINE);
                 }
                 break;

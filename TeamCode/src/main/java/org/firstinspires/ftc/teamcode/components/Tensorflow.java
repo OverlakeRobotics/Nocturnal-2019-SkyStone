@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
+
 
 public class Tensorflow {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
@@ -18,11 +20,25 @@ public class Tensorflow {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    public Tensorflow(HardwareMap hardwareMap) {
+    public Tensorflow(HardwareMap hardwareMap, CameraChoice cameraChoice) {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
+
+        switch (cameraChoice) {
+            case PHONE_FRONT:
+                parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+                break;
+            case PHONE_BACK:
+                parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+                break;
+            case WEBCAM1:
+                parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+                break;
+            case WEBCAM2:
+                parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 2");
+                break;
+        }
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
