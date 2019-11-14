@@ -2,13 +2,9 @@ package org.firstinspires.ftc.teamcode.opmodes.base;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.IMUSystem;
@@ -75,14 +71,7 @@ public abstract class BaseOpMode extends OpMode {
 
     }
 
-    protected void setCamera(CameraChoice cameraChoice){
-        vuforia = new Vuforia(hardwareMap, cameraChoice);
-        skystone = vuforia.targetsSkyStone.get(0);
-    }
-
-    @Override
-    public void stop() {
-        stopRequested = true;
-        super.stop();
+    protected void setCamera(CameraChoice cameraChoice) {
+        tensorflow = new Tensorflow(hardwareMap, CameraChoice.WEBCAM1);
     }
 }
