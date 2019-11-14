@@ -135,7 +135,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_HORIZONTAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition(800, centerDirection, 0.7)) {
+                if (driveSystem.driveToPosition(850, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
@@ -159,8 +159,8 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(900 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
-                    newState(State.EJECT_STONE);
+                if (driveSystem.driveToPosition(1400 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
+                    newState(State.STATE_TURN_FOR_FOUNDATION);
                 }
                 break;
 
@@ -268,7 +268,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                         newState(State.STATE_DEPOSIT_STONE);
                     }
                 }
-                driveSystem.drive(0.0f, 0.0f, 0.2f, false);
+                driveSystem.drive(0.0f, 0.3f * sign, 0.0f, false);
                 break;
 
 
