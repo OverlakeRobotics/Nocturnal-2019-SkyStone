@@ -2,19 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.base;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.IMUSystem;
-import org.firstinspires.ftc.teamcode.components.IntakeSystem;
 import org.firstinspires.ftc.teamcode.components.LatchSystem;
-import org.firstinspires.ftc.teamcode.components.Vuforia;
+import org.firstinspires.ftc.teamcode.components.SpinnySystem;
+import org.firstinspires.ftc.teamcode.components.Tensorflow;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 
 import java.util.EnumMap;
@@ -23,10 +18,8 @@ public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
     protected LatchSystem latchSystem;
-    protected IntakeSystem intakeSystem;
-    protected Vuforia vuforia;
-    protected VuforiaTrackable skystone;
-    protected VuforiaTrackable rearPerimeter;
+    protected SpinnySystem spinnySystem;
+    protected Tensorflow tensorflow;
     protected ArmSystem armSystem;
     private boolean stopRequested;
 
@@ -60,14 +53,7 @@ public abstract class BaseOpMode extends OpMode {
 
     }
 
-    protected void setCamera(CameraChoice cameraChoice){
-        vuforia = new Vuforia(hardwareMap, cameraChoice);
-        skystone = vuforia.targetsSkyStone.get(0);
-    }
-
-    @Override
-    public void stop() {
-        stopRequested = true;
-        super.stop();
+    protected void setCamera(CameraChoice cameraChoice) {
+        tensorflow = new Tensorflow(hardwareMap, CameraChoice.WEBCAM1);
     }
 }

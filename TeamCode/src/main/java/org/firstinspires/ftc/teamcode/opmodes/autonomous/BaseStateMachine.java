@@ -7,12 +7,16 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.IntakeSystem;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
+
+import java.util.List;
 
 public abstract class BaseStateMachine extends BaseOpMode {
     public enum State {
@@ -64,11 +68,10 @@ public abstract class BaseStateMachine extends BaseOpMode {
         newState(State.STATE_INITIAL);
     }
 
-    private VectorF translation;
+    private int skystoneOffset;
     private int distanceToWall;
     @Override
     public void loop() {
-        Log.d(TAG, mCurrentState.name());
         telemetry.addData("State", mCurrentState);
         telemetry.update();
         switch (mCurrentState) {
@@ -84,35 +87,35 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INITIAL:
                 // Initialize
                 // Drive 0.5m (1 tile) to the left
-                if (driveSystem.driveToPosition(230, centerDirection, 1.0)) {
-                    newState(State.STATE_FIND_SKYSTONE);
-                }
+                newState(State.STATE_FIND_SKYSTONE);
                 break;
 
             case STATE_FIND_SKYSTONE:
-                // If it has seen the stone grab the stone
-                if (vuforia.isTargetVisible(skystone)) {
-                    translation = vuforia.getRobotPosition();
-                    driveSystem.stopAndReset();
-                    newState(State.STATE_ALIGN_STONE);
-                    break;
-                }
-                // TODO: If it moves 500 millimeters and it hasn't found the stone just use dead reckoning
-                if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.05)) {
-                    newState(State.LOGGING);
-                    break;
+                List<Recognition> recognitions = tensorflow.getInference();
+                if (recognitions != null) {
+                    for (Recognition recognition : recognitions) {
+                        if (recognition.getLabel().equals("Skystone")) {
+                            double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
+                            int sign = (int) Math.signum(degrees);
+                            skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
+                            skystoneOffset -= 300;
+                            Log.d(TAG, "Skystone offset: " + skystoneOffset);
+                            newState(State.STATE_ALIGN_STONE);
+                            break;
+                        }
+                    }
                 }
                 break;
 
             case STATE_ALIGN_STONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition((int) translation.get(1) + 500, DriveSystem.Direction.BACKWARD, 0.5)) {
+                if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
 
             case STATE_HORIZONTAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition(600, centerDirection, 0.7)) {
+                if (driveSystem.driveToPosition(900, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
@@ -136,7 +139,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(1050, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(800 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.EJECT_STONE);
                 }
                 break;
