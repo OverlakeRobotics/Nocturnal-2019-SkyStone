@@ -7,11 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.IMUSystem;
-import org.firstinspires.ftc.teamcode.components.IntakeSystem;
 import org.firstinspires.ftc.teamcode.components.LatchSystem;
-import org.firstinspires.ftc.teamcode.components.LightSystem;
-import org.firstinspires.ftc.teamcode.components.Vuforia;
+import org.firstinspires.ftc.teamcode.components.SpinnySystem;
+import org.firstinspires.ftc.teamcode.components.Tensorflow;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 
 import java.util.EnumMap;
@@ -20,11 +18,8 @@ public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
     protected LatchSystem latchSystem;
-    protected IntakeSystem intakeSystem;
-    protected LightSystem lightSystem;
-    protected Vuforia vuforia;
-    protected VuforiaTrackable skystone;
-    protected VuforiaTrackable rearPerimeter;
+    protected SpinnySystem spinnySystem;
+    protected Tensorflow tensorflow;
     protected ArmSystem armSystem;
     private boolean stopRequested;
 
@@ -68,8 +63,6 @@ public abstract class BaseOpMode extends OpMode {
                 servoEnumMap,
                 hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"),
                 hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"), false);
-
-    }
 
     protected void setCamera(CameraChoice cameraChoice) {
         tensorflow = new Tensorflow(hardwareMap, CameraChoice.WEBCAM1);
