@@ -98,12 +98,15 @@ public abstract class BaseStateMachine extends BaseOpMode {
                             double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
                             int sign = (int) Math.signum(degrees);
                             skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
-                            skystoneOffset -= 300;
+                            skystoneOffset -= 250;
                             Log.d(TAG, "Skystone offset: " + skystoneOffset);
                             newState(State.STATE_ALIGN_STONE);
                             break;
                         }
                     }
+                } else {
+                    skystoneOffset = 20;
+                    newState(State.STATE_ALIGN_STONE);
                 }
                 break;
 
@@ -115,7 +118,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_HORIZONTAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition(900, centerDirection, 0.7)) {
+                if (driveSystem.driveToPosition(800, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
@@ -139,7 +142,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(800 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(900 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.EJECT_STONE);
                 }
                 break;
