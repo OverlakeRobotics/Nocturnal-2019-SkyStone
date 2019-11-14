@@ -29,6 +29,9 @@ public abstract class BaseStateMachine extends BaseOpMode {
         STATE_INTAKE_STONE,
         STATE_ALIGN_BRIDGE,
         STATE_MOVE_PAST_LINE,
+        STATE_TURN_FOR_FOUNDATION,
+        STATE_BACKUP_INTO_FOUNDATION,
+        STATE_MOVE_INTO_WALL,
         LOGGING
     }
 
@@ -118,7 +121,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_HORIZONTAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition(800, centerDirection, 0.7)) {
+                if (driveSystem.driveToPosition(850, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
@@ -142,8 +145,27 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(900 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
-                    newState(State.EJECT_STONE);
+                if (driveSystem.driveToPosition(1400 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
+                    newState(State.STATE_TURN_FOR_FOUNDATION);
+                }
+                break;
+
+            case STATE_TURN_FOR_FOUNDATION:
+                int sign = currentTeam == Team.RED ? 1 : -1;
+                if (driveSystem.turnAbsolute(90 * sign, 0.4)) {
+                    newState(State.STATE_BACKUP_INTO_FOUNDATION);
+                }
+                break;
+
+            case STATE_BACKUP_INTO_FOUNDATION:
+                if (driveSystem.driveToPosition(350, DriveSystem.Direction.BACKWARD, 1.0)) {
+                    newState(State.STATE_MOVE_INTO_WALL);
+                }
+                break;
+
+            case STATE_MOVE_INTO_WALL:
+                if (driveSystem.driveToPosition(700, DriveSystem.Direction.FORWARD, 1.0)) {
+                    newState(State.STATE_PARK_AT_LINE);
                 }
                 break;
 
@@ -159,19 +181,21 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_PARK_AT_LINE:
                 // Find the line
                 if (currentTeam == Team.BLUE) {
+                    sign = -1;
                     if (colorSensor.blue() > colorSensor.red() * 1.5) {
                         driveSystem.setMotorPower(0.0);
                         newState(State.LOGGING);
                         break;
                     }
-                } else if (currentTeam == Team.RED) {
+                } else {
+                    sign = 1;
                     if (colorSensor.red() > colorSensor.blue() * 1.5) {
                         driveSystem.setMotorPower(0.0);
                         newState(State.LOGGING);
                         break;
                     }
                 }
-                driveSystem.drive(0.0f, 0.0f, 0.2f, false);
+                driveSystem.drive(0.0f, 0.3f * sign, 0.0f, false);
                 break;
         }
     }
