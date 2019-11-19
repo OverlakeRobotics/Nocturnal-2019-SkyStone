@@ -58,7 +58,7 @@ public class strafingTests extends BaseOpMode {
                 driveSystem.drive(0, 1, 0, false);
             }
             if(gamepad1.x)//left
-            {f
+            {
                 pushedButton = "X Pushed";
                 driveSystem.drive(0, -1, 0, true);
             }
