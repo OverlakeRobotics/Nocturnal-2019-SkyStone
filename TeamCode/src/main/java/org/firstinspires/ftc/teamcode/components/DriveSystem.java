@@ -115,7 +115,46 @@ public class DriveSystem {
         double frontRightPower = -leftY - rightX - leftX;
         double backLeftPower = -leftY + rightX - leftX;
         double backRightPower = -leftY - rightX + leftX;
-        if(rightX == 0.0f){ //No Strafe
+
+        if (rightX > 0.03f){ //Strafe Right
+            motors.forEach((name, motor) -> {
+                switch(name) {
+                    case FRONTRIGHT:
+                        motor.setPower(-MAX_DRIVE_POWER);
+                        break;
+                    case BACKLEFT:
+                        motor.setPower(-MAX_DRIVE_POWER);
+                        break;
+                    case FRONTLEFT:
+                        motor.setPower(MAX_DRIVE_POWER);
+                        break;
+                    case BACKRIGHT:
+                        motor.setPower(MAX_DRIVE_POWER);
+                        break;
+                }
+            });
+            slowDrive = false;
+        }
+        else if (rightX < 0.03f){ //Strafe Left
+            motors.forEach((name, motor) -> {
+                switch(name) {
+                    case FRONTRIGHT:
+                        motor.setPower(MAX_DRIVE_POWER);
+                        break;
+                    case BACKLEFT:
+                        motor.setPower(MAX_DRIVE_POWER);
+                        break;
+                    case FRONTLEFT:
+                        motor.setPower(-MAX_DRIVE_POWER);
+                        break;
+                    case BACKRIGHT:
+                        motor.setPower(-MAX_DRIVE_POWER);
+                        break;
+                }
+            });
+            slowDrive = false;
+        }
+        else{ //No Strafe
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTRIGHT:
@@ -129,44 +168,6 @@ public class DriveSystem {
                         break;
                     case BACKRIGHT:
                         motor.setPower(Range.clip(backRightPower, -power, power));
-                        break;
-                }
-            });
-            slowDrive = false;
-        }
-        else if (rightX > 0.0f){ //Strafe Right
-            motors.forEach((name, motor) -> {
-                switch(name) {
-                    case FRONTRIGHT:
-                        motor.setPower(-MAX_DRIVE_POWER);
-                        break;
-                    case BACKLEFT:
-                        motor.setPower(-MAX_DRIVE_POWER);
-                        break;
-                    case FRONTLEFT:
-                        motor.setPower(MAX_DRIVE_POWER);
-                        break;
-                    case BACKRIGHT:
-                        motor.setPower(MAX_DRIVE_POWER);
-                        break;
-                }
-            });
-            slowDrive = false;
-        }
-        else if (rightX < 0.0f){ //Strafe Left
-            motors.forEach((name, motor) -> {
-                switch(name) {
-                    case FRONTRIGHT:
-                        motor.setPower(MAX_DRIVE_POWER);
-                        break;
-                    case BACKLEFT:
-                        motor.setPower(MAX_DRIVE_POWER);
-                        break;
-                    case FRONTLEFT:
-                        motor.setPower(-MAX_DRIVE_POWER);
-                        break;
-                    case BACKRIGHT:
-                        motor.setPower(-MAX_DRIVE_POWER);
                         break;
                 }
             });
