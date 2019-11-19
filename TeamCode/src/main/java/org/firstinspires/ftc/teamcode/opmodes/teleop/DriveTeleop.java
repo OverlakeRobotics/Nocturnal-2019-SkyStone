@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,7 +13,14 @@ import java.util.EnumMap;
 
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
-    
+
+    private ColorSensor colorSensor;
+
+    @Override
+    public void init() {
+        colorSensor = hardwareMap.get(ColorSensor.class, "intake_sensor");
+    }
+
     public void loop(){
         float rx = (float) Math.pow(gamepad1.right_stick_x, 5);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
