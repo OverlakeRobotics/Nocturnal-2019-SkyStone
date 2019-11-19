@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
-@TeleOp(name = "MotorEncoderTest", group = "Test")
+@TeleOp(name = "ServoValueFinder", group = "Test")
 public class ServoValueFinder extends BaseOpMode {
 
-    public Servo wrist;
-    public Servo elbow;
-    public Servo pivot;
+    private Servo wrist;
+    private Servo elbow;
+    private Servo pivot;
 
     public void init() {
         this.wrist = hardwareMap.servo.get("wrist");
@@ -21,7 +21,7 @@ public class ServoValueFinder extends BaseOpMode {
 
         // x + b - move wrist
         // y + a - move elbow
-        // bumpers - move pivot
+        // dpad left + right - move pivot
 
         //if button pressed
         if (gamepad1.b) {
@@ -40,11 +40,11 @@ public class ServoValueFinder extends BaseOpMode {
             elbow.setPosition(elbow.getPosition() - 0.01);
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.dpad_left) {
             pivot.setPosition(pivot.getPosition() + 0.01);
         }
 
-        if (gamepad2.right_bumper) {
+        if (gamepad2.dpad_right) {
             pivot.setPosition(pivot.getPosition() - 0.01);
         }
 
