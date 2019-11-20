@@ -203,7 +203,6 @@ public class DriveSystem {
         for (DcMotor motor : motors.values()) {
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if(offset <= 0){
-
                 // Shut down motors
                 setMotorPower(0);
 
@@ -220,7 +219,6 @@ public class DriveSystem {
 
         // Motor has not reached target
         return false;
-
     }
 
     public void setRunMode(DcMotor.RunMode runMode) {
