@@ -39,49 +39,41 @@ public class strafingTests extends BaseOpMode {
     @Override
     public void loop() {
         String pushedButton = "No Buttons Pressed";
-        if(gamepad1.a && !aRecentlyHit)
-        {
+        if(gamepad1.a && !aRecentlyHit) {
             aRecentlyHit = true;
             //Cycle Mode
             if(mode == Modes.DEAD_RECKONING)mode = Modes.IMU;
             if(mode == Modes.IMU)mode = Modes.DISTANCE_SENSOR;
         }
-        else
-        {
+        else {
             aRecentlyHit = false;
         }
-        if(mode == Modes.DEAD_RECKONING)
-        {
-            if(gamepad1.b)//right
-            {
+        if(mode == Modes.DEAD_RECKONING) {
+            if(gamepad1.b){ //right
                 pushedButton = "B Pushed";
                 driveSystem.drive(0, 1, 0, false);
             }
-            if(gamepad1.x)//left
-            {
+            if(gamepad1.x){ //left
                 pushedButton = "X Pushed";
                 driveSystem.drive(0, -1, 0, true);
             }
         }
-        else if (mode == Modes.IMU)
-        { double direction = imuSystem.getPitch();
-            if(Math.abs(direction) > PRECISION_FACTOR)//In real code would need to take target direction into account.
-            {
+        else if (mode == Modes.IMU) {
+            double direction = imuSystem.getPitch();
+            if(Math.abs(direction) > PRECISION_FACTOR)//In real code would need to take target direction into account.{
                 driveSystem.turnAbsolute(0, 0.75);//In real "
             }
-            if(gamepad1.b)//right
-            {
+            if(gamepad1.b){ //right
                 pushedButton = "B Pushed";
                 driveSystem.drive(0, 1, 0, false);
             }
-            if(gamepad1.x)//left
-            {
+            if(gamepad1.x){ //left
+
                 pushedButton = "X Pushed";
                 driveSystem.drive(0, -1, 0, true);
             }
         }
-        else
-        {
+        else{
             telemetry.addLine("EXCEPTION: NO MODE SELECTED.");
         }
         telemetry.addLine("Mode: " + mode.name);
@@ -89,8 +81,7 @@ public class strafingTests extends BaseOpMode {
         telemetry.update();
     }
 
-    private enum SensorPlacement
-    {
+    private enum SensorPlacement{
         FRONT,
         BACK
     }
