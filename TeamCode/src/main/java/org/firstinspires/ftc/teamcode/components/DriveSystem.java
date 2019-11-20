@@ -101,13 +101,13 @@ public class DriveSystem {
             power = MAX_DRIVE_POWER;
         }
         // Prevent small values from causing the robot to drift
-        if (Math.abs(rightX) < 0.01) {
+        if (Math.abs(rightX) < 0.03) {
             rightX = 0.0f;
         }
-        if (Math.abs(leftX) < 0.01) {
+        if (Math.abs(leftX) < 0.03) {
             leftX = 0.0f;
         }
-        if (Math.abs(leftY) < 0.01) {
+        if (Math.abs(leftY) < 0.03) {
             leftY = 0.0f;
         }
 
@@ -116,7 +116,7 @@ public class DriveSystem {
         double backLeftPower = -leftY + rightX - leftX;
         double backRightPower = -leftY - rightX + leftX;
 
-        if (rightX > 0.03f){ //Strafe Right
+        if (rightX > 0.0f){ //Strafe Right
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTRIGHT:
@@ -135,7 +135,7 @@ public class DriveSystem {
             });
             slowDrive = false;
         }
-        else if (rightX < 0.03f){ //Strafe Left
+        else if (rightX < 0.0f){ //Strafe Left
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTRIGHT:
