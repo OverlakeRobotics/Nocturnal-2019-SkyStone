@@ -25,6 +25,7 @@ public abstract class BaseOpMode extends OpMode {
     protected LatchSystem latchSystem;
     protected SpinnySystem spinnySystem;
     protected Vuforia vuforia;
+    protected ColorSensor colorSensor;
     protected VuforiaTrackable skystone;
     protected VuforiaTrackable rearPerimeter;
     protected ArmSystem armSystem;
@@ -48,9 +49,7 @@ public abstract class BaseOpMode extends OpMode {
         }
         spinnySystem = new SpinnySystem(spinnyMap);
 
-        DistanceSensor distanceSensor2;
-        DistanceSensor distanceSensor3;
-        ColorSensor colorSensor;
+        colorSensor = hardwareMap.get(ColorSensor.class, "intake_sensor");;
 
         EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
         servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));
