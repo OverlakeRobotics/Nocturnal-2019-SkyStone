@@ -260,28 +260,25 @@ public class DriveSystem {
      * @param speed     Desired speed of turn
      */
     public boolean onHeading(double speed, double heading) {
-        double steer;
         double leftSpeed;
-        double rightSpeed;
 
         // determine turn power based on +/- error
         double error = getError(heading);
 
+        // If it gets there: stop
         if (Math.abs(error) <= HEADING_THRESHOLD) {
             mTargetHeading = 0;
             setMotorPower(0);
             return true;
         }
 
-        steer = getSteer(error);
-        leftSpeed  = speed * steer;
-        rightSpeed   = -leftSpeed;
-
+        // TODO
+        // Go full speed until 60% there
+        leftSpeed = error > (0.75 * (heading)) ? speed : (speed * getSteer(error));
 
         Log.d(TAG,"Left Speed:" + leftSpeed);
-        Log.d(TAG, "Right Speed:" + rightSpeed);
         // Send desired speeds to motors.
-        tankDrive(leftSpeed, rightSpeed);
+        tankDrive(leftSpeed, -leftSpeed);
 
         return false;
     }
