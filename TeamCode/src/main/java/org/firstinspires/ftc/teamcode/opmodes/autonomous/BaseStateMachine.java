@@ -104,7 +104,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INITIAL:
                 // Initialize
                 // Drive 0.5m (1 tile) to the left
-                newState(State.STATE_FIND_SKYSTONE);
+                newState(State.STATE_TURN_FOR_FOUNDATION);
                 break;
 
             case STATE_FIND_SKYSTONE:
@@ -166,8 +166,8 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_TURN_FOR_FOUNDATION:
                 int sign = currentTeam == Team.RED ? 1 : -1;
-                if (driveSystem.turnAbsolute(90 * sign, 0.75)) {
-                    newState(State.STATE_BACKUP_INTO_FOUNDATION);
+                if (driveSystem.turnAbsolute(90 * sign, 1)) {
+                    newState(State.LOGGING);
                 }
                 break;
 
