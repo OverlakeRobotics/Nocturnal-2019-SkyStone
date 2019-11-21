@@ -31,7 +31,7 @@ public class DriveSystem {
 
 
     public static final String TAG = "DriveSystem";
-    public static final double P_TURN_COEFF = 0.07;     // Larger is more responsive, but also less stable
+    public static final double P_TURN_COEFF = 0.02;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
 
     public EnumMap<MotorNames, DcMotor> motors;
@@ -93,8 +93,6 @@ public class DriveSystem {
      * @param leftX Left X joystick value
      * @param leftY Left Y joystick value in case you couldn't tell from the others
      */
-
-    // TODO
     public void drive(float rightX, float leftX, float leftY, boolean xButton) {
 
 
@@ -260,28 +258,25 @@ public class DriveSystem {
      * @param speed     Desired speed of turn
      */
     public boolean onHeading(double speed, double heading) {
-        double steer;
         double leftSpeed;
-        double rightSpeed;
 
         // determine turn power based on +/- error
         double error = getError(heading);
 
+        // If it gets there: stop
         if (Math.abs(error) <= HEADING_THRESHOLD) {
             mTargetHeading = 0;
             setMotorPower(0);
             return true;
         }
 
-        steer = getSteer(error);
-        leftSpeed  = speed * steer;
-        rightSpeed   = -leftSpeed;
-
+        // TODO
+        // Go full speed until 60% there
+        leftSpeed = error > (0.75 * (heading)) ? speed : (speed * getSteer(error));
 
         Log.d(TAG,"Left Speed:" + leftSpeed);
-        Log.d(TAG, "Right Speed:" + rightSpeed);
         // Send desired speeds to motors.
-        tankDrive(leftSpeed, rightSpeed);
+        tankDrive(leftSpeed, -leftSpeed);
 
         return false;
     }
