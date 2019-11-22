@@ -22,7 +22,9 @@ public abstract class BaseStateMachine extends BaseOpMode {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
         STATE_PARK_AT_LINE,
-        EJECT_STONE,
+        STATE_ALIGN_SKYSTONE,
+        STATE_HORIZONTAL_ALIGN_SKYSTONE,
+        STATE_INTAKE_SKYSTONE,
         STATE_ALIGN_STONE,
         STATE_HORIZONTAL_ALIGN_STONE,
         STATE_INTAKE_STONE,
@@ -30,7 +32,17 @@ public abstract class BaseStateMachine extends BaseOpMode {
         STATE_MOVE_PAST_LINE,
         STATE_TURN_FOR_FOUNDATION,
         STATE_BACKUP_INTO_FOUNDATION,
+        STATE_INITIAL_ALIGN_STONE,
+        STATE_STRAFE_AWAY_FROM_FOUNDATION,
         STATE_MOVE_INTO_WALL,
+        STATE_ALIGN_FOR_BRIDGE,
+        STATE_FIND_STONE,
+        STATE_APPROACH_STONE,
+        STATE_COMPLETE,
+        STATE_DEPOSIT_STONE,
+        STATE_BACKUP_TO_LINE,
+        STATE_TURN_FOR_BACKUP,
+        STATE_BACKUP_FOR_SECOND_STONE,
         LOGGING
     }
 
@@ -72,6 +84,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
     private int skystoneOffset;
     private int distanceToWall;
+    private double alignStone;
     @Override
     public void loop() {
         telemetry.addData("State", mCurrentState);
@@ -112,20 +125,20 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 }
                 break;
 
-            case STATE_ALIGN_STONE:
+            case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
                 if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
 
-            case STATE_HORIZONTAL_ALIGN_STONE:
+            case STATE_HORIZONTAL_ALIGN_SKYSTONE:
                 if (driveSystem.driveToPosition(850, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
 
-            case STATE_INTAKE_STONE:
+            case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
 //                    spinnySystem.spin(false, false);
                     distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
@@ -157,44 +170,121 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_BACKUP_INTO_FOUNDATION:
-                if (driveSystem.driveToPosition(350, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_MOVE_INTO_WALL);
                 }
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(600, DriveSystem.Direction.FORWARD, 1.0)) {
-                    newState(State.STATE_PARK_AT_LINE);
+                if (driveSystem.driveToPosition(700, DriveSystem.Direction.FORWARD, 1.0)) {
+                    newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
                 break;
 
-            case EJECT_STONE:
-                if (mStateTime.milliseconds() >= 1000) {
-//                    spinnySystem.spin(false, false);
-                    newState(State.STATE_PARK_AT_LINE);
+            case STATE_STRAFE_AWAY_FROM_FOUNDATION:
+                if (driveSystem.driveToPosition(500, outsideDirection, 1.0)) {
+                    newState(State.STATE_TURN_FOR_BACKUP);
+                }
+                break;
+
+            case STATE_TURN_FOR_BACKUP:
+                sign = currentTeam == Team.RED ? -1 : 1;
+                if (driveSystem.turnAbsolute(90 * sign, 0.4)) {
+                    newState(State.STATE_BACKUP_FOR_SECOND_STONE);
+                }
+                break;
+
+            case STATE_BACKUP_FOR_SECOND_STONE:
+                if (driveSystem.driveToPosition(1000 - skystoneOffset, DriveSystem.Direction.BACKWARD, 1.0)) {
+                    newState(State.STATE_FIND_STONE);
+                }
+                break;
+
+            case STATE_FIND_STONE:
+                recognitions = tensorflow.getInference();
+                if (recognitions != null) {
+                    for (Recognition recognition : recognitions) {
+                        if (recognition.getLabel().equals("Stone") || recognition.getLabel().equals("Skystone")) {
+                            double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
+                            sign = (int) Math.signum(degrees);
+                            alignStone = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
+                            newState(State.STATE_INITIAL_ALIGN_STONE);
+                            break;
+                        }
+                    }
+                }
+                break;
+
+            case STATE_INITIAL_ALIGN_STONE:
+                if (driveSystem.driveToPosition((int) alignStone, DriveSystem.Direction.FORWARD, 0.75)) {
+                    newState(State.STATE_APPROACH_STONE);
+                }
+                break;
+
+            case STATE_APPROACH_STONE:
+                if (distanceCenter.getDistance(DistanceUnit.MM) < 350) {
+                    driveSystem.stopAndReset();
+                    alignStone = distanceCenter.getDistance(DistanceUnit.MM);
+                    newState(State.STATE_ALIGN_STONE);
                 } else {
-//                    spinnySystem.spin(false, true);
+                    driveSystem.driveToPosition(2000, centerDirection, 0.7);
+                }
+                break;
+
+            case STATE_ALIGN_STONE:
+                if (driveSystem.driveToPosition(250, DriveSystem.Direction.BACKWARD, 1.0)) {
+                    newState(State.STATE_HORIZONTAL_ALIGN_STONE);
+                }
+                break;
+            case STATE_HORIZONTAL_ALIGN_STONE:
+                if (driveSystem.driveToPosition((int) alignStone + 125, centerDirection, 1.0)) {
+                    newState(State.STATE_INTAKE_STONE);
+                }
+                break;
+
+            case STATE_INTAKE_STONE:
+                if (driveSystem.driveToPosition(200, DriveSystem.Direction.FORWARD, 1.0)) {
+                    newState(State.STATE_ALIGN_FOR_BRIDGE);
+                }
+                break;
+
+            case STATE_ALIGN_FOR_BRIDGE:
+                if (driveSystem.driveToPosition((int) alignStone + 250, outsideDirection, 1.0)) {
+                    newState(State.STATE_PARK_AT_LINE);
                 }
                 break;
 
             case STATE_PARK_AT_LINE:
-                // Find the line
-                if (currentTeam == Team.BLUE) {
-                    sign = -1;
-                    if (colorSensor.blue() > colorSensor.red() * 1.5) {
-                        driveSystem.setMotorPower(0.0);
-                        newState(State.LOGGING);
-                        break;
-                    }
-                } else {
-                    sign = 1;
+                if (currentTeam == Team.RED) {
                     if (colorSensor.red() > colorSensor.blue() * 1.5) {
                         driveSystem.setMotorPower(0.0);
-                        newState(State.LOGGING);
-                        break;
+                        newState(State.STATE_DEPOSIT_STONE);
+                    }
+                } else {
+                    if (colorSensor.blue() > colorSensor.red() * 1.5) {
+                        driveSystem.setMotorPower(0.0);
+                        newState(State.STATE_DEPOSIT_STONE);
                     }
                 }
-                driveSystem.drive(0.0f, 0.3f * sign, 0.0f, false);
+                driveSystem.drive(0, 0, -1.0f, false);
+                break;
+
+
+            case STATE_DEPOSIT_STONE:
+                if (mStateTime.milliseconds() > 1250) {
+                    newState(State.STATE_BACKUP_TO_LINE);
+                    // TODO: Deposit stone
+                }
+                break;
+
+            case STATE_BACKUP_TO_LINE:
+                if (driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 1.0)) {
+                    newState(State.STATE_COMPLETE);
+                }
+                break;
+
+            case STATE_COMPLETE:
+
                 break;
         }
     }
@@ -206,4 +296,3 @@ public abstract class BaseStateMachine extends BaseOpMode {
     }
 
 }
-
