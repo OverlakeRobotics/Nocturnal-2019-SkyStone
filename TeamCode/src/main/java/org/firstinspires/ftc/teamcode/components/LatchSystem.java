@@ -4,19 +4,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class LatchSystem {
-    private Servo servo;
-    private final double DOWN_POSITION = 0.9;
-    private final double UP_POSITION = 0.05;
+    private Servo servoLeft;
+    private Servo servoRight;
+    private final double LEFT_DOWN_POSITION = 0.714623491755917;
+    private final double RIGHT_DOWN_POSITION = 0.18877972287358707;
+    private final double LEFT_UP_POSITION = 0.4461410963209186;
+    private final double RIGHT_UP_POSITION = 0.45632352852029817;
     public boolean latched;
 
-    public LatchSystem(Servo servo) {
-        this.servo = servo;
+    public LatchSystem(Servo left, Servo right) {
+        this.servoLeft = left;
+        this.servoRight = right;
         initServo();
     }
 
     private void initServo() {
-        servo.setPosition(UP_POSITION);
-        servo.close();
+        unlatch();
     }
 
     public void run(boolean up, boolean down) {
@@ -27,6 +30,19 @@ public class LatchSystem {
         }
     }
 
+    public void latch() {
+        servoLeft.setPosition(LEFT_DOWN_POSITION);
+        servoLeft.close();
+        servoRight.setPosition(RIGHT_DOWN_POSITION);
+        servoRight.close();
+    }
+
+    public void unlatch() {
+        servoLeft.setPosition(LEFT_UP_POSITION);
+        servoLeft.close();
+        servoRight.setPosition(RIGHT_UP_POSITION);
+        servoRight.close();
+    }
     public void toggle() {
         if (latched) {
             unlatch();
@@ -36,17 +52,5 @@ public class LatchSystem {
             latch();
             latched = true;
         }
-    }
-
-    public void latch() {
-        servo.setPosition(DOWN_POSITION);
-        servo.close();
-        latched = true;
-    }
-
-    public void unlatch() {
-        servo.setPosition(UP_POSITION);
-        servo.close();
-        latched = false;
     }
 }
