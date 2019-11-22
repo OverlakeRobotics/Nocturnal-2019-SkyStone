@@ -22,7 +22,7 @@ public class DriveTeleop extends BaseOpMode {
     public int loopcount = 0;
 
     public void loop(){
-        /*listoftogglebooleans.set(loopcount, gamepad2.a);
+        /*listoftogglebooleans.set(loopcount, gamepad2.a); /Anish is too complicated/
         if(!(listoftogglebooleans.get(loopcount)) && listoftogglebooleans.get(loopcount-1)){
             if(latched){
                 latchSystem.unlatch();
@@ -30,7 +30,7 @@ public class DriveTeleop extends BaseOpMode {
             }
             if(!latched){
                 latchSystem.latch();
-                latched = true;
+                latched = true;  /
             }
         }*/
         if(gamepad2.x && !xRecentlyHit){
