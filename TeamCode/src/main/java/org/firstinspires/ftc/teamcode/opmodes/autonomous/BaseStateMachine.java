@@ -21,6 +21,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
     public enum State {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
+        STATE_PARK_AT_LINE,
         STATE_ALIGN_SKYSTONE,
         STATE_HORIZONTAL_ALIGN_SKYSTONE,
         STATE_INTAKE_SKYSTONE,
@@ -42,7 +43,6 @@ public abstract class BaseStateMachine extends BaseOpMode {
         STATE_BACKUP_TO_LINE,
         STATE_TURN_FOR_BACKUP,
         STATE_BACKUP_FOR_SECOND_STONE,
-        STATE_MOVE_PAST_COLOR_LINE,
         LOGGING
     }
 
@@ -134,13 +134,13 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 }
                 break;
 
-            case STATE_HORIZONTAL_ALIGN_STONE:
+            case STATE_HORIZONTAL_ALIGN_SKYSTONE:
                 if (driveSystem.driveToPosition(850, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_STONE);
                 }
                 break;
 
-            case STATE_INTAKE_STONE:
+            case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
 //                    spinnySystem.spin(false, false);
                     distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
@@ -218,7 +218,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_INITIAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition((int) alignStone - 50, DriveSystem.Direction.FORWARD, 0.75)) {
+                if (driveSystem.driveToPosition((int) alignStone, DriveSystem.Direction.FORWARD, 0.75)) {
                     newState(State.STATE_APPROACH_STONE);
                 }
                 break;
@@ -252,11 +252,11 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_ALIGN_FOR_BRIDGE:
                 if (driveSystem.driveToPosition((int) alignStone + 250, outsideDirection, 1.0)) {
-                    newState(State.STATE_MOVE_PAST_COLOR_LINE);
+                    newState(State.STATE_PARK_AT_LINE);
                 }
                 break;
 
-            case STATE_MOVE_PAST_COLOR_LINE:
+            case STATE_PARK_AT_LINE:
                 if (currentTeam == Team.RED) {
                     if (colorSensor.red() > colorSensor.blue() * 1.5) {
                         driveSystem.setMotorPower(0.0);
@@ -268,7 +268,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                         newState(State.STATE_DEPOSIT_STONE);
                     }
                 }
-                driveSystem.drive(0.0f, 0.3f * sign, 0.0f, false);
+                driveSystem.drive(0, 0, -1.0f, false);
                 break;
 
 
