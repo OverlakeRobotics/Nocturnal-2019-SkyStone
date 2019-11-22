@@ -22,7 +22,7 @@ public class DriveTeleop extends BaseOpMode {
     public int loopcount = 0;
 
     public void loop(){
-        /*listoftogglebooleans.set(loopcount, gamepad2.a); /Anish is too complicated/
+        /*listoftogglebooleans.set(loopcount, gamepad2.a); /Anish is too complicated/ /hello/
         if(!(listoftogglebooleans.get(loopcount)) && listoftogglebooleans.get(loopcount-1)){
             if(latched){
                 latchSystem.unlatch();
