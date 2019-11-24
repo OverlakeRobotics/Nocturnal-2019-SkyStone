@@ -29,7 +29,7 @@ public class DriveSystem {
 
 
     public static final String TAG = "DriveSystem";
-    public static final double P_TURN_COEFF = 0.02;     // Larger is more responsive, but also less stable
+    public static final double P_TURN_COEFF = 0.046;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
 
     public EnumMap<MotorNames, DcMotor> motors;
@@ -280,7 +280,7 @@ public class DriveSystem {
 
         // TODO
         // Go full speed until 60% there
-        leftSpeed = error > (0.75 * (heading)) ? speed : (speed * getSteer(error));
+        leftSpeed = error > Math.abs(0.75 * (mTargetHeading - heading)) ? speed : (speed * getSteer(error));
 
         Log.d(TAG,"Left Speed:" + leftSpeed);
         // Send desired speeds to motors.
