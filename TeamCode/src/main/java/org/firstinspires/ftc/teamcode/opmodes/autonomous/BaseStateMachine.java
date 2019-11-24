@@ -56,7 +56,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
     protected State mCurrentState;    // Current State Machine State.
     protected ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
     private DistanceSensor distanceCenter;
-    private DistanceSensor distanceOutside;
+    // private DistanceSensor distanceOutside;
     private DriveSystem.Direction centerDirection;
     private DriveSystem.Direction outsideDirection;
     private Team currentTeam;
@@ -68,13 +68,13 @@ public abstract class BaseStateMachine extends BaseOpMode {
         this.msStuckDetectInitLoop = 15000;
         if (team == Team.RED) {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
-            distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
+            // distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
             super.setCamera(CameraChoice.WEBCAM1);
             centerDirection = DriveSystem.Direction.LEFT;
             outsideDirection = DriveSystem.Direction.RIGHT;
         } else {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
-            distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
+            // distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
             super.setCamera(CameraChoice.WEBCAM2);
             centerDirection = DriveSystem.Direction.RIGHT;
             outsideDirection = DriveSystem.Direction.LEFT;
@@ -92,7 +92,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
         telemetry.update();
         switch (mCurrentState) {
             case LOGGING:
-                telemetry.addData("DistanceFront", distanceCenter.getDistance(DistanceUnit.MM));
+                // telemetry.addData("DistanceFront", distanceCenter.getDistance(DistanceUnit.MM));
                 telemetry.addData("Color Blue", colorSensor.blue());
                 telemetry.addData("Color Red", colorSensor.red());
                 telemetry.addData("Color Green", colorSensor.green());
@@ -142,7 +142,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
 //                    spinnySystem.spin(false, false);
-                    distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
+                    // distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
                     Log.d(TAG, "Distance to wall: " + distanceToWall);
                     newState(State.STATE_ALIGN_BRIDGE);
                 }
