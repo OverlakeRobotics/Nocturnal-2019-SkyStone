@@ -293,7 +293,7 @@ public class DriveSystem {
 
         // TODO
         // Go full speed until 60% there
-        leftSpeed = error > (0.75 * (heading)) ? speed : (speed * getSteer(error));
+        leftSpeed = error > Math.abs(0.75 * (mTargetHeading - heading)) ? speed : (speed * getSteer(error));
 
         Log.d(TAG,"Left Speed:" + leftSpeed);
         // Send desired speeds to motors.
