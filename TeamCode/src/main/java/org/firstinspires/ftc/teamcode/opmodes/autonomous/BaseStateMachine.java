@@ -43,6 +43,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
         STATE_BACKUP_TO_LINE,
         STATE_TURN_FOR_BACKUP,
         STATE_BACKUP_FOR_SECOND_STONE,
+        STATE_MOVE_PAST_COLOR_LINE,
         LOGGING
     }
 
@@ -115,26 +116,26 @@ public abstract class BaseStateMachine extends BaseOpMode {
                             skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
                             skystoneOffset -= 250;
                             Log.d(TAG, "Skystone offset: " + skystoneOffset);
-                            newState(State.STATE_ALIGN_STONE);
+                            newState(State.STATE_ALIGN_SKYSTONE);
                             break;
                         }
                     }
                 } else {
                     skystoneOffset = 20;
-                    newState(State.STATE_ALIGN_STONE);
+                    newState(State.STATE_ALIGN_SKYSTONE);
                 }
                 break;
 
             case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
                 if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
-                    newState(State.STATE_HORIZONTAL_ALIGN_STONE);
+                    newState(State.STATE_HORIZONTAL_ALIGN_SKYSTONE);
                 }
                 break;
 
             case STATE_HORIZONTAL_ALIGN_SKYSTONE:
                 if (driveSystem.driveToPosition(850, centerDirection, 0.7)) {
-                    newState(State.STATE_INTAKE_STONE);
+                    newState(State.STATE_INTAKE_SKYSTONE);
                 }
                 break;
 
@@ -250,11 +251,11 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_ALIGN_FOR_BRIDGE:
                 if (driveSystem.driveToPosition((int) alignStone + 250, outsideDirection, 1.0)) {
-                    newState(State.STATE_PARK_AT_LINE);
+                    newState(State.STATE_MOVE_PAST_COLOR_LINE);
                 }
                 break;
 
-            case STATE_PARK_AT_LINE:
+            case STATE_MOVE_PAST_COLOR_LINE:
                 if (currentTeam == Team.RED) {
                     if (colorSensor.red() > colorSensor.blue() * 1.5) {
                         driveSystem.setMotorPower(0.0);
