@@ -45,13 +45,13 @@ public class TestDrive extends TestOpMode {
 
             case STATE_TURN_90:
                 // Initialize
-                if (driveSystem.turn(90, 0.5)) {
+                if (driveSystem.turn(90, 1)) {
                     newState(State.STATE_TURN_BACK);
                 }
                 break;
             case STATE_TURN_BACK:
                 // Initialize
-                if (driveSystem.turnAbsolute(0, 0.5)) {
+                if (driveSystem.turnAbsolute(0, 1)) {
                     newState(State.STATE_FINISHED);
                 }
                 break;
