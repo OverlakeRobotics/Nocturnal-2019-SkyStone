@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
@@ -8,11 +9,13 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 public class TestBlockSensor extends BaseOpMode {
 
     public boolean color;
+
+    @Override
     public void init() {
-        super.init();
+        colorSensor = hardwareMap.get(ColorSensor.class, "intake_sensor");
     }
     public void loop() {
-        if (colorSensor.alpha() > 150) {
+        if (colorSensor.alpha() > 1500) {
             color = true;
         }
         else {

@@ -17,15 +17,15 @@ public class DriveTeleop extends BaseOpMode {
         float rx = (float) Math.pow(gamepad1.right_stick_x, 5);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
-        driveSystem.drive(rx, lx, -ly, gamepad1.x);
+        driveSystem.drive(rx, lx, -ly);
         String armReturn;
         if (colorSensor.red() < 10) { // subject to change obviously
-            spinnySystem.spin(false, false);
+            //spinnySystem.spin(false, false);
             armReturn = armSystem.run(true, false, false, false,
                     false, false, false, false, false, 1, 0.005);
         }
         else {
-            spinnySystem.spin(gamepad1.left_bumper, gamepad1.right_bumper);
+            //spinnySystem.spin(gamepad1.left_bumper, gamepad1.right_bumper);
             armReturn = armSystem.run(gamepad2.b, gamepad2.dpad_left, gamepad2.dpad_right, gamepad2.dpad_up,
                     gamepad2.dpad_down, gamepad2.right_bumper, gamepad2.left_bumper, gamepad2.a,
                     true,1, 0.005);
