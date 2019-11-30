@@ -22,16 +22,17 @@ public class DriveSystem {
         }
     }
 
-    public static final double SLOW_DRIVE_POWER = 0.3;
+    public static final double SLOW_DRIVE_POWER = 0.28;
     public static final double MAX_DRIVE_POWER = 1.0;
 
-    public int counter = 0;
+    public int counter;
     public boolean slowDrive;
     public double power;
 
 
     public static final String TAG = "DriveSystem";
-    public static final double P_TURN_COEFF = 0.045;     // Larger is more responsive, but also less stable
+
+    public static final double P_TURN_COEFF = 0.029;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
 
     public EnumMap<MotorNames, DcMotor> motors;
@@ -40,6 +41,8 @@ public class DriveSystem {
 
     private int mTargetTicks;
     private double mTargetHeading;
+    private double mInitHeading;
+    private int mTurnCounter;
 
     // 12.566370614359173 inches circumference of a wheel
     // 319.185813604722993 mm circumference of a wheel
@@ -53,6 +56,7 @@ public class DriveSystem {
     public DriveSystem(EnumMap<MotorNames, DcMotor> motors, BNO055IMU imu) {
         this.motors = motors;
         mTargetTicks = 0;
+        mTurnCounter = 0;
         initMotors();
         imuSystem = new IMUSystem(imu);
     }
@@ -93,8 +97,6 @@ public class DriveSystem {
      * @param leftX Left X joystick value
      * @param leftY Left Y joystick value in case you couldn't tell from the others
      */
-
-    // TODO
     public void drive(float rightX, float leftX, float leftY, boolean xButton) {
 
 
@@ -249,8 +251,11 @@ public class DriveSystem {
             Log.d(TAG, "Degrees: " + degrees);
         }
         double difference = mTargetHeading - heading;
+        if (mTurnCounter == 0) {
+            mInitHeading = difference;
+        }
         Log.d(TAG,"Difference: " + difference);
-
+        mTurnCounter++;
         return onHeading(maxPower, heading);
 
     }
@@ -260,28 +265,28 @@ public class DriveSystem {
      * @param speed     Desired speed of turn
      */
     public boolean onHeading(double speed, double heading) {
-        double steer;
         double leftSpeed;
-        double rightSpeed;
 
         // determine turn power based on +/- error
         double error = getError(heading);
 
+        // If it gets there: stop
         if (Math.abs(error) <= HEADING_THRESHOLD) {
             mTargetHeading = 0;
             setMotorPower(0);
+            mTurnCounter = 0;
             return true;
         }
 
-        steer = getSteer(error);
-        leftSpeed  = speed * steer;
-        rightSpeed   = -leftSpeed;
+        // TODO
+        // Go full speed until 60% there
+        leftSpeed = error > Math.abs(0.85 * (mInitHeading)) ? speed : (speed * getSteer(error));
+        // leftSpeed = speed * getSteer(error);
 
 
         Log.d(TAG,"Left Speed:" + leftSpeed);
-        Log.d(TAG, "Right Speed:" + rightSpeed);
         // Send desired speeds to motors.
-        tankDrive(leftSpeed, rightSpeed);
+        tankDrive(leftSpeed, -leftSpeed);
 
         return false;
     }
