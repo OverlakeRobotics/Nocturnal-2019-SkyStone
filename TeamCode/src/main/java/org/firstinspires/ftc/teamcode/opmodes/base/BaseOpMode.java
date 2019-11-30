@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.IntakeSystem;
 import org.firstinspires.ftc.teamcode.components.LatchSystem;
-import org.firstinspires.ftc.teamcode.components.SpinnySystem;
 import org.firstinspires.ftc.teamcode.components.Tensorflow;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 
@@ -18,7 +18,7 @@ public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
     protected LatchSystem latchSystem;
-    protected SpinnySystem spinnySystem;
+    protected IntakeSystem intakeSystem;
     protected Tensorflow tensorflow;
     protected ArmSystem armSystem;
     private boolean stopRequested;

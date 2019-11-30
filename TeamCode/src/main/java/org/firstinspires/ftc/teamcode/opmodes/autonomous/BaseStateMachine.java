@@ -141,14 +141,14 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
-//                    spinnySystem.spin(false, false);
+                    intakeSystem.stop();
                     distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
                     Log.d(TAG, "Distance to wall: " + distanceToWall);
                     newState(State.STATE_ALIGN_BRIDGE);
                 }
-//                else {
-//                    spinnySystem.spin(true, false);
-//                }
+                else {
+                    intakeSystem.suck();
+                }
                 break;
 
             case STATE_ALIGN_BRIDGE:
@@ -267,14 +267,16 @@ public abstract class BaseStateMachine extends BaseOpMode {
                         newState(State.STATE_DEPOSIT_STONE);
                     }
                 }
-                driveSystem.drive(0, 0, -1.0f, false);
+                driveSystem.drive(0, 0, -1.0f);
                 break;
 
 
             case STATE_DEPOSIT_STONE:
                 if (mStateTime.milliseconds() > 1250) {
+                    intakeSystem.stop();
                     newState(State.STATE_BACKUP_TO_LINE);
-                    // TODO: Deposit stone
+                } else {
+                    intakeSystem.unsuck();
                 }
                 break;
 
