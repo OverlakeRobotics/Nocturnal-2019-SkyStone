@@ -21,7 +21,6 @@ public abstract class BaseStateMachine extends BaseOpMode {
     public enum State {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
-        STATE_PARK_AT_LINE,
         STATE_ALIGN_SKYSTONE,
         STATE_HORIZONTAL_ALIGN_SKYSTONE,
         STATE_INTAKE_SKYSTONE,
@@ -56,7 +55,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
     protected State mCurrentState;    // Current State Machine State.
     protected ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
     private DistanceSensor distanceCenter;
-    // private DistanceSensor distanceOutside;
+    private DistanceSensor distanceOutside;
     private DriveSystem.Direction centerDirection;
     private DriveSystem.Direction outsideDirection;
     private Team currentTeam;
@@ -70,13 +69,13 @@ public abstract class BaseStateMachine extends BaseOpMode {
         this.msStuckDetectInitLoop = 15000;
         if (team == Team.RED) {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
-            // distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
+            distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
             super.setCamera(CameraChoice.WEBCAM1);
             centerDirection = DriveSystem.Direction.LEFT;
             outsideDirection = DriveSystem.Direction.RIGHT;
         } else {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
-            // distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
+            distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
             super.setCamera(CameraChoice.WEBCAM2);
             centerDirection = DriveSystem.Direction.RIGHT;
             outsideDirection = DriveSystem.Direction.LEFT;
@@ -105,7 +104,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INITIAL:
                 // Initialize
                 // Drive 0.5m (1 tile) to the left
-                newState(State.STATE_TURN_FOR_FOUNDATION);
+                newState(State.STATE_FIND_SKYSTONE);
                 break;
 
             case STATE_FIND_SKYSTONE:
@@ -144,7 +143,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
 //                    spinnySystem.spin(false, false);
-                    // distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
+                    distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
                     Log.d(TAG, "Distance to wall: " + distanceToWall);
                     newState(State.STATE_ALIGN_BRIDGE);
                 }
@@ -160,15 +159,15 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(1400 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(1600 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_TURN_FOR_FOUNDATION);
                 }
                 break;
 
             case STATE_TURN_FOR_FOUNDATION:
                 int sign = currentTeam == Team.RED ? 1 : -1;
-                if (driveSystem.turnAbsolute(90 * sign, 1)) {
-                    newState(State.LOGGING);
+                if (driveSystem.turnAbsolute(90 * sign, 0.75)) {
+                    newState(State.STATE_BACKUP_INTO_FOUNDATION);
                 }
                 break;
 
@@ -219,7 +218,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_INITIAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition((int) alignStone, DriveSystem.Direction.FORWARD, 0.75)) {
+                if (driveSystem.driveToPosition((int) alignStone - 50, DriveSystem.Direction.FORWARD, 0.75)) {
                     newState(State.STATE_APPROACH_STONE);
                 }
                 break;
