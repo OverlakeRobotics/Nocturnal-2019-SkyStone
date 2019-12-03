@@ -17,10 +17,10 @@ import java.util.EnumMap;
 public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
-    protected LatchSystem latchSystem;
-    protected IntakeSystem intakeSystem;
+//    protected LatchSystem latchSystem;
+//    protected IntakeSystem intakeSystem;
     protected Tensorflow tensorflow;
-    protected ArmSystem armSystem;
+//    protected ArmSystem armSystem;
     private boolean stopRequested;
 
     public void init(){
@@ -33,7 +33,7 @@ public abstract class BaseOpMode extends OpMode {
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
-        latchSystem = new LatchSystem(hardwareMap.get(Servo.class, "latchLeft"), hardwareMap.get(Servo.class, "latchRight"));
+//        latchSystem = new LatchSystem(hardwareMap.get(Servo.class, "latchLeft"), hardwareMap.get(Servo.class, "latchRight"));
 
         lightSystem = new LightSystem(hardwareMap.get(DigitalChannel.class, "right_light"), hardwareMap.get(DigitalChannel.class, "left_light"));
         lightSystem.off();
