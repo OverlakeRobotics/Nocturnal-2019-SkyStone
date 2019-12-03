@@ -31,7 +31,6 @@ public class TestTensorflow extends BaseOpMode {
         super.setCamera(Vuforia.CameraChoice.WEBCAM1);
     }
 
-    private double skystoneOffset;
     @Override
     public void loop() {
         switch (mCurrentState) {
@@ -42,7 +41,7 @@ public class TestTensorflow extends BaseOpMode {
                         if (recognition.getLabel().equals("Skystone")) {
                             double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
                             int sign = (int) Math.signum(degrees);
-                            skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
+                            double skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
                             skystoneOffset -= 250;
                             telemetry.addData("Skystone offset", skystoneOffset);
                         }

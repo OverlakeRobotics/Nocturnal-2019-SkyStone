@@ -17,10 +17,10 @@ import java.util.EnumMap;
 public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
-    protected LatchSystem latchSystem;
-    protected IntakeSystem intakeSystem;
+//    protected LatchSystem latchSystem;
+//    protected IntakeSystem intakeSystem;
     protected Tensorflow tensorflow;
-    protected ArmSystem armSystem;
+//    protected ArmSystem armSystem;
     private boolean stopRequested;
 
     public void init(){
@@ -33,13 +33,13 @@ public abstract class BaseOpMode extends OpMode {
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
-        latchSystem = new LatchSystem(hardwareMap.get(Servo.class, "latchLeft"), hardwareMap.get(Servo.class, "latchRight"));
+//        latchSystem = new LatchSystem(hardwareMap.get(Servo.class, "latchLeft"), hardwareMap.get(Servo.class, "latchRight"));
 
-        EnumMap<IntakeSystem.MotorNames, DcMotor> intakeMap = new EnumMap<>(IntakeSystem.MotorNames.class);
-        for(IntakeSystem.MotorNames name : IntakeSystem.MotorNames.values()){
-            intakeMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        intakeSystem = new IntakeSystem(intakeMap);
+//        EnumMap<IntakeSystem.MotorNames, DcMotor> intakeMap = new EnumMap<>(IntakeSystem.MotorNames.class);
+//        for(IntakeSystem.MotorNames name : IntakeSystem.MotorNames.values()){
+//            intakeMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
+//        }
+//        intakeSystem = new IntakeSystem(intakeMap);
 
 //        EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
 //        servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "gripper"));

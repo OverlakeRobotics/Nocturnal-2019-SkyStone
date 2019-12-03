@@ -141,13 +141,13 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
-                    intakeSystem.stop();
+//                    intakeSystem.stop();
                     distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
                     Log.d(TAG, "Distance to wall: " + distanceToWall);
                     newState(State.STATE_ALIGN_BRIDGE);
                 }
                 else {
-                    intakeSystem.suck();
+//                    intakeSystem.suck();
                 }
                 break;
 
@@ -165,7 +165,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_TURN_FOR_FOUNDATION:
                 int sign = currentTeam == Team.RED ? 1 : -1;
-                if (driveSystem.turnAbsolute(90 * sign, 0.75)) {
+                if (driveSystem.turnAbsolute(90 * sign, 1.0)) {
                     newState(State.STATE_BACKUP_INTO_FOUNDATION);
                 }
                 break;
@@ -177,7 +177,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(700, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(500, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
                 break;
@@ -189,8 +189,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_TURN_FOR_BACKUP:
-                sign = currentTeam == Team.RED ? -1 : 1;
-                if (driveSystem.turnAbsolute(90 * sign, 0.4)) {
+                if (driveSystem.turnAbsolute(0, 1.0)) {
                     newState(State.STATE_BACKUP_FOR_SECOND_STONE);
                 }
                 break;
@@ -273,10 +272,10 @@ public abstract class BaseStateMachine extends BaseOpMode {
 
             case STATE_DEPOSIT_STONE:
                 if (mStateTime.milliseconds() > 1250) {
-                    intakeSystem.stop();
+//                    intakeSystem.stop();
                     newState(State.STATE_BACKUP_TO_LINE);
                 } else {
-                    intakeSystem.unsuck();
+//                    intakeSystem.unsuck();
                 }
                 break;
 
