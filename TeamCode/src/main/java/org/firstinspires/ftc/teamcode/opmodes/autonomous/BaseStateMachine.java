@@ -178,7 +178,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(500, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(400, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
                 break;
