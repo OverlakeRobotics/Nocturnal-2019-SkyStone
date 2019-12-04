@@ -48,6 +48,7 @@ public class ArmSystem {
 
     // These fields are used only for calibration. Don't touch them outside of that method.
     private boolean calibrated = false;
+
     private enum Direction {
         UP, DOWN;
         private static Direction reverse(Direction direction){
@@ -66,7 +67,7 @@ public class ArmSystem {
 
     // This can actually be more, like 5000, but we're not going to stack that high
     // for the first comp and the servo wires aren't long enough yet
-    private final int MAX_HEIGHT = 3000;
+    private final int MAX_HEIGHT = calculateHeight(9);
     private final int INCREMENT_HEIGHT = 564; // how much the ticks increase when a block is added
     private final int START_HEIGHT = 366; // Height of the foundation
 
@@ -138,12 +139,12 @@ public class ArmSystem {
         // for example if we want to turn on / off fastmode, that can be done easily.
         // Double values ordered Pivot, elbow, wrist.
         this.positionEnumMap = new EnumMap<Position, double[]>(Position.class);
-        positionEnumMap.put(Position.POSITION_NORTH, new double[] {0.99, 0.58, 0.05});
-        positionEnumMap.put(Position.POSITION_EAST, new double[] {0.99, 0.22, 0.37});
-        positionEnumMap.put(Position.POSITION_WEST, new double[] {0.99, 0.22, 0.72});
-        positionEnumMap.put(Position.POSITION_SOUTH, new double[] {0.99, 0.22, 0.37});
-        positionEnumMap.put(Position.POSITION_HOME, new double[] {0.19, 0.15, 0.79});
-        positionEnumMap.put(Position.POSITION_CAPSTONE, new double[] {0.42, 0.31, 0.75});
+        positionEnumMap.put(Position.POSITION_NORTH, new double[] {0.16, 0.58, 0.05});
+        positionEnumMap.put(Position.POSITION_EAST, new double[] {0.16, 0.22, 0.37});
+        positionEnumMap.put(Position.POSITION_WEST, new double[] {0.16, 0.22, 0.72});
+        positionEnumMap.put(Position.POSITION_SOUTH, new double[] {0.16, 0.22, 0.37});
+        positionEnumMap.put(Position.POSITION_HOME, new double[] {0.98, 0.17, 0.79});
+        positionEnumMap.put(Position.POSITION_CAPSTONE, new double[] {0.78, 0.31, 0.75});
     }
 
     /*
@@ -170,11 +171,9 @@ public class ArmSystem {
         this.SERVO_SPEED = armSpeed;
 
         if (west) {
-            toReturn += "Moving west!";
             movePresetPosition(Position.POSITION_WEST);
         } else if (east) {
             movePresetPosition(Position.POSITION_EAST);
-            toReturn += "Moving east!";
         } else if (south) {
             movePresetPosition(Position.POSITION_SOUTH);
         } else if (north) {
@@ -218,6 +217,8 @@ public class ArmSystem {
         } else if (!gripperButton) {
             m_gripper = false;
         }
+        toReturn += gripper.getPosition();
+
         String temp = toReturn;
         toReturn = "";
         return temp;
@@ -270,8 +271,6 @@ public class ArmSystem {
             }
             setSliderHeight(1);
             if (getSliderPos() == calculateHeight(1)) {
-                // We know we can set fastmode to true here because we always want it to go fast
-                // to the home position
                 movePresetPosition(Position.POSITION_HOME);
                 openGripper();
                 m_homeDirection = Direction.DOWN;
@@ -414,6 +413,7 @@ public class ArmSystem {
 
     // Pos should be the # of blocks high it should be
     private void setSliderHeight(int pos) {
+        if (calculateHeight(pos) < calibrationDistance || calculateHeight(pos) > MAX_HEIGHT) { return; }
         targetHeight = pos;
         slider.setTargetPosition(calculateHeight(targetHeight));
         slider.setDirection(Direction.motorDirection(Direction.UP));
