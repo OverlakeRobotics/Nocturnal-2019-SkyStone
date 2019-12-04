@@ -29,7 +29,7 @@ public class DriveSystem {
 
 
     public static final String TAG = "DriveSystem";
-    public static final double P_TURN_COEFF = 0.015;     // Larger is more responsive, but also less stable
+    public static final double P_TURN_COEFF = 0.012;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
 
     public EnumMap<MotorNames, DcMotor> motors;
@@ -69,7 +69,6 @@ public class DriveSystem {
     }
 
     public void initMotors() {
-
         motors.forEach((name, motor) -> {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -297,9 +296,13 @@ public class DriveSystem {
         // leftSpeed = speed * getSteer(error);
 
 
+        if (leftSpeed < 0) {
+            leftSpeed = Range.clip(leftSpeed, -1.0, -0.15);
+        } else {
+            leftSpeed = Range.clip(leftSpeed, 0.15, 1.0);
+        }
         Log.d(TAG,"Left Speed: " + leftSpeed);
         // Send desired speeds to motors.
-        leftSpeed = Range.clip(leftSpeed, 0.08, 1.0);
         tankDrive(leftSpeed, -leftSpeed);
 
         return false;
