@@ -22,7 +22,7 @@ public class JustTheArmSystem extends OpMode {
         armSystem = new ArmSystem(
                 servoEnumMap,
                 hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"),
-                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"), false);
+                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"));
     }
 
     public void loop() {
@@ -31,9 +31,25 @@ public class JustTheArmSystem extends OpMode {
                       boolean up, boolean down, boolean gripperButton, boolean assist,
                       double sliderSpeed, double armSpeed, boolean fastMode) {
          */
-        String armReturn = armSystem.run(gamepad2.x, gamepad2.y, gamepad2.dpad_left, gamepad2.dpad_right, gamepad2.dpad_up,
-                gamepad2.dpad_down, gamepad2.right_bumper, gamepad2.left_bumper, gamepad2.a,
-                true,1, 0.005, true);
-        telemetry.addData("", armReturn);
+        if (gamepad2.x) {
+            armSystem.moveHome();
+            return;
+        } else if (gamepad2.y) {
+            armSystem.moveCapstone();
+        } else if (gamepad2.dpad_left) {
+            armSystem.moveWest();
+        } else if (gamepad2.dpad_right) {
+            armSystem.moveEast();
+        } else if (gamepad2.dpad_up) {
+            armSystem.moveNorth();
+        } else if (gamepad2.dpad_down) {
+            armSystem.moveSouth();
+        } else if (gamepad2.right_bumper) {
+            armSystem.moveUp(1);
+        } else if (gamepad2.left_bumper) {
+            armSystem.moveDown(1);
+        } else if (gamepad2.a) {
+            armSystem.moveGripper();
+        }
     }
 }
