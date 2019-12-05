@@ -79,9 +79,9 @@ public class ArmSystem {
     }
 
     public static final String TAG = "ArmSystem"; // for debugging
-    private boolean mGripper;
-    private boolean mUp;
-    private boolean mDown;
+    private boolean gripped;
+    private boolean goUp;
+    private boolean goDown;
 
     /*
      If the robot is at the bottom of the screen, and X is the block:
@@ -142,40 +142,40 @@ public class ArmSystem {
 
     // Slide up 1 increment
     public void moveUp(double sliderSpeed) {
-        boolean isUp = mUp;
+        boolean isUp = goUp;
         resetStatus();
         if (!isUp) {
             setSliderHeight(++targetHeight);
-            mUp = true;
+            goUp = true;
         }
     }
 
     // Slide down 1 increment
     public void moveDown(double sliderSpeed) {
-        boolean isDown = mDown;
+        boolean isDown = goDown;
         resetStatus();
         if (!isDown) {
             setSliderHeight(--targetHeight);
-            mDown = true;
+            goDown = true;
         }
         updateHeight(sliderSpeed);
     }
 
     // Toggle gripper
     public void moveGripper() {
-        boolean isGripped = mGripper;
+        boolean isGripped = gripped;
         resetStatus();
         if (!isGripped) {
             toggleGripper();
-            mGripper = true;
+            gripped = true;
         }
     }
 
     // Reset vars to keep track of current movements
     private void resetStatus() {
-        mGripper = false;
-        mDown = false;
-        mUp = false;
+        gripped = false;
+        goDown = false;
+        goUp = false;
     }
 
 
