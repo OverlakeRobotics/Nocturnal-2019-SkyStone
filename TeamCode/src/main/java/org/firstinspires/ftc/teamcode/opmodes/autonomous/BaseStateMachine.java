@@ -182,7 +182,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(650, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(600, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
                 break;
@@ -198,7 +198,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                     newState(State.STATE_BACKUP_FOR_SECOND_STONE);
                     // Make it move more when it backs up
                     if (skystoneOffset == DEAD_RECKON_SKYSTONE) {
-                        skystoneOffset = 50;
+                        skystoneOffset = 200;
                     }
                 }
                 break;
