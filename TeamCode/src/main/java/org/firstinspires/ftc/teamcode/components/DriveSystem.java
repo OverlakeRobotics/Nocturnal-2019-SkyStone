@@ -144,9 +144,7 @@ public class DriveSystem {
 
     public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower) {
         if(mTargetTicks == 0){
-            // TODO: This line below was replaced with the line below the aforementioned
             mTargetTicks = direction == Direction.BACKWARD ? -ticks : ticks;
-//            mTargetTicks = ticks;
             motors.forEach((name, motor) -> {
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 if(Direction.isStrafe(direction)) {

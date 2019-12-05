@@ -38,8 +38,8 @@ public abstract class BaseStateMachine extends BaseAutonomous {
     }
 
     private final static String TAG = "BaseStateMachine";
-    protected State mCurrentState;                         // Current State Machine State.
-    protected ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
+    private State mCurrentState;                         // Current State Machine State.
+    private ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
 
     public void init(Team team) {
         super.init(team);
@@ -50,7 +50,6 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
     private int skystoneOffset;
     private static final int DEAD_RECKON_SKYSTONE = 20;
-    private int distanceToWall;
     private double alignStone;
     @Override
     public void loop() {
@@ -111,13 +110,10 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_INTAKE_SKYSTONE:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
-//                    intakeSystem.stop();
-                    distanceToWall = (int) distanceOutside.getDistance(DistanceUnit.MM);
-                    Log.d(TAG, "Distance to wall: " + distanceToWall);
+                    intakeSystem.stop();
                     newState(State.STATE_ALIGN_BRIDGE);
-                }
-                else {
-//                    intakeSystem.suck();
+                } else {
+                    intakeSystem.suck();
                 }
                 break;
 
@@ -142,12 +138,14 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_BACKUP_INTO_FOUNDATION:
                 if (driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 1.0)) {
+                    latchSystem.latch();
                     newState(State.STATE_MOVE_INTO_WALL);
                 }
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(600, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(550, DriveSystem.Direction.FORWARD, 1.0)) {
+                    latchSystem.unlatch();
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
                 break;
@@ -249,10 +247,10 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_DEPOSIT_STONE:
                 if (mStateTime.milliseconds() > 1250) {
-//                    intakeSystem.stop();
+                    intakeSystem.stop();
                     newState(State.STATE_BACKUP_TO_LINE);
                 } else {
-//                    intakeSystem.unsuck();
+                    intakeSystem.unsuck();
                 }
                 break;
 
@@ -268,7 +266,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
         }
     }
 
-    public void newState(State newState) {
+    private void newState(State newState) {
         // Restarts the state clock as well as the state
         mStateTime.reset();
         mCurrentState = newState;

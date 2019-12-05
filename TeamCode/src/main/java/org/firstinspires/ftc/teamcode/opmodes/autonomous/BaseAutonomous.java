@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.Tensorflow;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
