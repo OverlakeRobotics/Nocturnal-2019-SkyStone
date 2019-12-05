@@ -29,7 +29,7 @@ public class DriveSystem {
 
 
     public static final String TAG = "DriveSystem";
-    public static final double P_TURN_COEFF = 0.012;     // Larger is more responsive, but also less stable
+    public static final double P_TURN_COEFF = 0.018;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
 
     public EnumMap<MotorNames, DcMotor> motors;
@@ -177,7 +177,7 @@ public class DriveSystem {
 
         for (DcMotor motor : motors.values()) {
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
-            if(offset <= 10){
+            if(offset <= 15){
                 // Shut down motors
                 setMotorPower(0);
                 // Reset motors to default run mode
