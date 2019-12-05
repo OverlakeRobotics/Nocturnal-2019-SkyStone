@@ -44,7 +44,7 @@ public class ArmSystem {
     };
 
     private Direction direction;
-
+    private boolean isHoming;
     // Don't change this unless in calibrate() or init(), is read in the calculateHeight method
     private int calibrationDistance;
 
@@ -107,6 +107,7 @@ public class ArmSystem {
         this.calibrationDistance = slider.getCurrentPosition();
         this.direction = Direction.UP;
         this.slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.isHoming = false;
     }
 
     // Go to "west" position
@@ -198,6 +199,7 @@ public class ArmSystem {
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
     private void goHome() {
+        isHoming = true;
         if (direction == Direction.UP) {
             int diff = getSliderPos() - calculateHeight(0);
             setSliderHeight(1);
@@ -205,6 +207,7 @@ public class ArmSystem {
                 movePresetPosition(Position.POSITION_HOME);
                 openGripper();
                 direction = Direction.DOWN;
+                isHoming = false;
             }
         }
         updateHeight(1);
@@ -266,4 +269,8 @@ public class ArmSystem {
     }
 
     public int getSliderPos() { return slider.getCurrentPosition(); }
+
+    public boolean isHoming() {
+        return isHoming;
+    }
 }

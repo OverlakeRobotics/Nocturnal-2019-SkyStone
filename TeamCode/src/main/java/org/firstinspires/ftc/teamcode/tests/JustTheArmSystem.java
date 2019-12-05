@@ -23,7 +23,9 @@ public class JustTheArmSystem extends OpMode {
     }
 
     public void loop() {
-        if (gamepad2.x) {
+        if  (armSystem.isHoming()) {
+            return;
+        } else if (gamepad2.x) {
             armSystem.moveHome();
             return;
         } else if (gamepad2.y) {
