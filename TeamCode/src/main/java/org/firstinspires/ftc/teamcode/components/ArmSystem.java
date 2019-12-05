@@ -141,8 +141,9 @@ public class ArmSystem {
 
     // Slide up 1 increment
     public void moveUp(double sliderSpeed) {
+        boolean isUp = mUp;
         resetStatus();
-        if (up && !mUp) {
+        if (!isUp) {
             setSliderHeight(++targetHeight);
             mUp = true;
         }
@@ -150,8 +151,9 @@ public class ArmSystem {
 
     // Slide down 1 increment
     public void moveDown(double sliderSpeed) {
+        boolean isDown = mDown;
         resetStatus();
-        if (down && !mDown) {
+        if (!isDown) {
             setSliderHeight(--targetHeight);
             mDown = true;
         }
@@ -160,8 +162,9 @@ public class ArmSystem {
 
     // Toggle gripper
     public void moveGripper() {
+        boolean isGripped = mGripper;
         resetStatus();
-        if (!mGripper) {
+        if (!isGripped) {
             toggleGripper();
             mGripper = true;
         }
