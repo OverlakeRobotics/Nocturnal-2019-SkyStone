@@ -30,7 +30,7 @@ public class ArmSystem {
     private final double GRIPPER_CLOSE = 0.3;
 
     // This is in block positions, not ticks
-    private int targetHeight;
+    public int targetHeight;
 
     private enum Direction {
         UP, DOWN;
@@ -140,45 +140,6 @@ public class ArmSystem {
         goHome();
     }
 
-    // Slide up 1 increment
-    public void moveUp(double sliderSpeed) {
-        boolean isUp = goUp;
-        resetStatus();
-        if (!isUp) {
-            setSliderHeight(++targetHeight);
-            goUp = true;
-        }
-    }
-
-    // Slide down 1 increment
-    public void moveDown(double sliderSpeed) {
-        boolean isDown = goDown;
-        resetStatus();
-        if (!isDown) {
-            setSliderHeight(--targetHeight);
-            goDown = true;
-        }
-        updateHeight(sliderSpeed);
-    }
-
-    // Toggle gripper
-    public void moveGripper() {
-        boolean isGripped = gripped;
-        resetStatus();
-        if (!isGripped) {
-            toggleGripper();
-            gripped = true;
-        }
-    }
-
-    // Reset vars to keep track of current movements
-    private void resetStatus() {
-        gripped = false;
-        goDown = false;
-        goUp = false;
-    }
-
-
     // These are public for debugging purposes
     public double getGripper() {
         return gripper.getPosition();
@@ -222,7 +183,7 @@ public class ArmSystem {
         gripper.setPosition(GRIPPER_CLOSE);
     }
 
-    private void toggleGripper() {
+    public void toggleGripper() {
         if (Math.abs(gripper.getPosition() - GRIPPER_CLOSE)
                 < Math.abs(gripper.getPosition() - GRIPPER_OPEN)) {
             // If we're in here, the gripper is closer to it's closed position
@@ -234,7 +195,7 @@ public class ArmSystem {
 
     private void placeStone() {
         openGripper();
-        moveUp(1);
+        setSliderHeight(getSliderPos() + 1);
         movePresetPosition(Position.POSITION_HOME);
         moveHome();
     }
@@ -252,11 +213,14 @@ public class ArmSystem {
     }
 
     // Pos should be the # of blocks high it should be
-    private void setSliderHeight(int pos) {
+    public void setSliderHeight(int pos) {
+        /*
         int calculatedHeight = calculateHeight(pos);
         if (calculatedHeight < calibrationDistance || calculatedHeight > MAX_HEIGHT) {
             return;
         }
+
+         */
         targetHeight = pos;
         slider.setTargetPosition(calculateHeight(targetHeight));
         slider.setDirection(Direction.motorDirection(Direction.UP));
@@ -269,8 +233,8 @@ public class ArmSystem {
         return START_HEIGHT + calibrationDistance + (pos * INCREMENT_HEIGHT);
     }
 
-    // Should be called every loop
-    private void updateHeight(double speed) {
+    // Must be called every loop
+    public void updateHeight(double speed) {
         slider.setPower(speed);
         slider.setTargetPosition(calculateHeight(targetHeight));
     }

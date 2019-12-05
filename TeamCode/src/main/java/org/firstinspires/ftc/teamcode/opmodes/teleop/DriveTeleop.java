@@ -25,7 +25,31 @@ public class DriveTeleop extends BaseOpMode {
             intakeSystem.unsuck();
         }
         latchSystem.run(gamepad2.x, gamepad2.y);
-        String armReturn = armSystem.run(gamepad2, true,1, 0.005, true);
-        telemetry.addData("", armReturn);
+        /*
+        if  (armSystem.isHoming()) {
+            return;
+        } else if (gamepad2.x) {
+            armSystem.moveHome();
+            return;
+        } else if (gamepad2.y) {
+            armSystem.moveCapstone();
+        } else if (gamepad2.dpad_left) {
+            armSystem.moveWest();
+        } else if (gamepad2.dpad_right) {
+            armSystem.moveEast();
+        } else if (gamepad2.dpad_up) {
+            armSystem.moveNorth();
+        } else if (gamepad2.dpad_down) {
+            armSystem.moveSouth();
+        } else if (gamepad2.right_bumper) {
+            armSystem.moveUp(1);
+        } else if (gamepad2.left_bumper) {
+            armSystem.moveDown(1);
+        } else if (gamepad2.a) {
+            armSystem.moveGripper();
+        }
+        armSystem.updateHeight(0.75);
+
+         */
     }
 }

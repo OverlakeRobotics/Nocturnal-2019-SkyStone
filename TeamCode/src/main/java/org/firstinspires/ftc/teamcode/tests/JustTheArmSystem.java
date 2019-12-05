@@ -13,6 +13,7 @@ import java.util.EnumMap;
 @TeleOp(name = "Just The Arm System", group="TeleOp")
 public class JustTheArmSystem extends OpMode {
     public ArmSystem armSystem;
+    final double SLIDER_SPEED = 1;
     public void init() {
         EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
         servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "GRIPPER"));
@@ -22,8 +23,12 @@ public class JustTheArmSystem extends OpMode {
         armSystem = new ArmSystem(servoEnumMap, hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"));
     }
 
+    // These boolean variables are to make sure the controls don't get spammed.
+    // They need to be out here, even though it's kinda ugly, because ArmSystem doesn't get access
+    // to the controller input.
+    private boolean m_up, m_down, m_gripper;
     public void loop() {
-        if  (armSystem.isHoming()) {
+        if (armSystem.isHoming()) {
             return;
         } else if (gamepad2.x) {
             armSystem.moveHome();
@@ -38,12 +43,25 @@ public class JustTheArmSystem extends OpMode {
             armSystem.moveNorth();
         } else if (gamepad2.dpad_down) {
             armSystem.moveSouth();
-        } else if (gamepad2.right_bumper) {
-            armSystem.moveUp(1);
-        } else if (gamepad2.left_bumper) {
-            armSystem.moveDown(1);
         } else if (gamepad2.a) {
-            armSystem.moveGripper();
+            armSystem.toggleGripper();
         }
+
+        if (gamepad2.right_bumper && !m_up) {
+            armSystem.setSliderHeight(armSystem.targetHeight + 1);
+            m_up = true;
+        } else if (!gamepad2.right_bumper) {
+            m_up = false;
+        }
+
+        if (gamepad2.left_bumper && !m_down) {
+            armSystem.setSliderHeight(armSystem.targetHeight - 1);
+            m_down = true;
+        } else if (!gamepad2.left_bumper) {
+            m_down = false;
+        }
+        //telemetry.addData("Target height: ", armSystem);
+
+        armSystem.updateHeight(SLIDER_SPEED);
     }
 }
