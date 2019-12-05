@@ -19,18 +19,10 @@ public class JustTheArmSystem extends OpMode {
         servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "ELBOW"));
         servoEnumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "WRIST"));
         servoEnumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "PIVOT"));
-        armSystem = new ArmSystem(
-                servoEnumMap,
-                hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"),
-                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"));
+        armSystem = new ArmSystem(servoEnumMap, hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"));
     }
 
     public void loop() {
-        /*
-    public String run(boolean home, boolean capstone, boolean west, boolean east, boolean north, boolean south,
-                      boolean up, boolean down, boolean gripperButton, boolean assist,
-                      double sliderSpeed, double armSpeed, boolean fastMode) {
-         */
         if (gamepad2.x) {
             armSystem.moveHome();
             return;

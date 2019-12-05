@@ -26,16 +26,11 @@ public class ArmSystem {
     private Servo elbow;
     private Servo pivot;
     private DcMotor slider;
-    private DigitalChannel limitSwitch; // true is unpressed, false is pressed
-    private final double WRIST_HOME = 0;
-    private final double ELBOW_HOME = 0;
-    private final double PIVOT_HOME = 0;
     private final double GRIPPER_OPEN = 0.7;
     private final double GRIPPER_CLOSE = 0.3;
 
     // This is in block positions, not ticks
     private int targetHeight;
-    private final int distanceConstant = 500; // used for calculating motor speed
 
     private enum Direction {
         UP, DOWN;
@@ -58,14 +53,6 @@ public class ArmSystem {
     private final int MAX_HEIGHT = calculateHeight(9);
     private final int INCREMENT_HEIGHT = 564; // how much the ticks increase when a block is added
     private final int START_HEIGHT = 366; // Height of the foundation
-
-    private double pivotTarget = 0.09;
-    private double elbowTarget = 0.09;
-    private double wristTarget = 0.62;
-
-
-    // Set to true when we're in the process of going home
-    private boolean homing = false;
 
     public enum Position {
         // Double values ordered Pivot, elbow, wrist.
@@ -111,13 +98,12 @@ public class ArmSystem {
      XX
      OO  <--- Position north
      */
-    public ArmSystem(EnumMap<ServoNames, Servo> servos, DcMotor slider, DigitalChannel limitSwitch) {
+    public ArmSystem(EnumMap<ServoNames, Servo> servos, DcMotor slider) {
         this.gripper = servos.get(ServoNames.GRIPPER);
         this.wrist = servos.get(ServoNames.WRIST);
         this.elbow = servos.get(ServoNames.ELBOW);
         this.pivot = servos.get(ServoNames.PIVOT);
         this.slider = slider;
-        this.limitSwitch = limitSwitch;
         this.calibrationDistance = slider.getCurrentPosition();
         this.direction = Direction.UP;
         this.slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -150,7 +136,6 @@ public class ArmSystem {
 
     // Go to the home position
     public void moveHome() {
-        homing = true;
         goHome();
     }
 
