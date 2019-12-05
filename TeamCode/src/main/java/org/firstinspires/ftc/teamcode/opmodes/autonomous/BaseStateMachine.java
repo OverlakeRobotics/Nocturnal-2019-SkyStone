@@ -235,7 +235,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                     alignStone = distanceCenter.getDistance(DistanceUnit.MM);
                     newState(State.STATE_ALIGN_STONE);
                 } else {
-                    driveSystem.driveToPosition(500, centerDirection, 0.7);
+                    driveSystem.driveToPosition(750, centerDirection, 0.7);
                 }
                 break;
 
