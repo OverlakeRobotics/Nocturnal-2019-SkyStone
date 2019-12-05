@@ -19,7 +19,6 @@ public abstract class BaseOpMode extends OpMode {
     protected DriveSystem driveSystem;
 //    protected LatchSystem latchSystem;
 //    protected IntakeSystem intakeSystem;
-    protected Tensorflow tensorflow;
 //    protected ArmSystem armSystem;
     private boolean stopRequested;
 
