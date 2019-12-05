@@ -4,6 +4,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import  com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -157,9 +158,19 @@ public class ArmSystem {
         It's a string so we can debug to telemetry, and use queuing if we implement it.
      */
     private boolean m_gripper, m_up, m_down = false;
-    public String run(boolean home, boolean capstone, boolean west, boolean east, boolean north, boolean south,
-                      boolean up, boolean down, boolean gripperButton, boolean assist,
+    public String run(Gamepad gamepad, boolean assist,
                       double sliderSpeed, double armSpeed, boolean fastMode) {
+
+        boolean west = gamepad.dpad_left;
+        boolean east = gamepad.dpad_right;
+        boolean north = gamepad.dpad_up;
+        boolean south = gamepad.dpad_down;
+        boolean capstone = gamepad.y;
+        homing = gamepad.x;
+
+        boolean up = gamepad.right_bumper;
+        boolean down = gamepad.left_bumper;
+        boolean gripperButton = gamepad.a;
 
         this.fastMode = fastMode;
 
@@ -217,7 +228,7 @@ public class ArmSystem {
         } else if (!gripperButton) {
             m_gripper = false;
         }
-        toReturn += gripper.getPosition();
+        toReturn += "\nCurrent pos: " + slider.getCurrentPosition() + "\nOriginal: " + calibrationDistance;
 
         String temp = toReturn;
         toReturn = "";
@@ -265,21 +276,13 @@ public class ArmSystem {
     private Direction m_homeDirection = Direction.UP;
     private void goHome() {
         if (m_homeDirection == Direction.UP) {
-            int diff = getSliderPos() - calculateHeight(0);
-            if (Math.abs(diff) < 100) {
-
-            }
             setSliderHeight(1);
-            if (getSliderPos() == calculateHeight(1)) {
+            if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
                 movePresetPosition(Position.POSITION_HOME);
                 openGripper();
                 m_homeDirection = Direction.DOWN;
             }
         } else {
-            // This should bring it to the lowest possible state, although it might get weird
-            // with the reversing directions so we should figure this out. If we just move the
-            // slider down, which way even is down when the motors reverse all the time?
-            // Should we even have the reversing direction?
             setSliderHeight(-1);
             if (getSliderPos() == calculateHeight(-1)) {
                 m_homeDirection = Direction.UP;
