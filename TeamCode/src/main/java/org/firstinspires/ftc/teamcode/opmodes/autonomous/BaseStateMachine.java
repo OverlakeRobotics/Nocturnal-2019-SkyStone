@@ -83,7 +83,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
         newState(State.STATE_INITIAL);
     }
 
-    private int skystoneOffset;
+    private int skystoneOffset = 20;
     private static final int DEAD_RECKON_SKYSTONE = 20;
     private int distanceToWall;
     private double alignStone;
@@ -114,11 +114,11 @@ public abstract class BaseStateMachine extends BaseOpMode {
                         if (recognition.getLabel().equals("Skystone")) {
                             double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
                             int sign = (int) Math.signum(degrees);
-                            skystoneOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
-                            skystoneOffset -= 250;
-                            // The stone detected is one of the first three
-                            if (skystoneOffset < -320) {
-                                skystoneOffset = DEAD_RECKON_SKYSTONE;
+                            int currOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
+                            currOffset -= 250;
+                            // The stone detected is one of the first three so ignore
+                            if (currOffset > -310) {
+                                skystoneOffset = currOffset;
                             }
                             Log.d(TAG, "Skystone offset: " + skystoneOffset);
                         }
@@ -156,7 +156,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_ALIGN_BRIDGE:
-                if (driveSystem.driveToPosition(230, outsideDirection, 1.0)) {
+                if (driveSystem.driveToPosition(275, outsideDirection, 1.0)) {
                     newState(State.STATE_MOVE_PAST_LINE);
                 }
                 break;
@@ -175,13 +175,13 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_BACKUP_INTO_FOUNDATION:
-                if (driveSystem.driveToPosition(250, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_MOVE_INTO_WALL);
                 }
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(575, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(650, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
                 break;
@@ -195,11 +195,15 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_TURN_FOR_BACKUP:
                 if (driveSystem.turnAbsolute(0, 1.0)) {
                     newState(State.STATE_BACKUP_FOR_SECOND_STONE);
+                    // Make it move more when it backs up
+                    if (skystoneOffset == DEAD_RECKON_SKYSTONE) {
+                        skystoneOffset = 50;
+                    }
                 }
                 break;
 
             case STATE_BACKUP_FOR_SECOND_STONE:
-                if (driveSystem.driveToPosition(1000 - skystoneOffset, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(900 + Math.abs(skystoneOffset), DriveSystem.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_FIND_STONE);
                 }
                 break;
@@ -231,7 +235,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                     alignStone = distanceCenter.getDistance(DistanceUnit.MM);
                     newState(State.STATE_ALIGN_STONE);
                 } else {
-                    driveSystem.driveToPosition(2000, centerDirection, 0.7);
+                    driveSystem.driveToPosition(500, centerDirection, 0.7);
                 }
                 break;
 
@@ -253,7 +257,7 @@ public abstract class BaseStateMachine extends BaseOpMode {
                 break;
 
             case STATE_ALIGN_FOR_BRIDGE:
-                if (driveSystem.driveToPosition((int) alignStone + 275, outsideDirection, 1.0)) {
+                if (driveSystem.driveToPosition((int) alignStone + 250, outsideDirection, 1.0)) {
                     newState(State.STATE_MOVE_PAST_COLOR_LINE);
                 }
                 break;
@@ -261,15 +265,18 @@ public abstract class BaseStateMachine extends BaseOpMode {
             case STATE_MOVE_PAST_COLOR_LINE:
                 if (currentTeam == Team.RED) {
                     if (colorSensor.red() > colorSensor.blue() * 1.25) {
-                        driveSystem.setMotorPower(0.0);
+                        driveSystem.drive(0, 0, 0.0f);
                         newState(State.STATE_DEPOSIT_STONE);
+                        break;
                     }
                 } else {
                     if (colorSensor.blue() > colorSensor.red() * 1.25) {
-                        driveSystem.setMotorPower(0.0);
+                        driveSystem.drive(0, 0, 0.0f);
                         newState(State.STATE_DEPOSIT_STONE);
+                        break;
                     }
                 }
+                Log.d(TAG, "Blue: " + colorSensor.blue() + " Red: " + colorSensor.red());
                 driveSystem.drive(0, 0, -0.75f);
                 break;
 
