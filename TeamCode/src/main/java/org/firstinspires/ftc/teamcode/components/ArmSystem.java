@@ -4,6 +4,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import  com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -164,7 +165,7 @@ public class ArmSystem {
         if (direction == Direction.UP) {
             int diff = getSliderPos() - calculateHeight(0);
             setSliderHeight(1);
-            if (getSliderPos() == calculateHeight(1)) {
+            if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
                 movePresetPosition(Position.POSITION_HOME);
                 openGripper();
                 direction = Direction.DOWN;
