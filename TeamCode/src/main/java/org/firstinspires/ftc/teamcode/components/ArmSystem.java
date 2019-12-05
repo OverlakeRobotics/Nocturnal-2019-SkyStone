@@ -9,6 +9,7 @@ import  com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.EnumMap;
+import java.util.LinkedList;
 
 /*
     This class controls everything related to the arm, including driver assist features.
@@ -31,6 +32,8 @@ public class ArmSystem {
 
     // This is in block positions, not ticks
     private int targetHeight;
+    private int queuedPosIndex;
+    private int queuedHeight;
 
     private enum Direction {
         UP, DOWN;
@@ -98,7 +101,10 @@ public class ArmSystem {
      XX
      OO  <--- Position north
      */
+    private Position[] posOrder;
+
     public ArmSystem(EnumMap<ServoNames, Servo> servos, DcMotor slider) {
+        posOrder = new Position[] {Position.POSITION_NORTH, Position.POSITION_SOUTH, Position.POSITION_EAST, Position.POSITION_WEST};
         this.gripper = servos.get(ServoNames.GRIPPER);
         this.wrist = servos.get(ServoNames.WRIST);
         this.elbow = servos.get(ServoNames.ELBOW);
@@ -232,12 +238,30 @@ public class ArmSystem {
         }
     }
 
-    private void placeStone() {
+    public void moveOut() {
+        closeGripper();
+        moveUp(1);
+        pivot.setPosition(0.16);
+    }
+
+    public void placeStone() {
         openGripper();
         moveUp(1);
         movePresetPosition(Position.POSITION_HOME);
         moveHome();
     }
+
+    // Still requires updateHeight() to be called, just like the setSliderHeight method.
+    private void goToNext() {
+        if (queuedPosIndex % 2 == 1) {
+            queuedHeight++;
+        }
+        queuedPosIndex = (queuedPosIndex + 1) % 4;
+        movePresetPosition(posOrder[queuedPosIndex]);
+        setSliderHeight(queuedHeight);
+        updateHeight(1);
+    }
+
 
     private void movePresetPosition(Position pos) {
         double[] posArray = pos.getPos();
