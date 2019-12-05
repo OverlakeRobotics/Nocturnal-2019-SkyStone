@@ -232,6 +232,13 @@ public class ArmSystem {
         }
     }
 
+    private void placeStone() {
+        openGripper();
+        moveUp(1);
+        movePresetPosition(Position.POSITION_HOME);
+        moveHome();
+    }
+
     private void movePresetPosition(Position pos) {
         double[] posArray = pos.getPos();
         pivot.setPosition(posArray[0]);
