@@ -1,24 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import android.util.Log;
-
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.IntakeSystem;
-import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
-import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
-
 import java.util.List;
 
-public abstract class BaseStateMachine extends BaseOpMode {
+public abstract class BaseStateMachine extends BaseAutonomous {
     public enum State {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
@@ -47,43 +37,18 @@ public abstract class BaseStateMachine extends BaseOpMode {
         LOGGING
     }
 
-    public enum Team {
-        RED, BLUE
-    }
-
     private final static String TAG = "BaseStateMachine";
-    private ColorSensor colorSensor;
-    protected State mCurrentState;    // Current State Machine State.
+    protected State mCurrentState;                         // Current State Machine State.
     protected ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
-    private DistanceSensor distanceCenter;
-    private DistanceSensor distanceOutside;
-    private DriveSystem.Direction centerDirection;
-    private DriveSystem.Direction outsideDirection;
-    private Team currentTeam;
 
     public void init(Team team) {
-        super.init();
-        currentTeam = team;
+        super.init(team);
         this.msStuckDetectInit = 15000;
         this.msStuckDetectInitLoop = 15000;
-        if (team == Team.RED) {
-            distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
-            distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
-            super.setCamera(CameraChoice.WEBCAM1);
-            centerDirection = DriveSystem.Direction.LEFT;
-            outsideDirection = DriveSystem.Direction.RIGHT;
-        } else {
-            distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
-            distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
-            super.setCamera(CameraChoice.WEBCAM2);
-            centerDirection = DriveSystem.Direction.RIGHT;
-            outsideDirection = DriveSystem.Direction.LEFT;
-        }
-        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
         newState(State.STATE_INITIAL);
     }
 
-    private int skystoneOffset = 20;
+    private int skystoneOffset;
     private static final int DEAD_RECKON_SKYSTONE = 20;
     private int distanceToWall;
     private double alignStone;
@@ -116,7 +81,8 @@ public abstract class BaseStateMachine extends BaseOpMode {
                             int sign = (int) Math.signum(degrees);
                             int currOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
                             currOffset -= 250;
-                            // The stone detected is one of the first three so ignore
+                            // The skystone detected is one of the first three which means that
+                            // the second skystone must be farthest from the audience
                             if (currOffset > -310) {
                                 skystoneOffset = currOffset;
                             }

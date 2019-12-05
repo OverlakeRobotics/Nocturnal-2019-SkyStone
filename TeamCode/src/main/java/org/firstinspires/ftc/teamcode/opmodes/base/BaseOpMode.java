@@ -19,7 +19,6 @@ public abstract class BaseOpMode extends OpMode {
     protected DriveSystem driveSystem;
 //    protected LatchSystem latchSystem;
 //    protected IntakeSystem intakeSystem;
-    protected Tensorflow tensorflow;
 //    protected ArmSystem armSystem;
     private boolean stopRequested;
 
@@ -51,9 +50,5 @@ public abstract class BaseOpMode extends OpMode {
 //                hardwareMap.get(DcMotor.class, "slider_motor"),
 //                hardwareMap.get(DigitalChannel.class, "slider_switch"), false);
 
-    }
-
-    protected void setCamera(CameraChoice cameraChoice) {
-        tensorflow = new Tensorflow(hardwareMap, CameraChoice.WEBCAM1);
     }
 }
