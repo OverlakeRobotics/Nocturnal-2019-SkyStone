@@ -1,14 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
-
-import java.util.EnumMap;
 
 @TeleOp(name = "Real Teleop", group="TeleOp")
 public class DriveTeleop extends BaseOpMode {
@@ -78,6 +72,6 @@ public class DriveTeleop extends BaseOpMode {
         }
         //telemetry.addData("Target height: ", armSystem);
 
-        armSystem.updateHeight(SLIDER_SPEED);
+        armSystem.raise(SLIDER_SPEED);
     }
 }

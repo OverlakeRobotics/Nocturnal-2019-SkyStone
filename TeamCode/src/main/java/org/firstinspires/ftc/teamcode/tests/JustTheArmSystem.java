@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.tests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
@@ -67,7 +66,7 @@ public class JustTheArmSystem extends OpMode {
         }
         //telemetry.addData("Target height: ", armSystem);
 
-        armSystem.updateHeight(SLIDER_SPEED);
+        armSystem.raise(SLIDER_SPEED);
     }
 
     public void stop() {
