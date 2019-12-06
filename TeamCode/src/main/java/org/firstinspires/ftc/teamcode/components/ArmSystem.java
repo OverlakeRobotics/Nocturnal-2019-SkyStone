@@ -208,7 +208,7 @@ public class ArmSystem {
 
     // Little helper method for setSliderHeight
     private int calculateHeight(int pos){
-        if (pos == 0) return calibrationDistance;
+        if (pos == 0) return calibrationDistance - 20;
         return calibrationDistance + (pos * INCREMENT_HEIGHT);
     }
 
