@@ -40,13 +40,13 @@ public class ArmSystem {
     private Direction direction;
     private boolean homing;
     // Don't change this unless in calibrate() or init(), is read in the calculateHeight method
-    private int calibrationDistance;
+    public int calibrationDistance;
 
     // This can actually be more, like 5000, but we're not going to stack that high
     // for the first comp and the servo wires aren't long enough yet
     private final int MAX_HEIGHT = calculateHeight(9);
-    private final int INCREMENT_HEIGHT = 564; // how much the ticks increase when a block is added
-    private final int START_HEIGHT = 366; // Height of the foundation
+    private final int INCREMENT_HEIGHT = 550; // how much the ticks increase when a block is added
+    private final int START_HEIGHT = 0; // Height of the foundation
 
     public enum Position {
         // Double values ordered Pivot, elbow, wrist.
@@ -136,11 +136,6 @@ public class ArmSystem {
         goHome();
     }
 
-    // Nice to have an override just in case
-    public void moveHomeManual() {
-        movePresetPosition(Position.POSITION_HOME);
-    }
-
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
     private Direction m_homeDirection;
@@ -152,7 +147,8 @@ public class ArmSystem {
             if (m_count > 30) {
                 m_waiting = false;
                 m_count = 0;
-                m_homeDirection = Direction.DOWN;
+                homing = false;
+                m_homeDirection = Direction.UP;
                 setSliderHeight(0);
             }
         }
@@ -161,11 +157,6 @@ public class ArmSystem {
                 movePresetPosition(Position.POSITION_HOME);
                 openGripper();
                 m_waiting = true;
-            }
-        } else {
-            if (getSliderPos() == calculateHeight(0)) {
-                m_homeDirection = Direction.UP;
-                homing = false; // We're done!
             }
         }
         raise(1);
@@ -208,7 +199,7 @@ public class ArmSystem {
     public void setSliderHeight(int pos){
         targetHeight = pos;
         if (pos < 0) targetHeight = 0;
-        if (pos > 9) targetHeight = 9;
+        if (pos > 5) targetHeight = 5;
         slider.setTargetPosition(calculateHeight(targetHeight));
         slider.setDirection(Direction.motorDirection(Direction.UP));
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -218,7 +209,7 @@ public class ArmSystem {
     // Little helper method for setSliderHeight
     private int calculateHeight(int pos){
         if (pos == 0) return calibrationDistance;
-        return START_HEIGHT + calibrationDistance + (pos * INCREMENT_HEIGHT);
+        return calibrationDistance + (pos * INCREMENT_HEIGHT);
     }
 
     // Must be called every loop
@@ -226,12 +217,6 @@ public class ArmSystem {
     public void raise(double speed){
         slider.setPower(speed);
         slider.setTargetPosition(calculateHeight(targetHeight));
-        if (switchIsPressed() && !m_switch) {
-            calibrationDistance = slider.getCurrentPosition();
-            m_switch = true;
-        } else if (!switchIsPressed()) {
-            m_switch = false;
-        }
     }
 
     public boolean switchIsPressed() {
