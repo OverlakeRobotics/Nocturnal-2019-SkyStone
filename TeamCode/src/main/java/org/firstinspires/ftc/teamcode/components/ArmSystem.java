@@ -129,6 +129,7 @@ public class ArmSystem {
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
     private  Direction m_homeDirection;
+
     private void goHome() {
         if (m_homeDirection == Direction.UP) {
             setSliderHeight(1);
@@ -160,7 +161,7 @@ public class ArmSystem {
     public void toggleGripper() {
         double gripPos = servoEnumMap.get(ServoNames.GRIPPER).getPosition();
         if (Math.abs(gripPos - GRIPPER_CLOSE) < Math.abs(gripPos - GRIPPER_OPEN)) {
-            // If we're in here, the gripper is closer to it's closed position
+            // If we're in here, the gripper is closer to its closed position
             openGripper();
         } else {
             closeGripper();
