@@ -158,8 +158,8 @@ public class ArmSystem {
     }
 
     public void toggleGripper() {
-        if (Math.abs(servoEnumMap.get(ServoNames.GRIPPER).getPosition() - GRIPPER_CLOSE)
-                < Math.abs(servoEnumMap.get(ServoNames.GRIPPER).getPosition() - GRIPPER_OPEN)) {
+        double gripPos = servoEnumMap.get(ServoNames.GRIPPER).getPosition();
+        if (Math.abs(gripPos - GRIPPER_CLOSE) < Math.abs(gripPos - GRIPPER_OPEN)) {
             // If we're in here, the gripper is closer to it's closed position
             openGripper();
         } else {
