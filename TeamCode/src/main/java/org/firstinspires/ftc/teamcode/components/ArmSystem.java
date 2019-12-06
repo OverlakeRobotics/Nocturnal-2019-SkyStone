@@ -104,6 +104,7 @@ public class ArmSystem {
         this.homing = false;
         this.limitSwitch = limitSwitch;
         movePresetPosition(Position.POSITION_HOME);
+        openGripper();
     }
 
     // Go to "west" position
@@ -131,7 +132,7 @@ public class ArmSystem {
     public void moveHome() {
         homing = true;
         m_homeDirection = Direction.UP;
-        setSliderHeight(2);
+        setSliderHeight(1);
         goHome();
     }
 
@@ -142,14 +143,24 @@ public class ArmSystem {
 
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
-    public Direction m_homeDirection;
+    private Direction m_homeDirection;
+    private int m_count = 0; // Used to wait a bit
+    private boolean m_waiting = false;
     public void goHome() {
-        if (m_homeDirection == Direction.UP) {
-            if (Math.abs(getSliderPos() - calculateHeight(2)) < 50) {
-                movePresetPosition(Position.POSITION_HOME);
-                openGripper();
+        if (m_waiting) {
+            m_count ++;
+            if (m_count > 30) {
+                m_waiting = false;
+                m_count = 0;
                 m_homeDirection = Direction.DOWN;
                 setSliderHeight(0);
+            }
+        }
+        if (m_homeDirection == Direction.UP) {
+            if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
+                movePresetPosition(Position.POSITION_HOME);
+                openGripper();
+                m_waiting = true;
             }
         } else {
             if (getSliderPos() == calculateHeight(0)) {
@@ -159,11 +170,6 @@ public class ArmSystem {
         }
         raise(1);
 
-    }
-
-    // Debugging
-    public String homeState() {
-        return m_homeDirection == null? "null" : m_homeDirection.toString();
     }
 
     private void openGripper() {
