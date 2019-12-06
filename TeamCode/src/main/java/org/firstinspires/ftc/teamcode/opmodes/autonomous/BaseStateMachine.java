@@ -6,9 +6,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
-import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
-
 import java.util.List;
 
 public abstract class BaseStateMachine extends BaseAutonomous {

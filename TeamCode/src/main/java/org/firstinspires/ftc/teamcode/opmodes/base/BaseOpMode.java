@@ -47,17 +47,5 @@ public abstract class BaseOpMode extends OpMode {
                 hardwareMap.get(DcMotor.class, "slider_motor"),
                 hardwareMap.get(DigitalChannel.class, "slider_switch"), false);
 
-        EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
-        servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "GRIPPER"));
-        servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "ELBOW"));
-        servoEnumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "WRIST"));
-        servoEnumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "PIVOT"));
-        armSystem = new ArmSystem(
-                servoEnumMap,
-                hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"),
-                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"), false);
-
-    protected void setCamera(CameraChoice cameraChoice) {
-        tensorflow = new Tensorflow(hardwareMap, CameraChoice.WEBCAM1);
     }
 }
