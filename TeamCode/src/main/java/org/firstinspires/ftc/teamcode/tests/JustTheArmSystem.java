@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.tests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 
+import java.io.DataInput;
 import java.util.EnumMap;
 
 @TeleOp(name = "Just The Arm System", group="TeleOp")
@@ -19,7 +21,9 @@ public class JustTheArmSystem extends OpMode {
         servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "ELBOW"));
         servoEnumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "WRIST"));
         servoEnumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "PIVOT"));
-        armSystem = new ArmSystem(servoEnumMap, hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"));
+        armSystem = new ArmSystem(servoEnumMap,
+                hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"),
+                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"));
     }
 
     // These boolean variables are to make sure the controls don't get spammed.
@@ -28,6 +32,7 @@ public class JustTheArmSystem extends OpMode {
     private boolean m_up, m_down, m_gripper;
     public void loop() {
         if (armSystem.isHoming()) {
+            armSystem.moveHome();
             return;
         } else if (gamepad2.x) {
             armSystem.moveHome();
@@ -42,6 +47,8 @@ public class JustTheArmSystem extends OpMode {
             armSystem.moveNorth();
         } else if (gamepad2.dpad_down) {
             armSystem.moveSouth();
+        } else if (gamepad2.b) {
+            armSystem.moveHomeManual();
         }
 
         if (gamepad2.a && !m_gripper) {
@@ -67,6 +74,10 @@ public class JustTheArmSystem extends OpMode {
         //telemetry.addData("Target height: ", armSystem);
 
         armSystem.raise(SLIDER_SPEED);
+        telemetry.addData("Limit switch: ", armSystem.switchIsPressed());
+        telemetry.addData("Current encoder position: ", armSystem.getSliderPos());
+        telemetry.addData("Homing state: ", armSystem.m_homeDirection);
+        telemetry.update();
     }
 
     public void stop() {

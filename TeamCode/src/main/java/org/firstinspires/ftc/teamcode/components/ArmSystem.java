@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import  com.qualcomm.robotcore.hardware.Servo;
 import java.util.EnumMap;
 
@@ -30,7 +31,9 @@ public class ArmSystem {
         }
 
         private static DcMotorSimple.Direction motorDirection(Direction direction){
-            return direction == UP ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD;
+            return direction == UP ?
+                    DcMotorSimple.Direction.REVERSE :
+                    DcMotorSimple.Direction.FORWARD;
         }
     };
 
@@ -75,6 +78,7 @@ public class ArmSystem {
     private boolean goDown;
 
     private EnumMap<ServoNames, Servo> servoEnumMap;
+    private DigitalChannel limitSwitch;
     /*
      If the robot is at the bottom of the screen, and X is the block:
 
@@ -90,13 +94,16 @@ public class ArmSystem {
      XX
      OO  <--- Position north
      */
-    public ArmSystem(EnumMap<ServoNames, Servo> servos, DcMotor slider) {
+    public ArmSystem(EnumMap<ServoNames, Servo> servos, DcMotor slider,
+                     DigitalChannel limitSwitch) {
         servoEnumMap = servos;
         this.slider = slider;
         this.calibrationDistance = slider.getCurrentPosition();
         this.direction = Direction.UP;
         this.slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.homing = false;
+        this.limitSwitch = limitSwitch;
+        movePresetPosition(Position.POSITION_HOME);
     }
 
     // Go to "west" position
@@ -122,32 +129,41 @@ public class ArmSystem {
 
     // Go to the home position
     public void moveHome() {
-        //goHome();
+        homing = true;
+        m_homeDirection = Direction.UP;
+        setSliderHeight(2);
+        goHome();
+    }
+
+    // Nice to have an override just in case
+    public void moveHomeManual() {
         movePresetPosition(Position.POSITION_HOME);
     }
 
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
-    private  Direction m_homeDirection;
-
-    private void goHome() {
+    public Direction m_homeDirection;
+    public void goHome() {
         if (m_homeDirection == Direction.UP) {
-            setSliderHeight(1);
-            if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
+            if (Math.abs(getSliderPos() - calculateHeight(2)) < 50) {
                 movePresetPosition(Position.POSITION_HOME);
                 openGripper();
-                direction = Direction.DOWN;
-                homing = false;
+                m_homeDirection = Direction.DOWN;
+                setSliderHeight(0);
             }
         } else {
-            setSliderHeight(-1);
-            if (getSliderPos() == calculateHeight(-1)) {
+            if (getSliderPos() == calculateHeight(0)) {
                 m_homeDirection = Direction.UP;
                 homing = false; // We're done!
             }
         }
         raise(1);
 
+    }
+
+    // Debugging
+    public String homeState() {
+        return m_homeDirection == null? "null" : m_homeDirection.toString();
     }
 
     private void openGripper() {
@@ -200,9 +216,20 @@ public class ArmSystem {
     }
 
     // Must be called every loop
+    private boolean m_switch = false;
     public void raise(double speed){
         slider.setPower(speed);
         slider.setTargetPosition(calculateHeight(targetHeight));
+        if (switchIsPressed() && !m_switch) {
+            calibrationDistance = slider.getCurrentPosition();
+            m_switch = true;
+        } else if (!switchIsPressed()) {
+            m_switch = false;
+        }
+    }
+
+    public boolean switchIsPressed() {
+        return !limitSwitch.getState();
     }
 
     public int getSliderPos() {
@@ -216,8 +243,5 @@ public class ArmSystem {
     // Moves slider back to original state
     public void stop() {
         slider.setTargetPosition(calibrationDistance);
-        for (int i = 0; i < 100; i++) {
-            this.raise(0.75);
-        }
     }
 }
