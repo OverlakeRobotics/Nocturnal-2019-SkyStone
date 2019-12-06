@@ -1,14 +1,8 @@
 package org.firstinspires.ftc.teamcode.components;
-import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import  com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.util.EnumMap;
 
 /*
@@ -22,10 +16,6 @@ import java.util.EnumMap;
         - Pivot
  */
 public class ArmSystem {
-    private Servo gripper;
-    private Servo wrist;
-    private Servo elbow;
-    private Servo pivot;
     private DcMotor slider;
     private final double GRIPPER_OPEN = 0.7;
     private final double GRIPPER_CLOSE = 0.3;
@@ -84,6 +74,7 @@ public class ArmSystem {
     private boolean goUp;
     private boolean goDown;
 
+    private EnumMap<ServoNames, Servo> servoEnumMap;
     /*
      If the robot is at the bottom of the screen, and X is the block:
 
@@ -100,10 +91,7 @@ public class ArmSystem {
      OO  <--- Position north
      */
     public ArmSystem(EnumMap<ServoNames, Servo> servos, DcMotor slider) {
-        this.gripper = servos.get(ServoNames.GRIPPER);
-        this.wrist = servos.get(ServoNames.WRIST);
-        this.elbow = servos.get(ServoNames.ELBOW);
-        this.pivot = servos.get(ServoNames.PIVOT);
+        servoEnumMap = servos;
         this.slider = slider;
         this.calibrationDistance = slider.getCurrentPosition();
         this.direction = Direction.UP;
@@ -128,37 +116,20 @@ public class ArmSystem {
         movePresetPosition(Position.POSITION_SOUTH);
     }
     // Go to capstone position
-    public void moveCapstone () {
+    public void moveCapstone() {
         movePresetPosition(Position.POSITION_CAPSTONE);
     }
 
     // Go to the home position
-    public void moveHome () {
+    public void moveHome() {
         //goHome();
         movePresetPosition(Position.POSITION_HOME);
-    }
-
-    // These are public for debugging purposes
-    public double getGripper () {
-        return gripper.getPosition();
-    }
-
-    public double getWrist () {
-        return wrist.getPosition();
-    }
-
-    public double getElbow () {
-        return elbow.getPosition();
-    }
-
-    public double getPivot () {
-        return 0;
     }
 
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
     private  Direction m_homeDirection;
-    private void goHome () {
+    private void goHome() {
         if (m_homeDirection == Direction.UP) {
             setSliderHeight(1);
             if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
@@ -174,21 +145,21 @@ public class ArmSystem {
                 homing = false; // We're done!
             }
         }
-        updateHeight(1);
+        raise(1);
 
     }
 
-    private void openGripper () {
-        gripper.setPosition(GRIPPER_OPEN);
+    private void openGripper() {
+        servoEnumMap.get(ServoNames.GRIPPER).setPosition(GRIPPER_OPEN);
     }
 
-    private void closeGripper () {
-        gripper.setPosition(GRIPPER_CLOSE);
+    private void closeGripper() {
+        servoEnumMap.get(ServoNames.GRIPPER).setPosition(GRIPPER_CLOSE);
     }
 
-    public void toggleGripper () {
-        if (Math.abs(gripper.getPosition() - GRIPPER_CLOSE)
-                < Math.abs(gripper.getPosition() - GRIPPER_OPEN)) {
+    public void toggleGripper() {
+        if (Math.abs(servoEnumMap.get(ServoNames.GRIPPER).getPosition() - GRIPPER_CLOSE)
+                < Math.abs(servoEnumMap.get(ServoNames.GRIPPER).getPosition() - GRIPPER_OPEN)) {
             // If we're in here, the gripper is closer to it's closed position
             openGripper();
         } else {
@@ -196,56 +167,56 @@ public class ArmSystem {
         }
     }
 
-    private void placeStone () {
+    private void placeStone() {
         openGripper();
         setSliderHeight(getSliderPos() + 1);
         movePresetPosition(Position.POSITION_HOME);
         moveHome();
     }
 
-    private void movePresetPosition (Position pos){
+    private void movePresetPosition(Position pos){
         double[] posArray = pos.getPos();
-        pivot.setPosition(posArray[0]);
-        elbow.setPosition(posArray[1]);
-        wrist.setPosition(posArray[2]);
+        servoEnumMap.get(ServoNames.PIVOT).setPosition(posArray[0]);
+        servoEnumMap.get(ServoNames.ELBOW).setPosition(posArray[1]);
+        servoEnumMap.get(ServoNames.WRIST).setPosition(posArray[2]);
     }
 
     // Pos should be the # of blocks high it should be
-    public void setSliderHeight ( int pos){
+    public void setSliderHeight(int pos){
         targetHeight = pos;
         if (pos < 0) targetHeight = 0;
         if (pos > 9) targetHeight = 9;
         slider.setTargetPosition(calculateHeight(targetHeight));
         slider.setDirection(Direction.motorDirection(Direction.UP));
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        updateHeight(1);
+        raise(1);
     }
 
     // Little helper method for setSliderHeight
-    private int calculateHeight ( int pos){
+    private int calculateHeight(int pos){
         if (pos == 0) return calibrationDistance;
         return START_HEIGHT + calibrationDistance + (pos * INCREMENT_HEIGHT);
     }
 
     // Must be called every loop
-    public void updateHeight ( double speed){
+    public void raise(double speed){
         slider.setPower(speed);
         slider.setTargetPosition(calculateHeight(targetHeight));
     }
 
-    public int getSliderPos () {
+    public int getSliderPos() {
         return slider.getCurrentPosition();
     }
 
-    public boolean isHoming () {
+    public boolean isHoming() {
         return homing;
     }
 
     // Moves slider back to original state
-    public void stop () {
+    public void stop() {
         slider.setTargetPosition(calibrationDistance);
         for (int i = 0; i < 100; i++) {
-            this.updateHeight(0.75);
+            this.raise(0.75);
         }
     }
 }
