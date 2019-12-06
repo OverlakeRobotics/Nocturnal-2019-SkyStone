@@ -1,63 +1,33 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
-import org.firstinspires.ftc.teamcode.components.LatchSystem;
-import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
 
-@TeleOp(name = "Real Teleop", group="TeleOp")
-public class DriveTeleop extends BaseOpMode {
+@TeleOp(name = "Just The Arm System", group="TeleOp")
+public class JustTheArmSystem extends OpMode {
+    public ArmSystem armSystem;
+    final double SLIDER_SPEED = 1;
+    public void init() {
+        EnumMap<ArmSystem.ServoNames, Servo> servoEnumMap = new EnumMap<ArmSystem.ServoNames, Servo>(ArmSystem.ServoNames.class);
+        servoEnumMap.put(ArmSystem.ServoNames.GRIPPER, hardwareMap.get(Servo.class, "GRIPPER"));
+        servoEnumMap.put(ArmSystem.ServoNames.ELBOW, hardwareMap.get(Servo.class, "ELBOW"));
+        servoEnumMap.put(ArmSystem.ServoNames.WRIST, hardwareMap.get(Servo.class, "WRIST"));
+        servoEnumMap.put(ArmSystem.ServoNames.PIVOT, hardwareMap.get(Servo.class, "PIVOT"));
+        armSystem = new ArmSystem(servoEnumMap, hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"));
+    }
 
-    private boolean leftLatchHit = false;
-    private boolean rightLatchHit = false;
-    
-    private final double SLIDER_SPEED = 1;
-    private boolean xRecentlyHit, m_gripper, m_down, m_up;
-
-    public void loop(){
-        float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
-        float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
-        float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
-        driveSystem.slowDrive(gamepad1.left_trigger > 0.3f);
-        driveSystem.drive(rx, lx, ly);
-
-
-        if (gamepad1.left_bumper) {
-            intakeSystem.unsuck();
-        } else if (gamepad1.right_bumper) {
-            intakeSystem.suck();
-        } else {
-            intakeSystem.stop();
-        }
-
-        if (gamepad1.b && !leftLatchHit) {
-            leftLatchHit = true;
-            latchSystem.toggle(LatchSystem.Latch.LEFT);
-        } else if (!gamepad1.b) {
-            leftLatchHit = false;
-        }
-
-        if (gamepad1.x && !rightLatchHit) {
-            rightLatchHit = true;
-            latchSystem.toggle(LatchSystem.Latch.RIGHT);
-        } else if (!gamepad1.x) {
-            rightLatchHit = false;
-        }
-
-        if (gamepad1.y) {
-            latchSystem.bothUp();
-        }
-
-        if (gamepad1.a) {
-            latchSystem.bothDown();
-        }
-
+    // These boolean variables are to make sure the controls don't get spammed.
+    // They need to be out here, even though it's kinda ugly, because ArmSystem doesn't get access
+    // to the controller input.
+    private boolean m_up, m_down, m_gripper;
+    public void loop() {
         if (armSystem.isHoming()) {
             return;
         } else if (gamepad2.x) {
@@ -98,5 +68,9 @@ public class DriveTeleop extends BaseOpMode {
         //telemetry.addData("Target height: ", armSystem);
 
         armSystem.updateHeight(SLIDER_SPEED);
+    }
+
+    public void stop() {
+        armSystem.stop();
     }
 }
