@@ -16,6 +16,13 @@ public class DriveTeleop extends BaseOpMode {
     private boolean xRecentlyHit, m_gripper, m_down, m_up;
 
     public void loop(){
+
+        telemetry.addData("Limit switch", armSystem.switchIsPressed());
+        telemetry.addData("Current encoder position", armSystem.getSliderPos());
+        telemetry.addData("Homing state", armSystem.homeState());
+        telemetry.update();
+
+
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
@@ -54,7 +61,7 @@ public class DriveTeleop extends BaseOpMode {
         }
 
         if (armSystem.isHoming()) {
-            return;
+            armSystem.goHome();
         } else if (gamepad2.x) {
             armSystem.moveHome();
             return;
@@ -93,5 +100,6 @@ public class DriveTeleop extends BaseOpMode {
         //telemetry.addData("Target height: ", armSystem);
 
         armSystem.raise(SLIDER_SPEED);
+
     }
 }
