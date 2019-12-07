@@ -106,11 +106,11 @@ public class DriveSystem {
 
         this.slowDrive = xButton;
         Log.d(TAG, "slow drive -- " + slowDrive);
-        if (slowDrive) {
-            power = SLOW_DRIVE_POWER;
-        } else {
-            power = MAX_DRIVE_POWER;
-        }
+//        if (slowDrive) {
+//            power = SLOW_DRIVE_POWER;
+//        } else {
+//            power = MAX_DRIVE_POWER;
+//        }
         // Prevent small values from causing the robot to drift
         if (Math.abs(rightX) < 0.01) {
             rightX = 0.0f;
@@ -174,6 +174,7 @@ public class DriveSystem {
         }
 
         for (DcMotor motor : motors.values()) {
+//            Log.d(TAG, motor.toString() + ", " + motor.getPortNumber() + ": " + motor.getCurrentPosition());
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if(offset <= 15){
                 // Shut down motors
@@ -188,12 +189,6 @@ public class DriveSystem {
         }
         // Motor has not reached target
         return false;
-    }
-
-    public void stopAndReset() {
-        setMotorPower(0.0);
-        mTargetTicks = 0;
-        mTargetHeading = 0;
     }
 
     public void stopAndReset() {
@@ -295,9 +290,9 @@ public class DriveSystem {
 
 
         if (leftSpeed < 0) {
-            leftSpeed = Range.clip(leftSpeed, -1.0, -0.15);
+            leftSpeed = Range.clip(leftSpeed, -1.0, -0.22);
         } else {
-            leftSpeed = Range.clip(leftSpeed, 0.15, 1.0);
+            leftSpeed = Range.clip(leftSpeed, 0.22, 1.0);
         }
         Log.d(TAG,"Left Speed: " + leftSpeed);
         // Send desired speeds to motors.

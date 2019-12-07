@@ -34,14 +34,13 @@ public abstract class BaseStateMachine extends BaseAutonomous {
         STATE_TURN_FOR_BACKUP,
         STATE_BACKUP_FOR_SECOND_STONE,
         STATE_MOVE_PAST_COLOR_LINE,
-        LOGGING
+        LOGGING,
+        STATE_REALIGN_HEADING
     }
 
     private final static String TAG = "BaseStateMachine";
     private State mCurrentState;                         // Current State Machine State.
     private ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
-
-    private DriveSystem.Direction direction;
 
     public void init(Team team) {
         super.init(team);
@@ -51,7 +50,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
     }
 
     private int skystoneOffset;
-    private static final int DEAD_RECKON_SKYSTONE = 20;
+    private static final int DEAD_RECKON_SKYSTONE = -80;
     private double alignStone;
     @Override
     public void loop() {
@@ -81,10 +80,10 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                             double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
                             int sign = (int) Math.signum(degrees);
                             int currOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
-                            currOffset -= 250;
+                            currOffset -= 330;
                             // The skystone detected is one of the first three which means that
                             // the second skystone must be farthest from the audience
-                            if (currOffset > -310) {
+                            if (currOffset > -380) {
                                 skystoneOffset = currOffset;
                             }
                             Log.d(TAG, "Skystone offset: " + skystoneOffset);
@@ -99,13 +98,16 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
+                if (skystoneOffset == 0) {
+                    skystoneOffset = DEAD_RECKON_SKYSTONE;
+                }
                 if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_SKYSTONE);
                 }
                 break;
 
             case STATE_HORIZONTAL_ALIGN_SKYSTONE:
-                if (driveSystem.driveToPosition(850, centerDirection, 0.7)) {
+                if (driveSystem.driveToPosition(1000, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_SKYSTONE);
                 }
                 break;
@@ -120,7 +122,13 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_ALIGN_BRIDGE:
-                if (driveSystem.driveToPosition(275, outsideDirection, 1.0)) {
+                if (driveSystem.driveToPosition(700, outsideDirection, 1.0)) {
+                    newState(State.STATE_REALIGN_HEADING);
+                }
+                break;
+
+            case STATE_REALIGN_HEADING:
+                if (driveSystem.turnAbsolute(0, 1.0)) {
                     newState(State.STATE_MOVE_PAST_LINE);
                 }
                 break;
@@ -139,14 +147,14 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_INTO_FOUNDATION:
-                if (driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(275, DriveSystem.Direction.BACKWARD, 1.0)) {
                     latchSystem.latch();
                     newState(State.STATE_MOVE_INTO_WALL);
                 }
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(550, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(600, DriveSystem.Direction.FORWARD, 1.0)) {
                     latchSystem.unlatch();
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
@@ -163,7 +171,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                     newState(State.STATE_BACKUP_FOR_SECOND_STONE);
                     // Make it move more when it backs up
                     if (skystoneOffset == DEAD_RECKON_SKYSTONE) {
-                        skystoneOffset = 200;
+                        skystoneOffset = 230;
                     }
                 }
                 break;
@@ -231,19 +239,19 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_MOVE_PAST_COLOR_LINE:
                 if (currentTeam == Team.RED) {
                     if (colorSensor.red() > colorSensor.blue() * 1.25) {
-                        driveSystem.drive(0, 0, 0.0f);
+                        driveSystem.drive(0, 0, 0.0f, false);
                         newState(State.STATE_DEPOSIT_STONE);
                         break;
                     }
                 } else {
                     if (colorSensor.blue() > colorSensor.red() * 1.25) {
-                        driveSystem.drive(0, 0, 0.0f);
+                        driveSystem.drive(0, 0, 0.0f, false);
                         newState(State.STATE_DEPOSIT_STONE);
                         break;
                     }
                 }
                 Log.d(TAG, "Blue: " + colorSensor.blue() + " Red: " + colorSensor.red());
-                driveSystem.drive(0, 0, -0.75f);
+                driveSystem.drive(0, 0, -0.75f, false);
                 break;
 
 

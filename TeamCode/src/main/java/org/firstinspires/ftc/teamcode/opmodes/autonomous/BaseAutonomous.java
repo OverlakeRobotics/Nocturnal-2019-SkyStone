@@ -21,6 +21,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     public void init(BaseStateMachine.Team team) {
+        super.init();
+        lightSystem.on();
         if (team == BaseStateMachine.Team.RED) {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
             distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
