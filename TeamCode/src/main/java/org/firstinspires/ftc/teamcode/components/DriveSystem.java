@@ -101,16 +101,7 @@ public class DriveSystem {
      * @param leftX Left X joystick value
      * @param leftY Left Y joystick value in case you couldn't tell from the others
      */
-    public void drive(float rightX, float leftX, float leftY, boolean xButton) {
-
-
-        this.slowDrive = xButton;
-        Log.d(TAG, "slow drive -- " + slowDrive);
-//        if (slowDrive) {
-//            power = SLOW_DRIVE_POWER;
-//        } else {
-//            power = MAX_DRIVE_POWER;
-//        }
+    public void drive(float rightX, float leftX, float leftY) {
         // Prevent small values from causing the robot to drift
         if (Math.abs(rightX) < 0.01) {
             rightX = 0.0f;

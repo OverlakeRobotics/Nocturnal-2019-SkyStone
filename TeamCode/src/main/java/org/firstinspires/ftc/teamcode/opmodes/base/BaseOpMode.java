@@ -31,7 +31,11 @@ public abstract class BaseOpMode extends OpMode {
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
-        latchSystem = new LatchSystem(hardwareMap.get(Servo.class, "LEFT"), hardwareMap.get(Servo.class, "RIGHT"));
+        EnumMap<LatchSystem.Latch, Servo> latchMap = new EnumMap<>(LatchSystem.Latch.class);
+        for(LatchSystem.Latch name : LatchSystem.Latch.values()){
+            latchMap.put(name,hardwareMap.get(Servo.class, name.toString()));
+        }
+        latchSystem = new LatchSystem(latchMap);
 
         lightSystem = new LightSystem(hardwareMap.get(DigitalChannel.class, "right_light"), hardwareMap.get(DigitalChannel.class, "left_light"));
 
@@ -49,7 +53,7 @@ public abstract class BaseOpMode extends OpMode {
         armSystem = new ArmSystem(
                 servoEnumMap,
                 hardwareMap.get(DcMotor.class, "SLIDER_MOTOR"),
-                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"), false);
+                hardwareMap.get(DigitalChannel.class, "SLIDER_SWITCH"));
 
     }
 }
