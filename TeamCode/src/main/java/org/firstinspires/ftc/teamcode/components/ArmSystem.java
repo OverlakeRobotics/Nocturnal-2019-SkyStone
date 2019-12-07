@@ -126,24 +126,17 @@ public class ArmSystem {
     // Go to capstone position
     public void moveCapstone() {
         gettingCapstone = true;
-        setSliderHeight(3);
+        setSliderHeight(2);
         movePresetPosition(Position.POSITION_CAPSTONE);
     }
 
     // Go to the home position
     public void moveHome() {
         homing = true;
-        setSliderHeight(3);
+        setSliderHeight(2);
         autoHome();
     }
 
-    // For autonomous
-    public void spitBlock() {
-        spitting = true;
-        closeGripper();
-        setSliderHeight(3);
-        autoSpit();
-    }
 
     // These two variables are used for all the auto methods.
     private int m_count = 0; // Used to wait a bit
@@ -161,7 +154,7 @@ public class ArmSystem {
                 setSliderHeight(0);
             }
         }
-        if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
+        if (Math.abs(getSliderPos() - calculateHeight(2)) < 50) {
             movePresetPosition(Position.POSITION_HOME);
             openGripper();
             m_waiting = true;
@@ -182,32 +175,13 @@ public class ArmSystem {
                 setSliderHeight(1);
             }
         }
-        if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
+        if (Math.abs(getSliderPos() - calculateHeight(2)) < 50) {
             movePresetPosition(Position.POSITION_CAPSTONE);
             openGripper();
             m_waiting = true;
         }
 
         raise(1);
-    }
-
-    private Direction m_spitDirection;
-    private boolean spitting = false;
-    public void autoSpit() {
-        if (m_waiting) {
-            m_count ++;
-            if (m_count > 30) {
-                m_waiting = false;
-                m_count = 0;
-                spitting = false;
-                setSliderHeight(0);
-            }
-        }
-        if (Math.abs(getSliderPos() - calculateHeight(0)) < 50) {
-            movePresetPosition(Position.POSITION_NORTH);
-            m_waiting = true;
-        }
-
     }
 
     public void openGripper() {
@@ -271,6 +245,9 @@ public class ArmSystem {
         slider.setTargetPosition(calculateHeight(targetHeight));
     }
 
+    public boolean isRaised() {
+        return getSliderPos() >= calibrationDistance + 50;
+    }
     public boolean switchIsPressed() {
         return !limitSwitch.getState();
     }
@@ -283,9 +260,7 @@ public class ArmSystem {
         return homing;
     }
 
-    public boolean isSpitting() {
-        return spitting;
-    }
+    public boolean isGettingCapstone() { return isGettingCapstone(); }
 
     // Moves slider back to original state
     public void stop() {
