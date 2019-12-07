@@ -39,6 +39,7 @@ public class ArmSystem {
 
     private Direction direction;
     private boolean homing;
+    private boolean gettingCapstone;
     // Don't change this unless in calibrate() or init(), is read in the calculateHeight method
     public int calibrationDistance;
 
@@ -127,7 +128,7 @@ public class ArmSystem {
     public void moveCapstone() {
         gettingCapstone = true;
         setSliderHeight(2);
-        movePresetPosition(Position.POSITION_CAPSTONE);
+        autoCapstone();
     }
 
     // Go to the home position
@@ -163,8 +164,7 @@ public class ArmSystem {
         raise(1);
     }
 
-    private Direction m_capstoneDirection;
-    private boolean gettingCapstone = false;
+
     public void autoCapstone() {
         if (m_waiting) {
             m_count ++;
@@ -172,7 +172,7 @@ public class ArmSystem {
                 m_waiting = false;
                 m_count = 0;
                 gettingCapstone = false;
-                setSliderHeight(1);
+                setSliderHeight(0.5);
             }
         }
         if (Math.abs(getSliderPos() - calculateHeight(2)) < 50) {
@@ -245,9 +245,6 @@ public class ArmSystem {
         slider.setTargetPosition(calculateHeight(targetHeight));
     }
 
-    public boolean isRaised() {
-        return getSliderPos() >= calibrationDistance + 50;
-    }
     public boolean switchIsPressed() {
         return !limitSwitch.getState();
     }
@@ -260,7 +257,7 @@ public class ArmSystem {
         return homing;
     }
 
-    public boolean isGettingCapstone() { return isGettingCapstone(); }
+    public boolean isGettingCapstone() { return gettingCapstone; }
 
     // Moves slider back to original state
     public void stop() {
