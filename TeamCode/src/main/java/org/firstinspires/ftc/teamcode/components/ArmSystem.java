@@ -18,11 +18,11 @@ import java.util.EnumMap;
  */
 public class ArmSystem {
     private DcMotor slider;
-    private final double GRIPPER_OPEN = 0.7;
+    private final double GRIPPER_OPEN = 0.9;
     private final double GRIPPER_CLOSE = 0.3;
 
     // This is in block positions, not ticks
-    public int targetHeight;
+    public double targetHeight;
 
     private enum Direction {
         UP, DOWN;
@@ -210,11 +210,11 @@ public class ArmSystem {
 
     }
 
-    private void openGripper() {
+    public void openGripper() {
         servoEnumMap.get(ServoNames.GRIPPER).setPosition(GRIPPER_OPEN);
     }
 
-    private void closeGripper() {
+    public void closeGripper() {
         servoEnumMap.get(ServoNames.GRIPPER).setPosition(GRIPPER_CLOSE);
     }
 
@@ -243,7 +243,7 @@ public class ArmSystem {
     }
 
     // Pos should be the # of blocks high it should be
-    public void setSliderHeight(int pos){
+    public void setSliderHeight(double pos){
         targetHeight = pos;
         if (pos < 0) targetHeight = 0;
         if (pos > 5) targetHeight = 5;
@@ -253,10 +253,15 @@ public class ArmSystem {
         raise(1);
     }
 
+    public void setSliderHeight(int pos) {
+        // * 1.0 converts to double
+        setSliderHeight(pos * 1.0);
+    }
+
     // Little helper method for setSliderHeight
-    private int calculateHeight(int pos){
+    private int calculateHeight(double pos){
         if (pos == 0) return calibrationDistance - 20;
-        return calibrationDistance + (pos * INCREMENT_HEIGHT);
+        return (int) (calibrationDistance + (pos * INCREMENT_HEIGHT));
     }
 
     // Must be called every loop
@@ -276,6 +281,10 @@ public class ArmSystem {
 
     public boolean isHoming() {
         return homing;
+    }
+
+    public boolean isSpitting() {
+        return spitting;
     }
 
     // Moves slider back to original state

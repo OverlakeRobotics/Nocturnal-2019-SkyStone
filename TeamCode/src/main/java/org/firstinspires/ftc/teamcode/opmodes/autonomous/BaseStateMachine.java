@@ -12,7 +12,10 @@ public abstract class BaseStateMachine extends BaseAutonomous {
     public enum State {
         STATE_INITIAL,
         STATE_FIND_SKYSTONE,
+        STATE_BACKUP_SLIGHTLY_FROM_WALL,
         STATE_ALIGN_SKYSTONE,
+        STATE_ROTATE_ARM,
+        STATE_ROTATE_ARM_FOR_HOME,
         STATE_HORIZONTAL_ALIGN_SKYSTONE,
         STATE_INTAKE_SKYSTONE,
         STATE_ALIGN_STONE,
@@ -25,6 +28,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
         STATE_INITIAL_ALIGN_STONE,
         STATE_STRAFE_AWAY_FROM_FOUNDATION,
         STATE_MOVE_INTO_WALL,
+        STATE_RAISE_ARM_FOR_HOME,
         STATE_ALIGN_FOR_BRIDGE,
         STATE_FIND_STONE,
         STATE_APPROACH_STONE,
@@ -32,10 +36,12 @@ public abstract class BaseStateMachine extends BaseAutonomous {
         STATE_DEPOSIT_STONE,
         STATE_BACKUP_TO_LINE,
         STATE_TURN_FOR_BACKUP,
+        STATE_RAISE_ARM,
         STATE_BACKUP_FOR_SECOND_STONE,
         STATE_MOVE_PAST_COLOR_LINE,
         LOGGING,
-        STATE_REALIGN_HEADING
+        STATE_REALIGN_HEADING,
+        STATE_PARK_AT_LINE,
     }
 
     private final static String TAG = "BaseStateMachine";
@@ -50,8 +56,9 @@ public abstract class BaseStateMachine extends BaseAutonomous {
     }
 
     private int skystoneOffset;
-    private static final int DEAD_RECKON_SKYSTONE = -80;
+    private static final int DEAD_RECKON_SKYSTONE = -110;
     private double alignStone;
+    private boolean calledSpit = false;
     @Override
     public void loop() {
         telemetry.addData("State", mCurrentState);
@@ -83,11 +90,14 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                             currOffset -= 330;
                             // The skystone detected is one of the first three which means that
                             // the second skystone must be farthest from the audience
-                            if (currOffset > -380) {
+                            if (currOffset > -600) {
                                 skystoneOffset = currOffset;
                             }
                             Log.d(TAG, "Skystone offset: " + skystoneOffset);
                         }
+                    }
+                    if (skystoneOffset == 0) {
+                        skystoneOffset = DEAD_RECKON_SKYSTONE;
                     }
                     newState(State.STATE_ALIGN_SKYSTONE);
                 } else {
@@ -98,37 +108,42 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
-                if (skystoneOffset == 0) {
-                    skystoneOffset = DEAD_RECKON_SKYSTONE;
-                }
                 if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
+                    armSystem.setSliderHeight(0.3);
                     newState(State.STATE_HORIZONTAL_ALIGN_SKYSTONE);
                 }
                 break;
 
             case STATE_HORIZONTAL_ALIGN_SKYSTONE:
+                armSystem.raise(1.0);
                 if (driveSystem.driveToPosition(1000, centerDirection, 0.7)) {
                     newState(State.STATE_INTAKE_SKYSTONE);
                 }
                 break;
 
             case STATE_INTAKE_SKYSTONE:
-                if (driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
-                    intakeSystem.stop();
+                armSystem.raise(1.0);
+                intakeSystem.suck();
+                if (driveSystem.driveToPosition(200, DriveSystem.Direction.FORWARD, 0.2)) {
                     newState(State.STATE_ALIGN_BRIDGE);
-                } else {
-                    intakeSystem.suck();
                 }
                 break;
 
             case STATE_ALIGN_BRIDGE:
+                armSystem.raise(1.0);
+                intakeSystem.suck();
                 if (driveSystem.driveToPosition(625, outsideDirection, 1.0)) {
+                    armSystem.setSliderHeight(0.0);
                     newState(State.STATE_REALIGN_HEADING);
                 }
                 break;
 
             case STATE_REALIGN_HEADING:
+                armSystem.raise(1.0);
+                intakeSystem.suck();
                 if (driveSystem.turnAbsolute(0, 1.0)) {
+                    intakeSystem.stop();
+                    armSystem.closeGripper();
                     newState(State.STATE_MOVE_PAST_LINE);
                 }
                 break;
@@ -147,20 +162,77 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_INTO_FOUNDATION:
-                if (driveSystem.driveToPosition(350, DriveSystem.Direction.BACKWARD, 1.0)) {
-                    latchSystem.latch();
+                if (driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.75)) {
+                    latchSystem.bothDown();
+                    armSystem.setSliderHeight(2.0);
+                    newState(State.STATE_RAISE_ARM);
+                }
+                break;
+
+            case STATE_RAISE_ARM:
+                armSystem.raise(1.0);
+                if (mStateTime.milliseconds() > 500) {
+                    armSystem.moveNorth();
+                    newState(State.STATE_ROTATE_ARM);
+                }
+                break;
+
+            case STATE_ROTATE_ARM:
+                armSystem.raise(1.0);
+                if (mStateTime.milliseconds() > 500) {
+                    armSystem.setSliderHeight(0.0);
                     newState(State.STATE_MOVE_INTO_WALL);
                 }
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(650, DriveSystem.Direction.FORWARD, 1.0)) {
-                    latchSystem.unlatch();
-                    newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
+                armSystem.raise(1.0);
+                if (driveSystem.driveToPosition(675, DriveSystem.Direction.FORWARD, 0.75)) {
+                    armSystem.openGripper();
+                    latchSystem.bothUp();
+                    armSystem.moveHome();
+                    newState(State.STATE_RAISE_ARM_FOR_HOME);
+                }
+                break;
+
+            case STATE_RAISE_ARM_FOR_HOME:
+                if (armSystem.isHoming()) {
+                    armSystem.autoHome();
+                } else {
+                    newState(State.STATE_PARK_AT_LINE);
+                }
+                break;
+
+            case STATE_BACKUP_SLIGHTLY_FROM_WALL:
+                if (driveSystem.driveToPosition(15, DriveSystem.Direction.BACKWARD, 1.0)) {
+                    newState(State.STATE_PARK_AT_LINE);
+                }
+                break;
+
+            case STATE_PARK_AT_LINE:
+//                if (currentTeam == Team.RED) {
+//                    if (colorSensor.red() > colorSensor.blue() * 1.25) {
+//                        driveSystem.stopAndReset();
+//                        newState(State.STATE_COMPLETE);
+//                        break;
+//                    }
+//                } else {
+//                    if (colorSensor.blue() > colorSensor.red() * 1.25) {
+//                        driveSystem.stopAndReset();
+//                        newState(State.STATE_COMPLETE);
+//                        break;
+//                    }
+//                }
+//                Log.d(TAG, "Blue: " + colorSensor.blue() + " Red: " + colorSensor.red());
+                if (driveSystem.driveToPosition(1200, outsideDirection, 0.6)) {
+                    newState(State.STATE_COMPLETE);
                 }
                 break;
 
             case STATE_STRAFE_AWAY_FROM_FOUNDATION:
+                if (armSystem.isHoming()) {
+                   armSystem.autoHome();
+                }
                 if (driveSystem.driveToPosition(500, outsideDirection, 1.0)) {
                     newState(State.STATE_TURN_FOR_BACKUP);
                 }
@@ -239,19 +311,19 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_MOVE_PAST_COLOR_LINE:
                 if (currentTeam == Team.RED) {
                     if (colorSensor.red() > colorSensor.blue() * 1.25) {
-                        driveSystem.drive(0, 0, 0.0f, false);
+                        driveSystem.drive(0, 0, 0.0f);
                         newState(State.STATE_DEPOSIT_STONE);
                         break;
                     }
                 } else {
                     if (colorSensor.blue() > colorSensor.red() * 1.25) {
-                        driveSystem.drive(0, 0, 0.0f, false);
+                        driveSystem.drive(0, 0, 0.0f);
                         newState(State.STATE_DEPOSIT_STONE);
                         break;
                     }
                 }
                 Log.d(TAG, "Blue: " + colorSensor.blue() + " Red: " + colorSensor.red());
-                driveSystem.drive(0, 0, -0.75f, false);
+                driveSystem.drive(0, 0, -0.75f);
                 break;
 
 
