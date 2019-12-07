@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.LatchSystem;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
@@ -62,7 +61,7 @@ public class DriveTeleop extends BaseOpMode {
         }
 
         if (armSystem.isHoming()) {
-            armSystem.goHome();
+            armSystem.autoHome();
         } else if (gamepad2.x) {
             armSystem.moveHome();
             return;

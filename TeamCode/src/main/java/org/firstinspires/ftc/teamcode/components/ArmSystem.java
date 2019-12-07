@@ -125,41 +125,88 @@ public class ArmSystem {
     }
     // Go to capstone position
     public void moveCapstone() {
+        gettingCapstone = true;
+        setSliderHeight(3);
         movePresetPosition(Position.POSITION_CAPSTONE);
     }
 
     // Go to the home position
     public void moveHome() {
         homing = true;
-        m_homeDirection = Direction.UP;
-        setSliderHeight(1);
-        goHome();
+        setSliderHeight(3);
+        autoHome();
     }
+
+    // For autonomous
+    public void spitBlock() {
+        spitting = true;
+        closeGripper();
+        setSliderHeight(3);
+        autoSpit();
+    }
+
+    // These two variables are used for all the auto methods.
+    private int m_count = 0; // Used to wait a bit
+    private boolean m_waiting = false;
 
     // Moves the slider up to one block high, moves the gripper to the home position, and then moves
     // back down so we can fit under the bridge.
-    private Direction m_homeDirection;
-    private int m_count = 0; // Used to wait a bit
-    private boolean m_waiting = false;
-    public void goHome() {
+    public void autoHome() {
         if (m_waiting) {
             m_count ++;
             if (m_count > 30) {
                 m_waiting = false;
                 m_count = 0;
                 homing = false;
-                m_homeDirection = Direction.UP;
                 setSliderHeight(0);
             }
         }
-        if (m_homeDirection == Direction.UP) {
-            if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
-                movePresetPosition(Position.POSITION_HOME);
-                openGripper();
-                m_waiting = true;
+        if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
+            movePresetPosition(Position.POSITION_HOME);
+            openGripper();
+            m_waiting = true;
+        }
+
+        raise(1);
+    }
+
+    private Direction m_capstoneDirection;
+    private boolean gettingCapstone = false;
+    public void autoCapstone() {
+        if (m_waiting) {
+            m_count ++;
+            if (m_count > 30) {
+                m_waiting = false;
+                m_count = 0;
+                gettingCapstone = false;
+                setSliderHeight(1);
             }
         }
+        if (Math.abs(getSliderPos() - calculateHeight(1)) < 50) {
+            movePresetPosition(Position.POSITION_CAPSTONE);
+            openGripper();
+            m_waiting = true;
+        }
+
         raise(1);
+    }
+
+    private Direction m_spitDirection;
+    private boolean spitting = false;
+    public void autoSpit() {
+        if (m_waiting) {
+            m_count ++;
+            if (m_count > 30) {
+                m_waiting = false;
+                m_count = 0;
+                spitting = false;
+                setSliderHeight(0);
+            }
+        }
+        if (Math.abs(getSliderPos() - calculateHeight(0)) < 50) {
+            movePresetPosition(Position.POSITION_NORTH);
+            m_waiting = true;
+        }
 
     }
 
