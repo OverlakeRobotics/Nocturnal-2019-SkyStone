@@ -34,9 +34,6 @@ public class DriveTeleop extends BaseOpMode {
             intakeSystem.unsuck();
         } else if (gamepad1.right_bumper) {
             intakeSystem.suck();
-            if (!armSystem.isRaised()) {
-                armSystem.setSliderHeight(0.1);
-            }
         } else {
             intakeSystem.stop();
         }
@@ -66,7 +63,7 @@ public class DriveTeleop extends BaseOpMode {
         if (armSystem.isHoming()) {
             armSystem.autoHome();
         } else if (armSystem.isGettingCapstone()) {
-            armSystem.isGettingCapstone();
+            armSystem.autoCapstone();
         } else if (gamepad2.x) {
             armSystem.moveHome();
             return;
