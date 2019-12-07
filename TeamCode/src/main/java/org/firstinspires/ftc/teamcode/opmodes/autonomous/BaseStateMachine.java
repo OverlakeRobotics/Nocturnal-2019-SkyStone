@@ -122,7 +122,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_ALIGN_BRIDGE:
-                if (driveSystem.driveToPosition(700, outsideDirection, 1.0)) {
+                if (driveSystem.driveToPosition(625, outsideDirection, 1.0)) {
                     newState(State.STATE_REALIGN_HEADING);
                 }
                 break;
@@ -147,14 +147,14 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_INTO_FOUNDATION:
-                if (driveSystem.driveToPosition(275, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(350, DriveSystem.Direction.BACKWARD, 1.0)) {
                     latchSystem.latch();
                     newState(State.STATE_MOVE_INTO_WALL);
                 }
                 break;
 
             case STATE_MOVE_INTO_WALL:
-                if (driveSystem.driveToPosition(600, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(650, DriveSystem.Direction.FORWARD, 1.0)) {
                     latchSystem.unlatch();
                     newState(State.STATE_STRAFE_AWAY_FROM_FOUNDATION);
                 }
