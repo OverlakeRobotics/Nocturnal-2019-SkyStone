@@ -14,7 +14,7 @@ public class DriveTeleop extends BaseOpMode {
     private final double SLIDER_SPEED = 1;
     private boolean xRecentlyHit, m_gripper, m_down, m_up;
 
-    public void loop(){
+    public void loop() {
 
         telemetry.addData("Limit switch", armSystem.switchIsPressed());
         telemetry.addData("Current encoder position", armSystem.getSliderPos());
@@ -34,6 +34,9 @@ public class DriveTeleop extends BaseOpMode {
             intakeSystem.unsuck();
         } else if (gamepad1.right_bumper) {
             intakeSystem.suck();
+            if (!armSystem.isRaised()) {
+                armSystem.setSliderHeight(0.1);
+            }
         } else {
             intakeSystem.stop();
         }
@@ -62,6 +65,8 @@ public class DriveTeleop extends BaseOpMode {
 
         if (armSystem.isHoming()) {
             armSystem.autoHome();
+        } else if (armSystem.isGettingCapstone()) {
+            armSystem.isGettingCapstone();
         } else if (gamepad2.x) {
             armSystem.moveHome();
             return;
