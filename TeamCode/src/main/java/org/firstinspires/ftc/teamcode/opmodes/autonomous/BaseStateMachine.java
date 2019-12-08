@@ -105,7 +105,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                     skystoneOffset = maxDistance;
                     // If the magnitude of the distance is greater than -360 the skystone is the
                     // first one
-                    if (skystoneOffset < -360) {
+                    if (skystoneOffset < -390) {
                         skystoneOffset = DEAD_RECKON_SKYSTONE;
                     }
                 } else {
@@ -244,7 +244,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 //                    }
 //                }
 //                Log.d(TAG, "Blue: " + colorSensor.blue() + " Red: " + colorSensor.red());
-                if (driveSystem.driveToPosition(1200, outsideDirection, 0.6)) {
+                if (driveSystem.driveToPosition(1300, outsideDirection, 0.6)) {
                     newState(State.STATE_COMPLETE);
                 }
                 break;

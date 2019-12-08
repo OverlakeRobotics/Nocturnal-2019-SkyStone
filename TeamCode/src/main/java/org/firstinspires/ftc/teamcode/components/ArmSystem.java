@@ -260,7 +260,7 @@ public class ArmSystem {
     public boolean isGettingCapstone() { return gettingCapstone; }
 
     // Moves slider back to original state
-    public void stop() {
-        slider.setTargetPosition(calibrationDistance);
-    }
+//    public void stop() {
+//        slider.setTargetPosition(calibrationDistance);
+//    }
 }
