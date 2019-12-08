@@ -23,8 +23,8 @@ import java.util.EnumMap;
 public abstract class BaseAutonomous extends OpMode {
     DistanceSensor distanceCenter;
     DistanceSensor distanceOutside;
-    DriveSystem.Direction centerDirection;
-    DriveSystem.Direction outsideDirection;
+    DriveSystemAutonomous.Direction centerDirection;
+    DriveSystemAutonomous.Direction outsideDirection;
     DriveSystemAutonomous driveSystem;
     LatchSystem latchSystem;
     ArmSystem armSystem;

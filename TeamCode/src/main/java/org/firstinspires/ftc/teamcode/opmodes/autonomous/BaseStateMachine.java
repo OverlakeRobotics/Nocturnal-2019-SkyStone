@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.components.DriveSystem;
-
+import org.firstinspires.ftc.teamcode.components.DriveSystemAutonomous;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +121,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_ALIGN_SKYSTONE:
                 // Align to prepare intake
-                if (driveSystem.driveToPosition(skystoneOffset, DriveSystem.Direction.FORWARD, 0.75)) {
+                if (driveSystem.driveToPosition(skystoneOffset, DriveSystemAutonomous.Direction.FORWARD, 0.75)) {
                     armSystem.setSliderHeight(0.4);
                     newState(State.STATE_HORIZONTAL_ALIGN_SKYSTONE);
                 }
@@ -144,7 +143,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_INTAKE_SKYSTONE:
                 armSystem.raise(1.0);
                 intakeSystem.suck();
-                if (driveSystem.driveToPosition(200, DriveSystem.Direction.FORWARD, 0.2)) {
+                if (driveSystem.driveToPosition(200, DriveSystemAutonomous.Direction.FORWARD, 0.2)) {
                     newState(State.STATE_ALIGN_BRIDGE);
                 }
                 break;
@@ -169,7 +168,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_MOVE_PAST_LINE:
-                if (driveSystem.driveToPosition(1600 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(1600 - skystoneOffset, DriveSystemAutonomous.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_TURN_FOR_FOUNDATION);
                 }
                 break;
@@ -182,7 +181,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_INTO_FOUNDATION:
-                if (driveSystem.driveToPosition(225, DriveSystem.Direction.BACKWARD, 0.75)) {
+                if (driveSystem.driveToPosition(225, DriveSystemAutonomous.Direction.BACKWARD, 0.75)) {
                     latchSystem.bothDown();
                     armSystem.setSliderHeight(2.0);
                     newState(State.STATE_RAISE_ARM);
@@ -207,7 +206,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_MOVE_INTO_WALL:
                 armSystem.raise(1.0);
-                if (driveSystem.driveToPosition(700, DriveSystem.Direction.FORWARD, 0.75)) {
+                if (driveSystem.driveToPosition(700, DriveSystemAutonomous.Direction.FORWARD, 0.75)) {
                     armSystem.openGripper();
                     latchSystem.bothUp();
                     armSystem.moveHome();
@@ -224,7 +223,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_SLIGHTLY_FROM_WALL:
-                if (driveSystem.driveToPosition(15, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(15, DriveSystemAutonomous.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_PARK_AT_LINE);
                 }
                 break;
@@ -269,7 +268,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_FOR_SECOND_STONE:
-                if (driveSystem.driveToPosition(900 + Math.abs(skystoneOffset), DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(900 + Math.abs(skystoneOffset), DriveSystemAutonomous.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_FIND_STONE);
                 }
                 break;
@@ -290,7 +289,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_INITIAL_ALIGN_STONE:
-                if (driveSystem.driveToPosition((int) alignStone - 20, DriveSystem.Direction.FORWARD, 0.75)) {
+                if (driveSystem.driveToPosition((int) alignStone - 20, DriveSystemAutonomous.Direction.FORWARD, 0.75)) {
                     newState(State.STATE_APPROACH_STONE);
                 }
                 break;
@@ -306,7 +305,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_ALIGN_STONE:
-                if (driveSystem.driveToPosition(250, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(250, DriveSystemAutonomous.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_HORIZONTAL_ALIGN_STONE);
                 }
                 break;
@@ -317,7 +316,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_INTAKE_STONE:
-                if (driveSystem.driveToPosition(225, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(225, DriveSystemAutonomous.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_ALIGN_FOR_BRIDGE);
                 }
                 break;
@@ -357,7 +356,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                 break;
 
             case STATE_BACKUP_TO_LINE:
-                if (driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 1.0)) {
+                if (driveSystem.driveToPosition(150, DriveSystemAutonomous.Direction.BACKWARD, 1.0)) {
                     newState(State.STATE_COMPLETE);
                 }
                 break;
