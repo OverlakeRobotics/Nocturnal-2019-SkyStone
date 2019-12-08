@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseStateMachine extends BaseAutonomous {
@@ -56,7 +58,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
     }
 
     private int skystoneOffset;
-    private static final int DEAD_RECKON_SKYSTONE = -110;
+    private static final int DEAD_RECKON_SKYSTONE = -95;
     private double alignStone;
     private boolean calledSpit = false;
     @Override
@@ -81,6 +83,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_FIND_SKYSTONE:
                 List<Recognition> recognitions = tensorflow.getInference();
+                List<Integer> distances = new ArrayList<Integer>();
                 if (recognitions != null) {
                     for (Recognition recognition : recognitions) {
                         if (recognition.getLabel().equals("Skystone")) {
@@ -90,26 +93,31 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                             currOffset -= 350;
                             // The skystone detected is one of the first three which means that
                             // the second skystone must be farthest from the audience
-                            if (currOffset > -370) {
-                                skystoneOffset = currOffset;
-                            }
-                            Log.d(TAG, "Skystone offset: " + skystoneOffset);
+                            distances.add(currOffset);
                         }
                     }
-                    if (skystoneOffset == 0) {
+                    // Set max to minimum value
+                    int maxDistance = Integer.MIN_VALUE;
+                    for (int value : distances) {
+                        maxDistance = Math.max(maxDistance, value);
+                    }
+                    // Set the skystoneOffset to be the maximum value
+                    skystoneOffset = maxDistance;
+                    // If the magnitude of the distance is greater than -360 the skystone is the
+                    // first one
+                    if (skystoneOffset < -360) {
                         skystoneOffset = DEAD_RECKON_SKYSTONE;
                     }
-                    if (currentTeam == Team.BLUE) {
-                        skystoneOffset *= 1.15;
-                    }
-                    newState(State.STATE_ALIGN_SKYSTONE);
                 } else {
                     skystoneOffset = DEAD_RECKON_SKYSTONE;
-                    if (currentTeam == Team.BLUE) {
-                        skystoneOffset *= 1.15;
-                    }
-                    newState(State.STATE_ALIGN_SKYSTONE);
                 }
+                // Blue strafing is worse so increase the value slightly
+                if (currentTeam == Team.BLUE) {
+                    skystoneOffset *= 1.1;
+                }
+                newState(State.STATE_ALIGN_SKYSTONE);
+                Log.d(TAG, "Skystone offset: " + skystoneOffset);
+                Log.d(TAG, "Distances: " + distances.toString());
                 break;
 
             case STATE_ALIGN_SKYSTONE:
@@ -123,7 +131,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_HORIZONTAL_ALIGN_SKYSTONE:
                 armSystem.raise(1.0);
                 if (currentTeam == Team.BLUE) {
-                    if (driveSystem.driveToPosition(1200, centerDirection, 0.7)) {
+                    if (driveSystem.driveToPosition(1100, centerDirection, 0.7)) {
                         newState(State.STATE_INTAKE_SKYSTONE);
                     }
                 } else {

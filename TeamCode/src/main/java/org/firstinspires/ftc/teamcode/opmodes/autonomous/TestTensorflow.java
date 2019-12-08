@@ -26,10 +26,12 @@ public class TestTensorflow extends BaseAutonomous {
 
     @Override
     public void init() {
-        super.init(Team.RED);
+        super.init(Team.BLUE);
         newState(State.STATE_SCAN_STONE);
     }
 
+    private int skystoneOffset;
+    private static final int DEAD_RECKON_SKYSTONE = -110;
     @Override
     public void loop() {
         switch (mCurrentState) {
@@ -41,10 +43,21 @@ public class TestTensorflow extends BaseAutonomous {
                             double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
                             int sign = (int) Math.signum(degrees);
                             int currOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
-                            currOffset -= 330;
-                            telemetry.addData("Skystone offset", currOffset);
+                            currOffset -= 350;
+                            // The skystone detected is one of the first three which means that
+                            // the second skystone must be farthest from the audience
+                            if (currOffset > -370) {
+                                skystoneOffset = currOffset;
+                            }
                         }
                     }
+                    if (skystoneOffset == 0) {
+                        skystoneOffset = DEAD_RECKON_SKYSTONE;
+                    }
+                    if (currentTeam == Team.BLUE) {
+                        skystoneOffset *= 1.15;
+                    }
+                    Log.d("BaseStateMachine", "Skystone offset: " + skystoneOffset);
                 }
                 telemetry.update();
                 break;
