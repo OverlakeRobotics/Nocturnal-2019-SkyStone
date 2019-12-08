@@ -56,7 +56,7 @@ public class ArmSystem {
         POSITION_SOUTH(new double[] {0.16, 0.22, 0.37}),
         POSITION_EAST(new double[] {0.16, 0.58, 0.37}),
         POSITION_NORTH(new double[] {0.16, 0.58, 0.05}),
-        POSITION_CAPSTONE(new double[] {0.78, 0.31, 0.75});
+        POSITION_CAPSTONE(new double[] {0.56, 0.23, 0.82});
 
         private double[] posArr;
 
