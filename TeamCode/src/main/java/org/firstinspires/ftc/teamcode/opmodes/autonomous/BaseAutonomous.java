@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.components.LatchSystem;
 import org.firstinspires.ftc.teamcode.components.LightSystem;
 import org.firstinspires.ftc.teamcode.components.Tensorflow;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
-import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
-
 import java.util.EnumMap;
 
 public abstract class BaseAutonomous extends OpMode {
@@ -75,13 +73,13 @@ public abstract class BaseAutonomous extends OpMode {
         if (team == BaseStateMachine.Team.RED) {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
             distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
-            centerDirection = DriveSystem.Direction.LEFT;
-            outsideDirection = DriveSystem.Direction.RIGHT;
+            centerDirection = DriveSystemAutonomous.Direction.LEFT;
+            outsideDirection = DriveSystemAutonomous.Direction.RIGHT;
         } else {
             distanceCenter = hardwareMap.get(DistanceSensor.class, "FRONTRIGHTLIDAR");
             distanceOutside = hardwareMap.get(DistanceSensor.class, "FRONTLEFTLIDAR");
-            centerDirection = DriveSystem.Direction.RIGHT;
-            outsideDirection = DriveSystem.Direction.LEFT;
+            centerDirection = DriveSystemAutonomous.Direction.RIGHT;
+            outsideDirection = DriveSystemAutonomous.Direction.LEFT;
         }
         tensorflow = new Tensorflow(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
         colorSensor = hardwareMap.get(ColorSensor.class, "COLORSENSOR");
