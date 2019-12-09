@@ -129,6 +129,11 @@ public class DriveSystemAutonomous extends DriveSystem {
         return distance;
     }
 
+    public boolean driveToPosition(int millimeters, Direction direction, double maxPower, double heading) {
+        // Since no heading is passed in just give it the current heading such it doesn't have
+        // any impact
+        return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower, heading);
+    }
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
         // Since no heading is passed in just give it the current heading such it doesn't have
         // any impact
