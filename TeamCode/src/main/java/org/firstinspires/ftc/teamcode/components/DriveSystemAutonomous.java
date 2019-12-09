@@ -9,11 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.EnumMap;
 
-public class DriveSystemAutonomous {
-
-    public enum MotorNames {
-        FRONTLEFT, FRONTRIGHT, BACKRIGHT, BACKLEFT
-    }
+public class DriveSystemAutonomous extends DriveSystem {
 
     public enum Direction {
         FORWARD, BACKWARD, LEFT, RIGHT;
@@ -23,18 +19,10 @@ public class DriveSystemAutonomous {
         }
     }
 
-    public static final double SLOW_DRIVE_COEFF = 0.4;
-
-    public int counter;
-    public boolean slowDrive;
-
-
     public static final String TAG = "DriveSystem";
     public static final double P_TURN_COEFF = 0.018;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
-
     public EnumMap<MotorNames, DcMotor> motors;
-
     public IMUSystem imuSystem;
 
     private int mTargetTicks;
@@ -52,97 +40,16 @@ public class DriveSystemAutonomous {
      * Handles the data for the abstract creation of a drive system with four wheels
      */
     public DriveSystemAutonomous(EnumMap<MotorNames, DcMotor> motors, BNO055IMU imu) {
-        this.motors = motors;
+        super(motors);
         mTargetTicks = 0;
         mTurnCounter = 0;
-        initMotors();
         imuSystem = new IMUSystem(imu);
     }
 
-    /**
-     * Set the power of the drive system
-     * @param power power of the system
-     */
-    public void setMotorPower(double power) {
-        for (DcMotor motor : motors.values()) {
-            motor.setPower(power);
-        }
-    }
-
-    public void initMotors() {
-        motors.forEach((name, motor) -> {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            switch(name) {
-                case FRONTLEFT:
-                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
-                    break;
-                case FRONTRIGHT:
-                case BACKRIGHT:
-                case BACKLEFT:
-                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
-                    break;
-            }
-        });
-        setMotorPower(0);
-    }
-
-    public void slowDrive(boolean on) {
-        slowDrive = on;
-    }
-
-    private void setDriveSpeed(DcMotor motor, double motorPower) {
-        motor.setPower(Range.clip(slowDrive ?
-                SLOW_DRIVE_COEFF * motorPower : motorPower, -1, 1));
-    }
-
-    /**
-     * Clips joystick values and drives the motors.
-     * @param rightX Right X joystick value
-     * @param leftX Left X joystick value
-     * @param leftY Left Y joystick value in case you couldn't tell from the others
-     */
-    public void drive(float rightX, float leftX, float leftY) {
-        // Prevent small values from causing the robot to drift
-        if (Math.abs(rightX) < 0.01) {
-            rightX = 0.0f;
-        }
-        if (Math.abs(leftX) < 0.01) {
-            leftX = 0.0f;
-        }
-        if (Math.abs(leftY) < 0.01) {
-            leftY = 0.0f;
-        }
-
-        double frontLeftPower = -leftY + rightX + leftX;
-        double frontRightPower = -leftY - rightX - leftX;
-        double backLeftPower = -leftY + rightX - leftX;
-        double backRightPower = -leftY - rightX + leftX;
-
-
-
-        motors.forEach((name, motor) -> {
-            switch(name) {
-                case FRONTRIGHT:
-                    setDriveSpeed(motor, frontRightPower);
-                    break;
-                case BACKLEFT:
-                    setDriveSpeed(motor, backLeftPower);
-                    break;
-                case FRONTLEFT:
-                    setDriveSpeed(motor, frontLeftPower);
-                    break;
-                case BACKRIGHT:
-                    setDriveSpeed(motor, backRightPower);
-                    break;
-            }
-        });
-        slowDrive = false;
-    }
-
-    public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower) {
+    public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower, double heading) {
         if(mTargetTicks == 0){
             mTargetTicks = direction == Direction.BACKWARD ? -ticks : ticks;
+            mTargetHeading = heading;
             motors.forEach((name, motor) -> {
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 if(Direction.isStrafe(direction)) {
@@ -160,13 +67,11 @@ public class DriveSystemAutonomous {
                 } else {
                     motor.setTargetPosition(mTargetTicks);
                 }
-                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motor.setPower(maxPower);
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             });
         }
 
         for (DcMotor motor : motors.values()) {
-//            Log.d(TAG, motor.toString() + ", " + motor.getPortNumber() + ": " + motor.getCurrentPosition());
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if(offset <= 15){
                 // Shut down motors
@@ -175,8 +80,25 @@ public class DriveSystemAutonomous {
                 setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 // Reset target
                 mTargetTicks = 0;
+                mTargetHeading = 0;
                 // Motor has reached target
                 return true;
+            } else {
+                int sign;
+                double difference = motor.getTargetPosition() - motor.getCurrentPosition();
+                // Run the motor in the positive direction
+                if (difference > 0) {
+                    sign = 1;
+                }
+                // Run the motor in the positive direction
+                else {
+                    sign = -1;
+                }
+                double powerAdjustment = getError(heading) / 70.0 * sign;
+                // https://www.desmos.com/calculator/cnixjfjecm
+                // I just made up a ramping function that looks good, x is the number of encoder
+                // ticks left. Aka the difference
+                motor.setPower(Range.clip((Math.pow(difference, 0.6) / 15), -1, 1) - powerAdjustment);
             }
         }
         // Motor has not reached target
@@ -208,7 +130,9 @@ public class DriveSystemAutonomous {
     }
 
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
-        return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower);
+        // Since no heading is passed in just give it the current heading such it doesn't have
+        // any impact
+        return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower, imuSystem.getHeading());
     }
 
     /**
@@ -225,7 +149,6 @@ public class DriveSystemAutonomous {
      * @param degrees The degrees to turn the robot by
      * @param maxPower The maximum power of the motors
      */
-    // TODO
     public boolean turnAbsolute(double degrees, double maxPower) {
         // Since it is vertical, use pitch instead of heading
         return turn(diffFromAbs(degrees), maxPower);
@@ -275,7 +198,6 @@ public class DriveSystemAutonomous {
             return true;
         }
 
-        // TODO
         // Go full speed until 60% there
         leftSpeed = error > Math.abs(0.85 * (mInitHeading)) ? speed : (speed * getSteer(error));
         // leftSpeed = speed * getSteer(error);
@@ -354,26 +276,5 @@ public class DriveSystemAutonomous {
                     break;
             }
         });
-    }
-
-    /**
-     * Gets the turn power needed
-     * @param degrees Number of degrees to turn
-     * @return motor power from 0 - 0.8
-     */
-    private double getTurnPower(double degrees, double maxPower) {
-        // double power = Math.abs(degrees / 100.0);
-        return Range.clip(degrees / 100.0, -maxPower, maxPower);
-    }
-
-    private double computeDegreesDiff(double targetHeading, double heading) {
-        double diff = targetHeading - heading;
-        if (diff > 180) {
-            return diff - 360;
-        }
-        if (diff < -180) {
-            return 360 + diff;
-        }
-        return diff;
     }
 }

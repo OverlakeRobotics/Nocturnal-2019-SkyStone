@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.components;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
@@ -10,11 +9,6 @@ public class DriveSystem {
     public enum MotorNames {
         FRONTLEFT, FRONTRIGHT, BACKRIGHT, BACKLEFT
     }
-
-    public enum Direction {
-        FORWARD, BACKWARD, LEFT, RIGHT;
-    }
-
     public static final double SLOW_DRIVE_COEFF = 0.4;
     public boolean slowDrive;
     public EnumMap<MotorNames, DcMotor> motors;
@@ -22,7 +16,7 @@ public class DriveSystem {
     /**
      * Handles the data for the abstract creation of a drive system with four wheels
      */
-    public DriveSystem(EnumMap<MotorNames, DcMotor> motors, BNO055IMU imu) {
+    public DriveSystem(EnumMap<MotorNames, DcMotor> motors) {
         this.motors = motors;
         initMotors();
     }
@@ -86,8 +80,6 @@ public class DriveSystem {
         double frontRightPower = -leftY - rightX - leftX;
         double backLeftPower = -leftY + rightX - leftX;
         double backRightPower = -leftY - rightX + leftX;
-
-
 
         motors.forEach((name, motor) -> {
             switch(name) {

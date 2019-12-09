@@ -20,7 +20,7 @@ public abstract class TestOpMode extends OpMode {
         for (DriveSystem.MotorNames name : DriveSystem.MotorNames.values()) {
             driveMap.put(name, hardwareMap.get(DcMotor.class, name.toString()));
         }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
+        driveSystem = new DriveSystem(driveMap);
 
     }
 }
