@@ -22,9 +22,7 @@ public class DriveSystemAutonomous extends DriveSystem {
     public static final String TAG = "DriveSystem";
     public static final double P_TURN_COEFF = 0.018;     // Larger is more responsive, but also less stable
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
-    public EnumMap<MotorNames, DcMotor> motors;
     public IMUSystem imuSystem;
-
     private int mTargetTicks;
     private double mTargetHeading;
     private double mInitHeading;
@@ -71,7 +69,8 @@ public class DriveSystemAutonomous extends DriveSystem {
             });
         }
 
-        for (DcMotor motor : motors.values()) {
+        for (MotorNames motorName : motors.keySet()) {
+            DcMotor motor = motors.get(motorName);
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if(offset <= 15){
                 // Shut down motors
@@ -82,6 +81,7 @@ public class DriveSystemAutonomous extends DriveSystem {
                 mTargetTicks = 0;
                 mTargetHeading = 0;
                 // Motor has reached target
+                Log.d(TAG, "Finished");
                 return true;
             } else {
                 int sign;
@@ -94,13 +94,27 @@ public class DriveSystemAutonomous extends DriveSystem {
                 else {
                     sign = -1;
                 }
-                double powerAdjustment = getError(heading) / 70.0 * sign;
-                // https://www.desmos.com/calculator/cnixjfjecm
+                double powerAdjustment = getError(imuSystem.getHeading()) / 70.0;
+                Log.d(TAG, "Power adjustment: " + powerAdjustment);
+                // https://www.desmos.com/calculator/cnixjfjec
                 // I just made up a ramping function that looks good, x is the number of encoder
                 // ticks left. Aka the difference
-                motor.setPower(Range.clip((Math.pow(difference, 0.6) / 15), -1, 1) - powerAdjustment);
+                double power = sign * Range.clip((Math.pow(Math.abs(difference), 0.6) / 15.0), 0.1, maxPower);
+                if (motorName == MotorNames.FRONTRIGHT) {
+                    power -= powerAdjustment;
+                } else if (motorName == MotorNames.BACKRIGHT) {
+                    power += powerAdjustment;
+                } else if (motorName == MotorNames.FRONTLEFT) {
+                    power -= powerAdjustment;
+                } else if (motorName == MotorNames.BACKLEFT) {
+                    power += powerAdjustment;
+                }
+
+                Log.d(TAG, motorName + ": " + power);
+                motor.setPower(power);
             }
         }
+        Log.d(TAG, "\n");
         // Motor has not reached target
         return false;
     }

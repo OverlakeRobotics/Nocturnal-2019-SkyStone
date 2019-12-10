@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.DriveSystemAutonomous;
 import org.firstinspires.ftc.teamcode.components.Tensorflow;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
@@ -19,7 +20,8 @@ import java.util.List;
 @Autonomous(name = "TestTensorflow", group="Autonomous")
 public class TestTensorflow extends BaseAutonomous {
     public enum State {
-        STATE_SCAN_STONE,
+        STATE_STRAFE_RIGHT,
+        STATE_COMPLETE
     }
 
     protected State mCurrentState;    // Current State Machine State.
@@ -27,39 +29,16 @@ public class TestTensorflow extends BaseAutonomous {
     @Override
     public void init() {
         super.init(Team.BLUE);
-        newState(State.STATE_SCAN_STONE);
+        newState(State.STATE_STRAFE_RIGHT);
     }
 
-    private int skystoneOffset;
-    private static final int DEAD_RECKON_SKYSTONE = -110;
     @Override
     public void loop() {
         switch (mCurrentState) {
-            case STATE_SCAN_STONE:
-                List<Recognition> recognitions = tensorflow.getInference();
-                if (recognitions != null) {
-                    for (Recognition recognition : recognitions) {
-                        if (recognition.getLabel().equals("Skystone")) {
-                            double degrees = recognition.estimateAngleToObject(AngleUnit.DEGREES);
-                            int sign = (int) Math.signum(degrees);
-                            int currOffset = sign * (int) (300 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
-                            currOffset -= 350;
-                            // The skystone detected is one of the first three which means that
-                            // the second skystone must be farthest from the audience
-                            if (currOffset > -370) {
-                                skystoneOffset = currOffset;
-                            }
-                        }
-                    }
-                    if (skystoneOffset == 0) {
-                        skystoneOffset = DEAD_RECKON_SKYSTONE;
-                    }
-                    if (currentTeam == Team.BLUE) {
-                        skystoneOffset *= 1.15;
-                    }
-                    Log.d("BaseStateMachine", "Skystone offset: " + skystoneOffset);
+            case STATE_STRAFE_RIGHT:
+                if (driveSystem.driveToPosition(1500, DriveSystemAutonomous.Direction.RIGHT, 0.2, 0)) {
+                    newState(State.STATE_COMPLETE);
                 }
-                telemetry.update();
                 break;
         }
     }
