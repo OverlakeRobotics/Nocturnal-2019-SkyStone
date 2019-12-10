@@ -22,7 +22,7 @@ public class DriveSystem {
         }
     }
 
-    public static final double SLOW_DRIVE_COEFF = 0.4;
+    public static final double SLOW_DRIVE_COEFF = 0.25;
 
     public int counter;
     public boolean slowDrive;
@@ -39,6 +39,8 @@ public class DriveSystem {
     private int mTargetTicks;
     private double mTargetHeading;
     private double mInitHeading;
+    private double mStrafeHeading;
+    private boolean strafeSet;
     private int mTurnCounter;
 
     // 12.566370614359173 inches circumference of a wheel
@@ -139,6 +141,7 @@ public class DriveSystem {
         slowDrive = false;
     }
 
+
     public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower) {
         if(mTargetTicks == 0){
             mTargetTicks = direction == Direction.BACKWARD ? -ticks : ticks;
@@ -178,6 +181,23 @@ public class DriveSystem {
                 return true;
             }
         }
+
+        double currHeading = imuSystem.getHeading();
+        if (strafeSet && mStrafeHeading != currHeading) {
+            double diff = mStrafeHeading - currHeading;
+            motors.forEach((name, motor) -> {
+                switch(name) {
+                    case FRONTLEFT:
+                    case BACKLEFT:
+                        motor.setPower(Range.clip(motor.getPower() + (0.1 * diff), -1, 1));
+                        break;
+                    case FRONTRIGHT:
+                    case BACKRIGHT:
+                        motor.setPower(Range.clip(motor.getPower() - (0.1 * diff), -1, 1));
+                        break;
+                }
+            });
+        }
         // Motor has not reached target
         return false;
     }
@@ -207,6 +227,10 @@ public class DriveSystem {
     }
 
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
+        if (!strafeSet) {
+            mStrafeHeading = imuSystem.getHeading();
+            strafeSet = true;
+        }
         return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower);
     }
 
@@ -375,4 +399,5 @@ public class DriveSystem {
         }
         return diff;
     }
+
 }
