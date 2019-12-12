@@ -36,8 +36,10 @@ public class DriveSystem {
 
     public IMUSystem imuSystem;
 
+
     private int mTargetTicks;
     private double mTargetHeading;
+    private double initialHeading;
 
     // 4 inches
     private final double TICKS_IN_MM = 1.358267716;
@@ -50,6 +52,7 @@ public class DriveSystem {
         mTargetTicks = 0;
         initMotors();
         imuSystem = new IMUSystem(imu);
+        initialHeading = imuSystem.getHeading();
     }
 
     /**
@@ -341,6 +344,31 @@ public class DriveSystem {
                     break;
             }
         });
+    }
+
+    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coeff) {
+        double currentHeading = Math.toRadians(imuSystem.getHeading());
+        double headingDiff = initialHeading - currentHeading;
+
+//        rightX = scaleJoystickValue(rightX);
+//        leftX = scaleJoystickValue(leftX);
+//        leftY = scaleJoystickValue(leftY);
+//
+//        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
+//        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
+//        double changeOfDirectionSpeed = rightX;
+//        double x = coeff * speed * Math.cos(angle);
+//        double y = coeff * speed * Math.sin(angle);
+
+//        double frontLeft = Range.clip(y - changeOfDirectionSpeed + x, -1, 1);
+//        double frontRight = Range.clip(y + changeOfDirectionSpeed - x, -1, 1);
+//        double backLeft = Range.clip(y - changeOfDirectionSpeed - x, -1, 1);
+//        double backRight = Range.clip(y + changeOfDirectionSpeed + x, -1, 1);
+
+//        motorFrontLeft.setPower(frontLeft);
+//        motorFrontRight.setPower(frontRight);
+//        motorBackLeft.setPower(backLeft);
+//        motorBackRight.setPower(backRight);
     }
 
     /**
