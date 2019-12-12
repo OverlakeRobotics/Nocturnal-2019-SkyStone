@@ -76,11 +76,11 @@ public class DriveSystem {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             switch(name) {
                 case FRONTLEFT:
+                case BACKLEFT:
                     motor.setDirection(DcMotorSimple.Direction.REVERSE);
                     break;
                 case FRONTRIGHT:
                 case BACKRIGHT:
-                case BACKLEFT:
                     motor.setDirection(DcMotorSimple.Direction.FORWARD);
                     break;
             }
@@ -183,7 +183,7 @@ public class DriveSystem {
         }
 
         double currHeading = imuSystem.getHeading();
-        if (strafeSet && mStrafeHeading != currHeading) {
+        if (strafeSet && mStrafeHeading != currHeading && Direction.isStrafe(direction)) {
             double diff = mStrafeHeading - currHeading;
             motors.forEach((name, motor) -> {
                 switch(name) {
