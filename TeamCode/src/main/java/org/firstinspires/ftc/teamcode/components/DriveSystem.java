@@ -183,17 +183,23 @@ public class DriveSystem {
         }
 
         double currHeading = imuSystem.getHeading();
+        Log.d("Curr heading: ", currHeading + " ");
         if (strafeSet && mStrafeHeading != currHeading && Direction.isStrafe(direction)) {
-            double diff = mStrafeHeading - currHeading;
+            double diff = computeDegreesDiff(mStrafeHeading, currHeading);
+            Log.d("Diff: ", diff + " ");
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTLEFT:
                     case BACKLEFT:
-                        motor.setPower(Range.clip(motor.getPower() + (0.1 * diff), -1, 1));
+                        double power = Range.clip(motor.getPower() + (0.21 * diff), -1, 1);
+                        motor.setPower(power);
+                        Log.d("motor: ", power + "");
                         break;
                     case FRONTRIGHT:
                     case BACKRIGHT:
-                        motor.setPower(Range.clip(motor.getPower() - (0.1 * diff), -1, 1));
+                        double pow = Range.clip(motor.getPower() - (0.21 * diff), -1, 1);
+                        motor.setPower(pow);
+                        Log.d("motor: ", pow + "");
                         break;
                 }
             });

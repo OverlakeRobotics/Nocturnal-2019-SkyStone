@@ -13,15 +13,12 @@ public abstract class TestOpMode extends OpMode {
     private boolean stopRequested;
 
     public void init() {
-        stopRequested = false;
-        this.msStuckDetectInit = 20000;
-        this.msStuckDetectInitLoop = 20000;
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for (DriveSystem.MotorNames name : DriveSystem.MotorNames.values()) {
-            driveMap.put(name, hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
+    }
+
+    @Override
+    public void loop() {
+        driveSystem.driveToPosition(2000, DriveSystem.Direction.RIGHT, 1.0);
     }
 }
 
