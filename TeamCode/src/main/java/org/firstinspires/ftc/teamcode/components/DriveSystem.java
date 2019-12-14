@@ -187,22 +187,27 @@ public class DriveSystem {
         if (strafeSet && mStrafeHeading != currHeading && Direction.isStrafe(direction)) {
             double diff = computeDegreesDiff(mStrafeHeading, currHeading);
             Log.d("Diff: ", diff + " ");
+            double correction = Range.clip(0.28 * diff, -1, 1);
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTLEFT:
                     case BACKLEFT:
-                        double power = Range.clip(motor.getPower() + (0.21 * diff), -1, 1);
-                        motor.setPower(power);
-                        Log.d("motor: ", power + "");
+                        motor.setPower(correction > 0 ? 1 - correction: 1);
+                        //double power = Range.clip(motor.getPower() + (0.23 * diff), -1, 1);
+                        //motor.setPower(power);
+                        // Log.d("motor: ", power + "");
                         break;
                     case FRONTRIGHT:
                     case BACKRIGHT:
-                        double pow = Range.clip(motor.getPower() - (0.21 * diff), -1, 1);
-                        motor.setPower(pow);
-                        Log.d("motor: ", pow + "");
+                        motor.setPower(correction < 0 ? 1 - correction : 1);
+                        // double pow = Range.clip(motor.getPower() - (0.23 * diff), -1, 1);
+                        // motor.setPower(pow);
+                        // Log.d("motor: ", pow + "");
                         break;
                 }
             });
+
+
         }
         // Motor has not reached target
         return false;
