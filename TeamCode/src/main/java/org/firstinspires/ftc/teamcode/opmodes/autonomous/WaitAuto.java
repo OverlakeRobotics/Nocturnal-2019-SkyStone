@@ -8,6 +8,9 @@ public abstract class WaitAuto extends BaseAutonomous {
     private boolean waited;
     private boolean arrived;
 
+    // In seconds
+    public static final int WAIT_TIME = 15;
+
     public void init(Team team) {
         super.init(team);
         waited = false;
@@ -19,7 +22,7 @@ public abstract class WaitAuto extends BaseAutonomous {
     public void loop() {
         if (!waited) {
             try {
-                Thread.sleep(15000);
+                Thread.sleep(WAIT_TIME * 1000);
                 waited = true;
             } catch (InterruptedException ie) {
 
