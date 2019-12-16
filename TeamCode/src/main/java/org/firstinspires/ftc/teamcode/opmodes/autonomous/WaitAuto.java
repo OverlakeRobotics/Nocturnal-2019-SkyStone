@@ -38,7 +38,7 @@ public abstract class WaitAuto extends BaseAutonomous {
                 arrived = true;
                 return;
             }
-            driveSystem.drive(0, 0, -0.75f);
+            driveSystem.drive(0, 0, 0.75f);
         }
     }
 
