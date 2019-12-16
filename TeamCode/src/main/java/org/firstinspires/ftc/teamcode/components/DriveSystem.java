@@ -187,25 +187,29 @@ public class DriveSystem {
         if (strafeSet && mStrafeHeading != currHeading && Direction.isStrafe(direction)) {
             double diff = computeDegreesDiff(mStrafeHeading, currHeading);
             Log.d("Diff: ", diff + " ");
-            double correction = Range.clip(0.28 * diff, -1, 1);
+            double correction = Range.clip(0.09 * diff, -1, 1);
+            int sign = direction == Direction.LEFT ? -1 : 1;
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTLEFT:
                     case BACKLEFT:
-                        motor.setPower(correction > 0 ? 1 - correction: 1);
+                        double maxLeft = direction == Direction.LEFT ? 1 : 0.9;
+                        motor.setPower(correction > 0 ? 1 - sign * correction: 1);
                         //double power = Range.clip(motor.getPower() + (0.23 * diff), -1, 1);
                         //motor.setPower(power);
                         // Log.d("motor: ", power + "");
                         break;
                     case FRONTRIGHT:
                     case BACKRIGHT:
-                        motor.setPower(correction < 0 ? 1 - correction : 1);
+                        double maxRight = direction == Direction.RIGHT ? 1 : 0.9;
+                        motor.setPower(correction < 0 ? 1 + sign * correction : 1);
                         // double pow = Range.clip(motor.getPower() - (0.23 * diff), -1, 1);
                         // motor.setPower(pow);
                         // Log.d("motor: ", pow + "");
                         break;
                 }
             });
+            Log.d("drift: ",  imuSystem.getAcceleration() + "");
 
 
         }
