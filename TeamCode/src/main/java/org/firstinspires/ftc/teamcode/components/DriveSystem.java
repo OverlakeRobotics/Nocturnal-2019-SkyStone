@@ -170,7 +170,7 @@ public class DriveSystem {
             });
         }
         double milliseconds = mElapsedTime.milliseconds();
-        if (milliseconds < 10) {
+        if (milliseconds < 100) {
             motors.forEach((name, motor) -> {
                 motor.setPower(Range.clip((Math.pow(Math.abs(milliseconds), 0.6) / 15.0), 0.1, maxPower));
             });
