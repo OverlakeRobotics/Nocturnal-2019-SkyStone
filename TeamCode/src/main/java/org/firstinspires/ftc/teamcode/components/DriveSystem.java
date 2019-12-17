@@ -252,9 +252,9 @@ public class DriveSystem {
     }
 
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
-        mElapsedTime.reset();
         if (!strafeSet) {
             mStrafeHeading = imuSystem.getHeading();
+            mElapsedTime.reset();
             strafeSet = true;
         }
         return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower);
