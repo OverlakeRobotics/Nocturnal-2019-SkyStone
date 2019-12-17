@@ -170,11 +170,6 @@ public class DriveSystem {
             });
         }
         double milliseconds = mElapsedTime.milliseconds();
-        if (milliseconds < 100) {
-            motors.forEach((name, motor) -> {
-                motor.setPower(Range.clip((Math.pow(Math.abs(milliseconds), 0.6) / 15.0), 0.1, maxPower));
-            });
-        }
 
         for (DcMotor motor : motors.values()) {
 //            Log.d(TAG, motor.toString() + ", " + motor.getPortNumber() + ": " + motor.getCurrentPosition());
@@ -203,19 +198,14 @@ public class DriveSystem {
                 switch(name) {
                     case FRONTLEFT:
                     case BACKLEFT:
-                        double maxLeft = direction == Direction.LEFT ? 1 : 0.9;
-                        motor.setPower(correction > 0 ? 1 - sign * correction: 1);
-                        //double power = Range.clip(motor.getPower() + (0.23 * diff), -1, 1);
-                        //motor.setPower(power);
-                        // Log.d("motor: ", power + "");
+                        double power = correction > 0 ? 1 - sign * correction: 1;
+                        motor.setPower(milliseconds < 90 ? power : power * Range.clip((Math.pow(Math.abs(milliseconds), 0.6) / 15.0), 0.1, maxPower));
                         break;
                     case FRONTRIGHT:
                     case BACKRIGHT:
-                        double maxRight = direction == Direction.RIGHT ? 1 : 0.9;
-                        motor.setPower(correction < 0 ? 1 + sign * correction : 1);
-                        // double pow = Range.clip(motor.getPower() - (0.23 * diff), -1, 1);
-                        // motor.setPower(pow);
-                        // Log.d("motor: ", pow + "");
+                        double powerRight = correction < 0 ? 1 + sign * correction : 1;
+                        motor.setPower(milliseconds < 90 ? powerRight : powerRight * Range.clip((Math.pow(Math.abs(milliseconds), 0.6) / 15.0), 0.1, maxPower));
+
                         break;
                 }
             });
