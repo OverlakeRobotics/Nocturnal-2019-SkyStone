@@ -189,23 +189,21 @@ public class DriveSystem {
             Log.d("Diff: ", diff + " ");
             double correction = Range.clip(0.09 * diff, -1, 1);
             int sign = direction == Direction.LEFT ? -1 : 1;
+            double maxLeft = direction == Direction.LEFT ? 1 : 0.96;
+            double maxRight = direction == Direction.RIGHT ? 1 : 0.96;
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTLEFT:
+                        // More power if right
                     case BACKLEFT:
-                        double maxLeft = direction == Direction.LEFT ? 1 : 0.9;
-                        motor.setPower(correction > 0 ? 1 - sign * correction: 1);
-                        //double power = Range.clip(motor.getPower() + (0.23 * diff), -1, 1);
-                        //motor.setPower(power);
-                        // Log.d("motor: ", power + "");
+                        // More power if left
+                        motor.setPower(correction > 0 ? maxLeft - sign * correction: maxLeft);
                         break;
                     case FRONTRIGHT:
+                        // More power if left
                     case BACKRIGHT:
-                        double maxRight = direction == Direction.RIGHT ? 1 : 0.9;
-                        motor.setPower(correction < 0 ? 1 + sign * correction : 1);
-                        // double pow = Range.clip(motor.getPower() - (0.23 * diff), -1, 1);
-                        // motor.setPower(pow);
-                        // Log.d("motor: ", pow + "");
+                        // More power if right
+                        motor.setPower(correction < 0 ? maxRight + sign * correction : maxRight);
                         break;
                 }
             });
