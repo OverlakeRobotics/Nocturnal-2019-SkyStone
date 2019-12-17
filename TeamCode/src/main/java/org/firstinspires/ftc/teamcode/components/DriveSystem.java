@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import java.util.EnumMap;
 
@@ -26,6 +27,7 @@ public class DriveSystem {
 
     public int counter;
     public boolean slowDrive;
+    private ElapsedTime mElapsedTime;
 
 
     public static final String TAG = "DriveSystem";
@@ -56,6 +58,7 @@ public class DriveSystem {
         this.motors = motors;
         mTargetTicks = 0;
         mTurnCounter = 0;
+        mElapsedTime = new ElapsedTime();
         initMotors();
         imuSystem = new IMUSystem(imu);
     }
@@ -166,6 +169,12 @@ public class DriveSystem {
                 motor.setPower(maxPower);
             });
         }
+        double milliseconds = mElapsedTime.milliseconds();
+        if (milliseconds < 10) {
+            motors.forEach((name, motor) -> {
+                motor.setPower(Range.clip((Math.pow(Math.abs(milliseconds), 0.6) / 15.0), 0.1, maxPower));
+            });
+        }
 
         for (DcMotor motor : motors.values()) {
 //            Log.d(TAG, motor.toString() + ", " + motor.getPortNumber() + ": " + motor.getCurrentPosition());
@@ -243,6 +252,7 @@ public class DriveSystem {
     }
 
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
+        mElapsedTime.reset();
         if (!strafeSet) {
             mStrafeHeading = imuSystem.getHeading();
             strafeSet = true;

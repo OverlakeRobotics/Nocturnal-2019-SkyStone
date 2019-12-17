@@ -30,7 +30,7 @@ public class TestStrafe extends BaseOpMode {
 
     @Override
     public void loop() {
-        driveSystem.driveToPosition(2000, DriveSystem.Direction.RIGHT, 1);
+        driveSystem.driveToPosition(2000, DriveSystem.Direction.LEFT, 1);
     }
 }
 
