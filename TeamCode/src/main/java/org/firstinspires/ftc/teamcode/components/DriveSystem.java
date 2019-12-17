@@ -187,6 +187,7 @@ public class DriveSystem {
         if (strafeSet && mStrafeHeading != currHeading && Direction.isStrafe(direction)) {
             double diff = computeDegreesDiff(mStrafeHeading, currHeading);
             Log.d("Diff: ", diff + " ");
+            double strafe_coeff = direction == Direction.LEFT ? 0.09 : 0.08;
             double correction = Range.clip(0.09 * diff, -1, 1);
             int sign = direction == Direction.LEFT ? -1 : 1;
             motors.forEach((name, motor) -> {
