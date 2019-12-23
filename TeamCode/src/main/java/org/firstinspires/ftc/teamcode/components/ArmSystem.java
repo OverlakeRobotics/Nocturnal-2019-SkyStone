@@ -19,6 +19,7 @@ public class ArmSystem {
     private DcMotor slider;
     private final double GRIPPER_OPEN = 0.9;
     private final double GRIPPER_CLOSE = 0.3;
+    private boolean queueingHeight = false;
 
     // This is in block positions, not ticks
     public double targetHeight;
@@ -76,6 +77,7 @@ public class ArmSystem {
     private boolean gripped;
     private boolean goUp;
     private boolean goDown;
+    private double queuePosition = -1.0;
 
     private EnumMap<ServoNames, Servo> servoEnumMap;
     /*
@@ -217,10 +219,32 @@ public class ArmSystem {
         targetHeight = pos;
         if (pos < 0) targetHeight = 0;
         if (pos > 5) targetHeight = 5;
+        if (pos < 0.3 && queueingHeight) {
+            queueingHeight = false;
+            incrementQueue();
+            if (queuePosition >= 6) {
+                resetQueue();
+            }
+        }
         slider.setTargetPosition(calculateHeight(targetHeight));
         slider.setDirection(Direction.motorDirection(Direction.UP));
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         raise(1);
+    }
+
+    public void setToQueueHeight() {
+        if (!queueingHeight) {
+            queueingHeight = true;
+        }
+        setSliderHeight(queuePosition);
+    }
+
+    public void resetQueue() {
+        queuePosition = -1.0;
+    }
+
+    private void incrementQueue() {
+        queuePosition++;
     }
 
     public void setSliderHeight(int pos) {

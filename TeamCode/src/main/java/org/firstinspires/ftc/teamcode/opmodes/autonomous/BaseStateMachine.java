@@ -88,8 +88,6 @@ public abstract class BaseStateMachine extends BaseAutonomous {
                             int sign = (int) Math.signum(degrees);
                             int currOffset = sign * (int) (320 * (Math.sin(Math.abs(degrees * Math.PI / 180))));
                             currOffset -= 215;
-                            // The skystone detected is one of the first three which means that
-                            // the second skystone must be farthest from the audience
                             distances.add(currOffset);
                         }
                     }
