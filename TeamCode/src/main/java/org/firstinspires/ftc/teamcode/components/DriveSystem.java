@@ -346,24 +346,51 @@ public class DriveSystem {
         });
     }
 
-    public void driveGodMode(float rightX, float rightY, float leftX, float leftY, float coeff) {
+    public void driveGodMode(float rightX, /*float rightY,*/ float leftX, float leftY, float coeff) {
         double currentHeading = Math.toRadians(imuSystem.getHeading());
         double headingDiff = initialHeading - currentHeading;
 
 //        rightX = scaleJoystickValue(rightX);
 //        leftX = scaleJoystickValue(leftX);
 //        leftY = scaleJoystickValue(leftY);
-//
-//        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
-//        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
-//        double changeOfDirectionSpeed = rightX;
-//        double x = coeff * speed * Math.cos(angle);
-//        double y = coeff * speed * Math.sin(angle);
 
-//        double frontLeft = Range.clip(y - changeOfDirectionSpeed + x, -1, 1);
-//        double frontRight = Range.clip(y + changeOfDirectionSpeed - x, -1, 1);
-//        double backLeft = Range.clip(y - changeOfDirectionSpeed - x, -1, 1);
-//        double backRight = Range.clip(y + changeOfDirectionSpeed + x, -1, 1);
+        if (Math.abs(rightX) < 0.01) {
+            rightX = 0.0f;
+        }
+        if (Math.abs(leftX) < 0.01) {
+            leftX = 0.0f;
+        }
+        if (Math.abs(leftY) < 0.01) {
+            leftY = 0.0f;
+        }
+        double speed = Math.sqrt(leftX * leftX + leftY * leftY);
+        double angle = Math.atan2(leftX, leftY) + (Math.PI / 2) + headingDiff;
+        double changeOfDirectionSpeed = rightX;
+        double x = coeff * speed * Math.cos(angle);
+        double y = coeff * speed * Math.sin(angle);
+
+        double frontLeft = Range.clip(y - changeOfDirectionSpeed + x, -1, 1);
+        double frontRight = Range.clip(y + changeOfDirectionSpeed - x, -1, 1);
+        double backLeft = Range.clip(y - changeOfDirectionSpeed - x, -1, 1);
+        double backRight = Range.clip(y + changeOfDirectionSpeed + x, -1, 1);
+
+
+        motors.forEach((name, motor) -> {
+            switch(name) {
+                case FRONTRIGHT:
+                    motor.setPower(frontRight);
+                    break;
+                case BACKLEFT:
+                    motor.setPower(backLeft);
+                    break;
+                case FRONTLEFT:
+                    motor.setPower(frontLeft);
+                    break;
+                case BACKRIGHT:
+                    setDriveSpeed(motor, backRight);
+                    break;
+            }
+        });
 
 //        motorFrontLeft.setPower(frontLeft);
 //        motorFrontRight.setPower(frontRight);

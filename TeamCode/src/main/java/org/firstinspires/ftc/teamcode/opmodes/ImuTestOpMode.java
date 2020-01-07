@@ -22,6 +22,10 @@ public class ImuTestOpMode extends OpMode {
 
     protected IMUSystem imu;
     private static final String TAG = "ImuTestOpMode";
+    private static final double HEADING_NORTH = 0.00;
+    private static final double HEADING_SOUTH = 180.00;
+    private static final double HEADING_EAST = 270.00;
+    private static final double HEADING_WEST = 90.00;
 
     public void init(){
 
@@ -33,4 +37,5 @@ public class ImuTestOpMode extends OpMode {
     public void loop(){
         Log.d(TAG,"heading:"  + imu.getHeading());
     }
+
 }
