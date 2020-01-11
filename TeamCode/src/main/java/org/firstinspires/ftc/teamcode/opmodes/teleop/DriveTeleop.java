@@ -17,7 +17,7 @@ public class DriveTeleop extends BaseOpMode {
     private boolean rightLatchHit = false;
 
     private final double SLIDER_SPEED = 1;
-    private boolean gripped, down, up;
+    private boolean gripped, down, up, decrease;
     // private boolean mPlacing;
     private boolean mCapstoning, mHoming, mQueuing;
     
@@ -59,14 +59,6 @@ public class DriveTeleop extends BaseOpMode {
             latchSystem.bothDown();
         }
 
-
-        /*
-        if (gamepad2.b) {
-            mPlacing = !armSystem.place();
-        } else if (mPlacing) {
-            mPlacing = !armSystem.place();
-        }
-         */
         if (mHoming) {
             mHoming = !armSystem.moveToHome();
         } else if (mCapstoning) {
@@ -117,8 +109,15 @@ public class DriveTeleop extends BaseOpMode {
         } else if (!gamepad2.left_bumper) {
             down = false;
         }
-        //telemetry.addData("Target height: ", armSystem);
-        armSystem.runSliderToTarget();
 
+        if (gamepad2.b && !decrease) {
+            armSystem.decrementQueue();
+            decrease = true;
+        } else if (!gamepad2.b) {
+            decrease = false;
+        }
+        telemetry.addData("Queued Height: ", armSystem.getQueue());
+        armSystem.runSliderToTarget();
+        telemetry.update();
     }
 }
