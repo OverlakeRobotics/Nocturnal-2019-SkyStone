@@ -42,7 +42,8 @@ public abstract class BaseStateMachine extends BaseAutonomous {
         LOGGING,
         STATE_REALIGN_HEADING,
         MOVE_BACKWARDS_AFTER_FOUNDATION,
-        STRAFE_ONTO_LINE
+        STRAFE_ONTO_LINE,
+        STATE_REALIGN_HEADING_BEFORE_INTAKE
     }
 
     private final static String TAG = "BaseStateMachine";
@@ -129,6 +130,13 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_HORIZONTAL_ALIGN_SKYSTONE:
                 armSystem.runSliderToTarget();
                 if (driveSystem.driveToPosition(975, centerDirection, 0.7)) {
+                    newState(State.STATE_REALIGN_HEADING_BEFORE_INTAKE);
+                }
+                break;
+
+            case STATE_REALIGN_HEADING_BEFORE_INTAKE:
+                armSystem.runSliderToTarget();
+                if (driveSystem.turnAbsolute(currentTeam == Team.RED ? 5 : 4, 1.0)) {
                     newState(State.STATE_INTAKE_SKYSTONE);
                 }
                 break;
@@ -136,7 +144,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_INTAKE_SKYSTONE:
                 armSystem.runSliderToTarget();
                 intakeSystem.suck();
-                if (driveSystem.driveToPosition(190, DriveSystem.Direction.FORWARD, 0.2)) {
+                if (driveSystem.driveToPosition(170, DriveSystem.Direction.FORWARD, 0.2)) {
                     newState(State.STATE_ALIGN_BRIDGE);
                 }
                 break;
@@ -153,7 +161,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
             case STATE_REALIGN_HEADING:
                 armSystem.runSliderToTarget();
                 intakeSystem.suck();
-                if (driveSystem.turnAbsolute(currentTeam == Team.RED ? 6 : 4, 1.0)) {
+                if (driveSystem.turnAbsolute(currentTeam == Team.RED ? 5 : 4, 1.0)) {
                     intakeSystem.stop();
                     armSystem.closeGripper();
                     newState(State.STATE_MOVE_PAST_LINE);
@@ -162,7 +170,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_MOVE_PAST_LINE:
                 armSystem.runSliderToTarget();
-                if (driveSystem.driveToPosition(1610 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
+                if (driveSystem.driveToPosition(1630 - skystoneOffset, DriveSystem.Direction.FORWARD, 1.0)) {
                     newState(State.STATE_TURN_FOR_FOUNDATION);
                 }
                 break;
@@ -177,7 +185,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_BACKUP_INTO_FOUNDATION:
                 armSystem.runSliderToTarget();
-                if (driveSystem.driveToPosition(215, DriveSystem.Direction.BACKWARD, 0.6)) {
+                if (driveSystem.driveToPosition(230, DriveSystem.Direction.BACKWARD, 0.6)) {
                     latchSystem.bothDown();
                     armSystem.setSliderHeight(2.0);
                     newState(State.STATE_RAISE_ARM);
@@ -208,7 +216,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
 
             case STATE_MOVE_INTO_WALL:
                 armSystem.runSliderToTarget();
-                if (driveSystem.driveToPosition(currentTeam == Team.RED ? 730 : 720, DriveSystem.Direction.FORWARD, 0.75)) {
+                if (driveSystem.driveToPosition(currentTeam == Team.RED ? 740 : 730, DriveSystem.Direction.FORWARD, 0.75)) {
                     armSystem.openGripper();
                     latchSystem.bothUp();
                     armSystem.moveToHome();
