@@ -87,7 +87,7 @@ public class ArmSystem {
 
     private final int MAX_HEIGHT = 6;
     private final int INCREMENT_HEIGHT = 525; // how much the ticks increase when a block is added
-    private final double GRIPPER_OPEN = 0.9;
+    private final double GRIPPER_OPEN = 0.8;
     private final double GRIPPER_CLOSE = 0.3;
     private final int WAIT_TIME = 400;
 

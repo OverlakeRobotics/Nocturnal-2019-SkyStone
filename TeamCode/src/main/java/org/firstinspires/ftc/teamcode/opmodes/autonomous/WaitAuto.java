@@ -6,19 +6,21 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 @Autonomous(name = "WaitAuto", group="Autonomous")
-public class WaitAuto extends BaseAutonomous {
+public class WaitAuto extends BaseOpMode {
     private boolean arrived;
     private ElapsedTime time;
 
     // In seconds
-    public static final int WAIT_TIME = 15;
+    public static final int WAIT_TIME = 25;
 
-    public void init(Team team) {
-        super.init(team);
+    public void init() {
+        super.init();
         arrived = false;
         time = new ElapsedTime();
+        time.reset();
     }
 
     @Override
